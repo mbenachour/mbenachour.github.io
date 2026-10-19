@@ -1,0 +1,326 @@
+[
+ {
+  "date": "2026-10-19",
+  "modified": "2026-10-19",
+  "slug": "building-for-the-post-ide-and-post-browser-era",
+  "title": "Building for the Post-IDE and Post-Browser Era",
+  "url": "https://mohamedbenachour.net/2026/10/19/building-for-the-post-ide-and-post-browser-era/",
+  "categories": [
+   "Uncategorized"
+  ],
+  "excerpt": "The most important interface in software is gaining a new operator. For decades the only operator was a human being, and the IDE and the browser were built for that operator alone. They now have a second one, the…"
+ },
+ {
+  "date": "2026-09-10",
+  "modified": "2026-09-10",
+  "slug": "dont-wait-for-mythos-create-your-security-harness",
+  "title": "Don’t Wait For Mythos, Create Your Security Harness.",
+  "url": "https://mohamedbenachour.net/2026/09/10/dont-wait-for-mythos-create-your-security-harness/",
+  "categories": [
+   "Uncategorized"
+  ],
+  "excerpt": "I want to start with what actually happened, because the headline and the finding are not the same thing. In April, Anthropic gave a handful of organizations early access to Mythos Preview under Project Glasswing.…"
+ },
+ {
+  "date": "2026-08-10",
+  "modified": "2026-09-10",
+  "slug": "2163",
+  "title": "The Watched Pot: Why Watching AI Agents Work Is Ruining Your Engineering Leverage",
+  "url": "https://mohamedbenachour.net/2026/08/10/2163/",
+  "categories": [
+   "Uncategorized"
+  ],
+  "excerpt": "The Watched Pot You type /goal implement the payment retry logic across the billing service and hit enter. For the next four minutes, you watch. The terminal scrolls. Tool calls fire. Files change. You read every…"
+ },
+ {
+  "date": "2026-01-16",
+  "modified": "2026-01-16",
+  "slug": "the-transdisciplinary-developer-weaving-a-new-era-of-engineers-based-on-edgar-morin-theory-of-complexity",
+  "title": "The “Transdisciplinary” Developer: Weaving a New Era of Engineers, Based on Edgar Morin Theory of Complexity.",
+  "url": "https://mohamedbenachour.net/2026/01/16/the-transdisciplinary-developer-weaving-a-new-era-of-engineers-based-on-edgar-morin-theory-of-complexity/",
+  "categories": [
+   "Uncategorized"
+  ],
+  "excerpt": "Note: AI tools were used to assist in the drafting and editing parts of this article. All content has been reviewed, edited, before publishing. At its heart, Morin’s theory is a rejection of the “simplifying thought”…"
+ },
+ {
+  "date": "2025-05-01",
+  "modified": "2025-05-01",
+  "slug": "dont-just-vibe-code-make-saas",
+  "title": "Don’t just vibe code, make SAAS.",
+  "url": "https://mohamedbenachour.net/2025/05/01/dont-just-vibe-code-make-saas/",
+  "categories": [
+   "Uncategorized"
+  ],
+  "excerpt": "One of the most heated debates in the software engineering world today centers around Vibe Coding. Introduced by Andrej Karpathy in February 2025, vibe coding is a conversational programming style where large…"
+ },
+ {
+  "date": "2023-06-01",
+  "modified": "2023-06-01",
+  "slug": "it-operations-from-automation-to-autonomy",
+  "title": "IT Operations: From Automation to Autonomy",
+  "url": "https://mohamedbenachour.net/2023/06/01/it-operations-from-automation-to-autonomy/",
+  "categories": [
+   "Uncategorized"
+  ],
+  "excerpt": "In the past decade, the field of IT operations has seen a revolution in automated systems. The focus has been on Infrastructure as Code (IaC), configuration management, and scripting. These approaches have brought…"
+ },
+ {
+  "date": "2022-08-17",
+  "modified": "2022-08-17",
+  "slug": "finops-and-shifting-left-your-cloud-finances",
+  "title": "FinOps and shifting left your cloud finances",
+  "url": "https://mohamedbenachour.net/2022/08/17/finops-and-shifting-left-your-cloud-finances/",
+  "categories": [
+   "Devops"
+  ],
+  "excerpt": "The old vs the new model of infrastructure finance The old procurement model : In the old days of infrastructure, ops teams like any other organization would have to follow a traditional procurement model,…"
+ },
+ {
+  "date": "2022-05-12",
+  "modified": "2022-05-12",
+  "slug": "making-your-publisher-subscriber-app-more-cloud-agnostic-using-dapr",
+  "title": "Making your publisher/subscriber app more cloud agnostic using DAPR",
+  "url": "https://mohamedbenachour.net/2022/05/12/making-your-publisher-subscriber-app-more-cloud-agnostic-using-dapr/",
+  "categories": [
+   "Devops"
+  ],
+  "excerpt": "Publisher/Subscriber Model Publish/subscribe messaging, or pub/sub messaging, is a form of asynchronous service-to-service communication used in serverless and microservices architectures. In a pub/sub model, any…"
+ },
+ {
+  "date": "2022-02-20",
+  "modified": "2022-02-21",
+  "slug": "decentralized-cloud-is-not-ready-for-prime-time-but-its-here-to-stay",
+  "title": "Decentralized cloud is not ready for prime time … But it’s here to stay.",
+  "url": "https://mohamedbenachour.net/2022/02/20/decentralized-cloud-is-not-ready-for-prime-time-but-its-here-to-stay/",
+  "categories": [
+   "dApps"
+  ],
+  "excerpt": "The whole concept of decentralized cloud was always interesting to me, after all, it’s fair to say today that the world of cloud is monopolized by the 3 big players: AWS, Azure, GCP, so a new approach to…"
+ },
+ {
+  "date": "2021-10-08",
+  "modified": "2021-10-08",
+  "slug": "part-1-continuously-loading-synthea-patients-to-azure-fhir-api",
+  "title": "PART 1 : Continuously Loading Synthea Patients Data to Azure FHIR API",
+  "url": "https://mohamedbenachour.net/2021/10/08/part-1-continuously-loading-synthea-patients-to-azure-fhir-api/",
+  "categories": [
+   "Healthcare"
+  ],
+  "excerpt": "What is FHIR ? Fast Healthcare Interoperability Resources (FHIR, pronounced “fire”) is a standard describing data formats and elements (known as “resources”) and an application programming interface (API) for…"
+ },
+ {
+  "date": "2021-01-20",
+  "modified": "2021-01-20",
+  "slug": "deploy-machine-learning-at-scale-with-kedro-and-cortex-dev",
+  "title": "Deploy Machine Learning at scale with Kedro and Cortex.dev",
+  "url": "https://mohamedbenachour.net/2021/01/20/deploy-machine-learning-at-scale-with-kedro-and-cortex-dev/",
+  "categories": [
+   "Uncategorized"
+  ],
+  "excerpt": "ML model deployment in production is still an area that lacks conformity, nomenclature, and patterns. Aside from few technology companies who started the journey early on, for late adopters of ML practices, it’s…"
+ },
+ {
+  "date": "2020-12-11",
+  "modified": "2020-12-14",
+  "slug": "power-generation-prediction-using-realtime-inference-with-spark-structured-streaming-and-kafka",
+  "title": "Power generation prediction using realtime inference with Spark Structured Streaming and Kafka",
+  "url": "https://mohamedbenachour.net/2020/12/11/power-generation-prediction-using-realtime-inference-with-spark-structured-streaming-and-kafka/",
+  "categories": [
+   "Energy/Smart Grid",
+   "machine learning"
+  ],
+  "excerpt": "A modern power plants generate an enormous amount of data, with the ever growing number of high frequency sensors, some of the applications of this data are : the protection against problems induced by combustion…"
+ },
+ {
+  "date": "2020-11-25",
+  "modified": "2020-11-26",
+  "slug": "deploy-pjm-electricity-load-forecast-model-on-aws-sagemaker",
+  "title": "Deploy PJM Electricity Load Forecast Model on AWS SageMaker",
+  "url": "https://mohamedbenachour.net/2020/11/25/deploy-pjm-electricity-load-forecast-model-on-aws-sagemaker/",
+  "categories": [
+   "Energy/Smart Grid",
+   "machine learning"
+  ],
+  "excerpt": "in the energy industry, forecasting the grid load is vital for various commercial optimizations around Day Ahead and Real Time trading, but it also help Independent Power Providers (IPPs) allocate the right…"
+ },
+ {
+  "date": "2020-04-09",
+  "modified": "2020-04-10",
+  "slug": "predicting-electricity-wholesale-prices-using-aws-machine-learning",
+  "title": "Predicting Electricity Wholesale Prices using AWS Machine Learning",
+  "url": "https://mohamedbenachour.net/2020/04/09/predicting-electricity-wholesale-prices-using-aws-machine-learning/",
+  "categories": [
+   "Energy/Smart Grid",
+   "machine learning"
+  ],
+  "excerpt": "Electricity Wholesale Markets Most of the nation’s wholesale electricity sales happen in a competitive market managed by Independent System Operator (ISO), with over 200 million customers in these areas and over $120…"
+ },
+ {
+  "date": "2019-04-15",
+  "modified": "2019-04-26",
+  "slug": "graph-databases-and-energy-modeling-lmps-and-crrs",
+  "title": "Graph databases and Energy: Modeling LMPs and CRRs",
+  "url": "https://mohamedbenachour.net/2019/04/15/graph-databases-and-energy-modeling-lmps-and-crrs/",
+  "categories": [
+   "Uncategorized"
+  ],
+  "excerpt": "Graph Databases : Graph databases are NoSQL databases which use the graph data model comprised of vertices, which is an entity such as a person, place, object or relevant piece of data and edges, which represent the…"
+ },
+ {
+  "date": "2019-02-11",
+  "modified": "2019-02-13",
+  "slug": "using-ams-data-for-consumer-power-usage-forecasting",
+  "title": "Using Smart Meter Data for consumer electricity usage forecasting",
+  "url": "https://mohamedbenachour.net/2019/02/11/using-ams-data-for-consumer-power-usage-forecasting/",
+  "categories": [
+   "Energy/Smart Grid",
+   "machine learning"
+  ],
+  "excerpt": "Electric energy consumption is essential for promoting economic development and raising the standard of living. In contrast to other energy sources, electric energy cannot be stored for large-scale consumption. From…"
+ },
+ {
+  "date": "2018-12-20",
+  "modified": "2019-01-22",
+  "slug": "my-books-recommendation-for-ai-and-ml",
+  "title": "My books recommendations for AI and ML",
+  "url": "https://mohamedbenachour.net/2018/12/20/my-books-recommendation-for-ai-and-ml/",
+  "categories": [
+   "machine learning"
+  ],
+  "excerpt": "With AI and machine learning creeping in every industry, the paradigm of IT as we know it is also changing, ML is a natural extension of the software revolution we have seen in the last decades, knowing how to…"
+ },
+ {
+  "date": "2018-12-11",
+  "modified": "2019-02-13",
+  "slug": "storing-your-ml-models-with-parameters",
+  "title": "Storing your ML Models with parameters",
+  "url": "https://mohamedbenachour.net/2018/12/11/storing-your-ml-models-with-parameters/",
+  "categories": [
+   "machine learning"
+  ],
+  "excerpt": "Often when training machine learning models you find yourself creating different estimators and tuning this parameter or that to get the results you want, you may also find yourself wanting to save the results of…"
+ },
+ {
+  "date": "2018-11-12",
+  "modified": "2019-02-13",
+  "slug": "querying-ercot-public-dataset-using-aws-glue-and-athena",
+  "title": "Querying Ercot public dataset using AWS Glue and Athena",
+  "url": "https://mohamedbenachour.net/2018/11/12/querying-ercot-public-dataset-using-aws-glue-and-athena/",
+  "categories": [
+   "Energy/Smart Grid",
+   "machine learning"
+  ],
+  "excerpt": "ERCOT is an acronym for Electric Reliability Council of Texas, it manages the flow of electric power to more than 25 million Texas customers — representing about 90 percent of the state’s electric load. As the…"
+ },
+ {
+  "date": "2018-10-15",
+  "modified": "2018-10-15",
+  "slug": "automating-aws-server-builds-from-servicenow-requests",
+  "title": "Automating AWS server builds from ServiceNow requests.",
+  "url": "https://mohamedbenachour.net/2018/10/15/automating-aws-server-builds-from-servicenow-requests/",
+  "categories": [
+   "Devops"
+  ],
+  "excerpt": "A lot of organizations are using ServiceNow to manage requests for creating new compute resources in the could ( i.e servers, lambda functions, containers …) Usually, CMP tools like Scalr, or even ServiceNow Cloud…"
+ },
+ {
+  "date": "2018-09-19",
+  "modified": "2018-10-15",
+  "slug": "how-can-aiops-help-you-prevent-the-next-major-incident",
+  "title": "How can AIOps help you prevent the next major incident.",
+  "url": "https://mohamedbenachour.net/2018/09/19/how-can-aiops-help-you-prevent-the-next-major-incident/",
+  "categories": [
+   "machine learning"
+  ],
+  "excerpt": "What is it? AIOps is a term that has been used in the last few years to describe the ability to drive intelligence from the day-to-day data that IT operations generate. The data source could vary from monitoring…"
+ },
+ {
+  "date": "2018-09-04",
+  "modified": "2019-02-13",
+  "slug": "deploying-apps-and-ml-models-on-mesosphere-dc-os",
+  "title": "Deploying Apps and ML models on mesosphere DC/OS",
+  "url": "https://mohamedbenachour.net/2018/09/04/deploying-apps-and-ml-models-on-mesosphere-dc-os/",
+  "categories": [
+   "machine learning"
+  ],
+  "excerpt": "Have you ever thought of your data centers and cloud infrastructure ( private and public ) as one big computer? where you can deploy your applications with a click of a button, without worrying too much about the…"
+ },
+ {
+  "date": "2018-08-07",
+  "modified": "2019-02-13",
+  "slug": "deploy-machine-learning-models-on-aws-lambda",
+  "title": "Deploy machine learning models on AWS lambda and serverless",
+  "url": "https://mohamedbenachour.net/2018/08/07/deploy-machine-learning-models-on-aws-lambda/",
+  "categories": [
+   "machine learning"
+  ],
+  "excerpt": "in the last post, we talked about how to deploy a Machine learning trained model on Kubernates. Here is another way of deploying ML models: AWS lambda + API gateway Basically, your model (mlpreg.pkl) will be stored…"
+ },
+ {
+  "date": "2018-06-22",
+  "modified": "2019-02-13",
+  "slug": "automating-the-training-and-deployment-of-ml-models-on-kubernates",
+  "title": "Automating the training and deployment of ML models on Kubernates",
+  "url": "https://mohamedbenachour.net/2018/06/22/automating-the-training-and-deployment-of-ml-models-on-kubernates/",
+  "categories": [
+   "machine learning"
+  ],
+  "excerpt": "With the rise of Machine Learning and models, the need for automating and streamlining model deployment become a necessity. Pushed mostly by the fact that ML models as a new way of programming, are no longer an…"
+ },
+ {
+  "date": "2018-01-04",
+  "modified": "2019-02-13",
+  "slug": "using-aws-guardduty-to-stop-compromised-instances-and-send-notifications",
+  "title": "Using AWS GuardDuty to stop compromised instances and send notifications.",
+  "url": "https://mohamedbenachour.net/2018/01/04/using-aws-guardduty-to-stop-compromised-instances-and-send-notifications/",
+  "categories": [
+   "Devops"
+  ],
+  "excerpt": "GuardDuty (announced in the 2017 edition of AWS Re:Invent) , is a managed threat detection service that continuously monitors for malicious or unauthorized behavior to help you protect your AWS accounts and…"
+ },
+ {
+  "date": "2017-01-03",
+  "modified": "2019-02-13",
+  "slug": "local-and-s3-cloud-storage-server-using-minio",
+  "title": "Local (and S3) cloud storage server using Minio",
+  "url": "https://mohamedbenachour.net/2017/01/03/local-and-s3-cloud-storage-server-using-minio/",
+  "categories": [
+   "Devops"
+  ],
+  "excerpt": "Minio is a local cloud object storage server, it’s open source, released under Apache License V2.0, allowing developers and devops to have a local and a public cloud storage to: backup VMs backup containers store…"
+ },
+ {
+  "date": "2016-09-19",
+  "modified": "2019-02-13",
+  "slug": "ci-and-code-promotion-for-chef-cookbooks-with-jenkins-poc",
+  "title": "CI and code promotion for Chef cookbooks with Jenkins – POC",
+  "url": "https://mohamedbenachour.net/2016/09/19/ci-and-code-promotion-for-chef-cookbooks-with-jenkins-poc/",
+  "categories": [
+   "Devops"
+  ],
+  "excerpt": "I have been browsing the internet for blogs or articles to help Chef developers have a way of promoting the code of their cookbooks, a way of vetting code, and avoiding that code goes from Operations guys straight to…"
+ },
+ {
+  "date": "2016-08-07",
+  "modified": "2019-02-13",
+  "slug": "running-containervms-on-esxi-host",
+  "title": "Running ContainerVMs on ESXI vmware host",
+  "url": "https://mohamedbenachour.net/2016/08/07/running-containervms-on-esxi-host/",
+  "categories": [
+   "Devops"
+  ],
+  "excerpt": "until today I knew that running containers was always dependent on the existence of a host and an OS of some kind, but I came across this project : vSphere Integrated containers, it’s a runtime environment allowing…"
+ },
+ {
+  "date": "2015-12-15",
+  "modified": "2019-02-13",
+  "slug": "riak-cluster-using-docker-compose",
+  "title": "Riak Cluster Using Docker Compose",
+  "url": "https://mohamedbenachour.net/2015/12/15/riak-cluster-using-docker-compose/",
+  "categories": [
+   "Devops"
+  ],
+  "excerpt": "Riak is some hot stuff lately with the increasing need for clusterzitation in the world of NoSQL data stores . Riak is a solution to big data problem, it was based on Amazon Dynamo design, to respond to request at a…"
+ }
+]
