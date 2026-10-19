@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Building for the Post-IDE and Post-Browser Era · Mohamed Ben Achour</title>
+  <meta name="description" content="The most important interface in software is gaining a new operator. For decades the only operator was a human being, and the IDE and the browser were built f…">
+  <style>
+    :root { color-scheme: dark; --bg:#050a12; --panel:#0a1626; --text:#eef7ff; --muted:#a9bed3; --line:rgba(94,234,255,.28); --accent:#5eeaff; --accent-2:#8bffb0; }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family: Inter, ui-sans-system, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: radial-gradient(circle at 18% 0%, rgba(94,234,255,.18), transparent 30rem), linear-gradient(180deg,#03060b 0%, var(--bg) 46%, #02040a 100%); color:var(--text); line-height:1.7; }
+    a { color:var(--accent); text-decoration:none; } a:hover { text-decoration:underline; }
+    .wrap { width:min(820px, calc(100% - 40px)); margin:0 auto; }
+    header { padding:28px 0 6px; } nav { display:flex; justify-content:space-between; align-items:center; gap:20px; flex-wrap:wrap; }
+    .brand { font-weight:800; color:var(--text); } .nav-links { display:flex; gap:18px; flex-wrap:wrap; font-size:.95rem; }
+    h1 { font-size:clamp(1.9rem,5vw,3rem); line-height:1.15; letter-spacing:-.03em; margin:30px 0 10px; }
+    .meta { color:var(--muted); font-size:.9rem; text-transform:uppercase; letter-spacing:.06em; margin-bottom:26px; }
+    .content img { max-width:100%; height:auto; border-radius:12px; }
+    .content figure { margin:24px 0; } .content figcaption { color:var(--muted); font-size:.9rem; text-align:center; }
+    .content pre { overflow:auto; background:var(--panel); border:1px solid rgba(94,234,255,.16); padding:16px; border-radius:12px; }
+    .content code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size:.92em; }
+    .content blockquote { border-left:3px solid var(--accent); margin:20px 0; padding:4px 18px; color:var(--muted); }
+    .content table { display:block; overflow-x:auto; border-collapse:collapse; } .content td, .content th { border:1px solid rgba(255,255,255,.14); padding:6px 10px; }
+    .content iframe { max-width:100%; }
+    .origin { border-top:1px solid rgba(255,255,255,.1); margin-top:38px; padding-top:16px; color:var(--muted); font-size:.92rem; }
+    footer { padding:26px 0 46px; color:var(--muted); }
+  </style>
+</head>
+<body>
+  <header class="wrap">
+    <nav aria-label="Main navigation">
+      <a class="brand" href="../index.html">Mohamed Ben Achour</a>
+      <div class="nav-links">
+        <a href="../articles.html">Articles</a>
+        <a href="https://github.com/mbenachour">GitHub</a>
+        <a href="https://huggingface.co/mbenachour">Hugging Face</a>
+        <a href="https://mohamedbenachour.net">Blog</a>
+      </div>
+    </nav>
+  </header>
+  <main class="wrap">
+    <h1>Building for the Post-IDE and Post-Browser Era</h1>
+    <div class="meta">October 19, 2026 · Uncategorized</div>
+    <figure class="content"><img src="../assets/posts/6bf70308-media-generation-post-ide-post-browser-era-clea-0-2dc91090-9102-4299-884c-0398c7702bcf.webp" alt=""></figure>
+    <div class="content">
+
+<figure class="wp-block-image size-large"><img data-recalc-dims="1" loading="lazy" decoding="async" width="1024" height="683" data-attachment-id="2267" data-permalink="https://mohamedbenachour.net/2026/10/19/building-for-the-post-ide-and-post-browser-era/media-generation-post-ide-post-browser-era-clea-0-2dc91090-9102-4299-884c-0398c7702bcf/" data-orig-file="../assets/posts/6bf70308-media-generation-post-ide-post-browser-era-clea-0-2dc91090-9102-4299-884c-0398c7702bcf.webp" data-orig-size="1920,1280" data-comments-opened="1" data-image-title="media-generation-post-ide-post-browser-era-clea-0-2dc91090-9102-4299-884c-0398c7702bcf" data-image-description="" data-image-caption="" data-large-file="../assets/posts/6bf70308-media-generation-post-ide-post-browser-era-clea-0-2dc91090-9102-4299-884c-0398c7702bcf.webp" src="../assets/posts/6bf70308-media-generation-post-ide-post-browser-era-clea-0-2dc91090-9102-4299-884c-0398c7702bcf.webp" alt="" class="wp-image-2267" /></figure>
+
+
+
+<p class="wp-block-paragraph">The most important interface in software is gaining a new operator. For decades the only operator was a human being, and the IDE and the browser were built for that operator alone. They now have a second one, the agent, and it is taking the larger share of the work. Coding agents write and test code; computer use agents operate software. Adoption is already deep: <a href="https://survey.stackoverflow.co/2025/ai">84% of developers use or plan to use AI tools</a>, and a study in <a href="https://www.science.org/doi/10.1126/science.adz9311">Science</a> estimates AI wrote 29% of Python functions in the United States by the end of 2024. Which tool yields first is an open question. That the human share of both is shrinking is not.</p>
+
+
+
+<p class="wp-block-paragraph">The IDE is a workbench for a human writer: syntax highlighting for the eye, autocomplete for the hand, a debugger for a mind that can hold only so much of a program at once. An agent needs none of it. It reads code as data, generates it directly, and checks its work by running it, which is why code may yield first: it is structured, testable, and announces its own failures. The newest tools show the direction. OpenAI&#8217;s Codex app and the <a href="https://github.blog/news-insights/product-news/github-copilot-app-the-agent-native-desktop-experience/">GitHub Copilot app</a> do not open on a code editor or a file browser; the interface is a conversation and a list of tasks, with the code sitting behind the work, available when a human wants to look. OpenAI said it plainly: &#8220;<a href="https://openai.com/index/introducing-the-codex-app/">existing IDEs and terminal-based tools are not built to support this way of working.</a>&#8220;</p>
+
+
+
+<p class="wp-block-paragraph">The browser may take longer, because the web resists: pages are laid out for eyes, and they sit behind logins, bot checks, and advertising built to separate people from programs. Computer use agents are the workaround, clicking and scrolling like people because the web still demands a person. But the ground is already shifting. Automated traffic reached <a href="https://cpl.thalesgroup.com/about-us/newsroom/2025-imperva-bad-bot-report-ai-internet-traffic">51% of all web traffic in 2024</a>, passing human traffic for the first time in a decade, and <a href="https://www.pewresearch.org/short-reads/2025/07/22/google-users-are-less-likely-to-click-on-links-when-an-ai-summary-appears-in-the-results/">Pew Research</a> found that when an AI summary appears in search results, users click a link 8% of the time, against 15% without one. Sites are building agent-readable versions of themselves, structured interfaces, and agent checkout. When enough doors exist, the browser stops being where transactions happen, and what remains for the human is intent and verification: state what you want, then check the diff, the tests, the receipt.</p>
+
+
+
+<p class="wp-block-paragraph">So build for the post-IDE, post-browser era. Build for the agent as the primary user: an interface for an agent is a contract, typed inputs, structured outputs, clear errors, a way to undo, delivered as an API, a command line, or a tool server; the Model Context Protocol already has <a href="https://www.anthropic.com/news/donating-the-model-context-protocol-and-establishing-of-the-agentic-ai-foundation">more than 10,000 public servers</a>. Build verification as the product: diffs, traces, audit logs, approval gates, reversible actions. Build documentation for models, and build the web to be called, not just visited, because advertising needs eyeballs and the eyeballs are leaving; payment for completed work is what replaces it, and Mastercard, Visa, and Stripe are already building the agent payment rails. The agent layer will be owned by someone, and whoever owns it sets the terms for everyone else. Which tool fades first, nobody knows. That both fade is the part worth acting on, and the only choice left is whether you design for what replaces them, or get dragged into it.</p>
+
+    </div>
+    <p class="origin">Originally published on mohamedbenachour.net on October 19, 2026. <a href="https://mohamedbenachour.net/2026/10/19/building-for-the-post-ide-and-post-browser-era/">View the original post</a>.</p>
+  </main>
+  <footer class="wrap"><span>© 2026 Mohamed Ben Achour</span></footer>
+</body>
+</html>

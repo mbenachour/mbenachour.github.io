@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Running ContainerVMs on ESXI vmware host · Mohamed Ben Achour</title>
+  <meta name="description" content="until today I knew that running containers was always dependent on the existence of a host and an OS of some kind, but I came across this project : vSphere I…">
+  <style>
+    :root { color-scheme: dark; --bg:#050a12; --panel:#0a1626; --text:#eef7ff; --muted:#a9bed3; --line:rgba(94,234,255,.28); --accent:#5eeaff; --accent-2:#8bffb0; }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family: Inter, ui-sans-system, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: radial-gradient(circle at 18% 0%, rgba(94,234,255,.18), transparent 30rem), linear-gradient(180deg,#03060b 0%, var(--bg) 46%, #02040a 100%); color:var(--text); line-height:1.7; }
+    a { color:var(--accent); text-decoration:none; } a:hover { text-decoration:underline; }
+    .wrap { width:min(820px, calc(100% - 40px)); margin:0 auto; }
+    header { padding:28px 0 6px; } nav { display:flex; justify-content:space-between; align-items:center; gap:20px; flex-wrap:wrap; }
+    .brand { font-weight:800; color:var(--text); } .nav-links { display:flex; gap:18px; flex-wrap:wrap; font-size:.95rem; }
+    h1 { font-size:clamp(1.9rem,5vw,3rem); line-height:1.15; letter-spacing:-.03em; margin:30px 0 10px; }
+    .meta { color:var(--muted); font-size:.9rem; text-transform:uppercase; letter-spacing:.06em; margin-bottom:26px; }
+    .content img { max-width:100%; height:auto; border-radius:12px; }
+    .content figure { margin:24px 0; } .content figcaption { color:var(--muted); font-size:.9rem; text-align:center; }
+    .content pre { overflow:auto; background:var(--panel); border:1px solid rgba(94,234,255,.16); padding:16px; border-radius:12px; }
+    .content code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size:.92em; }
+    .content blockquote { border-left:3px solid var(--accent); margin:20px 0; padding:4px 18px; color:var(--muted); }
+    .content table { display:block; overflow-x:auto; border-collapse:collapse; } .content td, .content th { border:1px solid rgba(255,255,255,.14); padding:6px 10px; }
+    .content iframe { max-width:100%; }
+    .origin { border-top:1px solid rgba(255,255,255,.1); margin-top:38px; padding-top:16px; color:var(--muted); font-size:.92rem; }
+    footer { padding:26px 0 46px; color:var(--muted); }
+  </style>
+</head>
+<body>
+  <header class="wrap">
+    <nav aria-label="Main navigation">
+      <a class="brand" href="../index.html">Mohamed Ben Achour</a>
+      <div class="nav-links">
+        <a href="../articles.html">Articles</a>
+        <a href="https://github.com/mbenachour">GitHub</a>
+        <a href="https://huggingface.co/mbenachour">Hugging Face</a>
+        <a href="https://mohamedbenachour.net">Blog</a>
+      </div>
+    </nav>
+  </header>
+  <main class="wrap">
+    <h1>Running ContainerVMs on ESXI vmware host</h1>
+    <div class="meta">August 7, 2016 · Devops</div>
+
+    <div class="content">
+<p>&nbsp;</p>
+<p>until today I knew that running containers was always dependent on the existence of a host and an OS of some kind, but I came across this project : <a href="https://github.com/vmware/vic" target="_blank" rel="noopener noreferrer">vSphere Integrated containers</a>, it&#8217;s a runtime environment allowing developer to run containers as VMs, instead of running containers in  VMs .</p>
+<p>there is a good read to understand the contrast <a href="https://github.com/vmware/vic/blob/master/doc/design/arch/vic-container-abstraction.md">between traditional containers and containerVMs</a></p>
+<div class="page" title="Page 8">
+<div class="page" title="Page 8">vic-machine :</div>
+<div class="page" title="Page 8">is CLI tool allowing for the creating of containerVMs in the following setups :</div>
+<div class="page" title="Page 8">
+<ul>
+<li class="p1">vCenter Server with a cluster</li>
+<li class="p1">vCenter Server with one or more standalone ESXi hosts</li>
+<li class="p1">A standalone ESXi host</li>
+</ul>
+<p>this architectures relies on a Virtual Container Host, the VHC is an end point to start, stop, delete containers across the datacenter .</p>
+<p>&#8220;The Virtual Container Host (VCH) is the means of controlling, as well as consuming, container services – a Docker API endpoint is exposed for developers to access, and desired ports for client connections are mapped to running containers as required. Each VCH is backed by a vSphere resource pool, delivering compute resources far beyond that of a single VM or even a dedicated physical host. Multiple VCHs can be deployed in an environment, depending on business requirements. For example, to separate resources for development, testing, and production.&#8221;</p>
+<p>the binaries can be downloaded from here :</p>
+<p><a href="https://bintray.com/vmware/vic-repo/build/view#files" rel="nofollow">https://bintray.com/vmware/vic-repo/build/view#files</a></p>
+</div>
+</div>
+<p>untar the compressed file :</p>
+<blockquote><p>$ tar xvzf vic_3711.tar.gz</p></blockquote>
+<div class="page" title="Page 8">
+<div class="page" title="Page 8">
+<p>this is the content of the tar file :</p>
+<p><img data-recalc-dims="1" loading="lazy" decoding="async" data-attachment-id="152" data-permalink="https://mohamedbenachour.net/2016/08/07/running-containervms-on-esxi-host/screen-shot-2016-08-06-at-11-54-13-pm/" data-orig-file="../assets/posts/a9bcbe5a-screen-shot-2016-08-06-at-11-54-13-pm.png" data-orig-size="737,305" data-comments-opened="1" data-image-title="Screen Shot 2016-08-06 at 11.54.13 PM" data-image-description="" data-image-caption="" data-large-file="../assets/posts/a9bcbe5a-screen-shot-2016-08-06-at-11-54-13-pm.png" class="alignnone size-full wp-image-152" src="../assets/posts/a9bcbe5a-screen-shot-2016-08-06-at-11-54-13-pm.png" alt="Screen Shot 2016-08-06 at 11.54.13 PM" width="737" height="305" /></p>
+<p><b>Setting</b><strong> up ESXI host : </strong></p>
+<ul>
+<li>download the ISO file from vmware wbesite :  https://my.vmware.com/en/web/vmware/evalcenter?p=free-esxi6</li>
+<li>use virtualbox or vmware fusion to create a host using esxi host ( http://www.vmwareandme.com/2013/10/step-by-step-guide-how-to-install.html#.V6a8rZNViko)<img data-recalc-dims="1" loading="lazy" decoding="async" data-attachment-id="151" data-permalink="https://mohamedbenachour.net/2016/08/07/running-containervms-on-esxi-host/screen-shot-2016-08-06-at-11-50-51-pm/" data-orig-file="../assets/posts/6245eab9-screen-shot-2016-08-06-at-11-50-51-pm.png" data-orig-size="771,579" data-comments-opened="1" data-image-title="Screen Shot 2016-08-06 at 11.50.51 PM" data-image-description="" data-image-caption="" data-large-file="../assets/posts/6245eab9-screen-shot-2016-08-06-at-11-50-51-pm.png" class="alignnone size-full wp-image-151" src="../assets/posts/6245eab9-screen-shot-2016-08-06-at-11-50-51-pm.png" alt="Screen Shot 2016-08-06 at 11.50.51 PM" width="771" height="579" /></li>
+</ul>
+<p><strong>Creating a Virtual Container Host :</strong></p>
+<blockquote><p>$ vic-machine-darwin create &#8211;target 172.16.127.130 &#8211;user root &#8211;image-datastore datastore1<br />
+INFO[2016-08-06T14:05:48-05:00] Please enter ESX or vCenter password:<br />
+INFO[2016-08-06T14:05:50-05:00] ### Installing VCH ####<br />
+INFO[2016-08-06T14:05:50-05:00] Generating certificate/key pair &#8211; private key in ./virtual-container-host-key.pem<br />
+INFO[2016-08-06T14:05:50-05:00] Validating supplied configuration<br />
+INFO[2016-08-06T14:05:51-05:00] Firewall status: ENABLED on &#8220;/ha-datacenter/host/localhost.localdomain/localhost.localdomain&#8221;<br />
+INFO[2016-08-06T14:05:51-05:00] Firewall configuration OK on hosts:<br />
+INFO[2016-08-06T14:05:51-05:00] &#8220;/ha-datacenter/host/localhost.localdomain/localhost.localdomain&#8221;<br />
+WARN[2016-08-06T14:05:51-05:00] Evaluation license detected. VIC may not function if evaluation expires or insufficient license is later assigned.<br />
+INFO[2016-08-06T14:05:51-05:00] License check OK<br />
+INFO[2016-08-06T14:05:51-05:00] DRS check SKIPPED &#8211; target is standalone host<br />
+INFO[2016-08-06T14:05:51-05:00] Creating Resource Pool &#8220;virtual-container-host&#8221;<br />
+INFO[2016-08-06T14:05:51-05:00] Creating VirtualSwitch<br />
+INFO[2016-08-06T14:05:51-05:00] Creating Portgroup<br />
+INFO[2016-08-06T14:05:51-05:00] Creating appliance on target<br />
+INFO[2016-08-06T14:05:51-05:00] Network role &#8220;client&#8221; is sharing NIC with &#8220;external&#8221;<br />
+INFO[2016-08-06T14:05:51-05:00] Network role &#8220;management&#8221; is sharing NIC with &#8220;external&#8221;<br />
+INFO[2016-08-06T14:05:52-05:00] Uploading images for container<br />
+INFO[2016-08-06T14:05:52-05:00] &#8220;bootstrap.iso&#8221;<br />
+INFO[2016-08-06T14:05:52-05:00] &#8220;appliance.iso&#8221;<br />
+INFO[2016-08-06T14:06:00-05:00] Waiting for IP information<br />
+INFO[2016-08-06T14:06:18-05:00] Waiting for major appliance components to launch<br />
+INFO[2016-08-06T14:06:18-05:00] Initialization of appliance successful<br />
+INFO[2016-08-06T14:06:18-05:00]<br />
+INFO[2016-08-06T14:06:18-05:00] vic-admin portal:<br />
+INFO[2016-08-06T14:06:18-05:00] <a href="https://172.16.127.131:2378" rel="nofollow">https://172.16.127.131:2378</a><br />
+INFO[2016-08-06T14:06:18-05:00]<br />
+INFO[2016-08-06T14:06:18-05:00] DOCKER_HOST=172.16.127.131:2376<br />
+INFO[2016-08-06T14:06:18-05:00]<br />
+INFO[2016-08-06T14:06:18-05:00] Connect to docker:<br />
+INFO[2016-08-06T14:06:18-05:00] docker -H 172.16.127.131:2376 &#8211;tls info<br />
+INFO[2016-08-06T14:06:18-05:00] Installer completed successfully</p></blockquote>
+</div>
+</div>
+<p>you can use vSphere or ESXI web client to take a look :</p>
+<p><img data-recalc-dims="1" loading="lazy" decoding="async" data-attachment-id="153" data-permalink="https://mohamedbenachour.net/2016/08/07/running-containervms-on-esxi-host/screen-shot-2016-08-07-at-12-20-56-am/" data-orig-file="../assets/posts/a45fd93d-screen-shot-2016-08-07-at-12-20-56-am.png" data-orig-size="583,216" data-comments-opened="1" data-image-title="Screen Shot 2016-08-07 at 12.20.56 AM" data-image-description="" data-image-caption="" data-large-file="../assets/posts/a45fd93d-screen-shot-2016-08-07-at-12-20-56-am.png" class="alignnone size-full wp-image-153" src="../assets/posts/a45fd93d-screen-shot-2016-08-07-at-12-20-56-am.png" alt="Screen Shot 2016-08-07 at 12.20.56 AM" width="583" height="216" /></p>
+<p>creating ContainerVM :</p>
+<blockquote><p>$ docker &#8211;tls run  &#8211;name container1 ubuntu</p></blockquote>
+<p>the container has been created :</p>
+<p><img data-recalc-dims="1" loading="lazy" decoding="async" data-attachment-id="154" data-permalink="https://mohamedbenachour.net/2016/08/07/running-containervms-on-esxi-host/screen-shot-2016-08-07-at-12-25-32-am/" data-orig-file="../assets/posts/cf8d234d-screen-shot-2016-08-07-at-12-25-32-am.png" data-orig-size="714,363" data-comments-opened="1" data-image-title="Screen Shot 2016-08-07 at 12.25.32 AM" data-image-description="" data-image-caption="" data-large-file="../assets/posts/cf8d234d-screen-shot-2016-08-07-at-12-25-32-am.png" class="alignnone size-full wp-image-154" src="../assets/posts/cf8d234d-screen-shot-2016-08-07-at-12-25-32-am.png" alt="Screen Shot 2016-08-07 at 12.25.32 AM" width="714" height="363" /></p>
+<p>&nbsp;</p>
+<p>Conclusion :</p>
+<p>ContainerVMs seem to have the following distinctive characteristics over the traditional containers  :</p>
+<ol>
+<li>There is no default shared filesystem between the container and its host
+<ul>
+<li>Volumes are attached to the container as disks and are completely isolated from each other</li>
+<li>A shared filesystem could be provided by something like an NFS volume driver</li>
+</ul>
+</li>
+<li>The way that you do low-level management and monitoring of a container is different. There is no VCH shell.
+<ul>
+<li>Any API-level control plane query, such as <code>docker ps</code>, works as expected</li>
+<li>Low-level management and monitoring uses exactly the same tools and processes as for a VM</li>
+</ul>
+</li>
+<li>The kernel running in the container is not shared with any other container
+<ul>
+<li>This means that there is no such thing as an optional <em>privileged</em> mode. Every container is privileged and fully isolated.</li>
+<li>When a containerVM kernel is forked rather than booted, much of its immutable memory is shared with a parent<em>template</em></li>
+</ul>
+</li>
+<li>There is no such thing as unspecified memory or CPU limits
+<ul>
+<li>A Linux container will have access to all of the CPU and memory resource available in its host if not specified</li>
+<li>A containerVM must have memory and CPU limits defined, either derived from a default or specified explicitly</li>
+</ul>
+</li>
+</ol>
+<p>but the traditional containers like Docker are definitely  a more mature solution, offers more tools for orchestration and scaling.</p>
+
+    </div>
+    <p class="origin">Originally published on mohamedbenachour.net on August 7, 2016. <a href="https://mohamedbenachour.net/2016/08/07/running-containervms-on-esxi-host/">View the original post</a>.</p>
+  </main>
+  <footer class="wrap"><span>© 2026 Mohamed Ben Achour</span></footer>
+</body>
+</html>

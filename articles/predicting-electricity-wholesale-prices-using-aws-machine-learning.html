@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Predicting Electricity Wholesale Prices using AWS Machine Learning · Mohamed Ben Achour</title>
+  <meta name="description" content="Electricity Wholesale Markets Most of the nation’s wholesale electricity sales happen in a competitive market managed by Independent System Operator (ISO), w…">
+  <style>
+    :root { color-scheme: dark; --bg:#050a12; --panel:#0a1626; --text:#eef7ff; --muted:#a9bed3; --line:rgba(94,234,255,.28); --accent:#5eeaff; --accent-2:#8bffb0; }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family: Inter, ui-sans-system, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: radial-gradient(circle at 18% 0%, rgba(94,234,255,.18), transparent 30rem), linear-gradient(180deg,#03060b 0%, var(--bg) 46%, #02040a 100%); color:var(--text); line-height:1.7; }
+    a { color:var(--accent); text-decoration:none; } a:hover { text-decoration:underline; }
+    .wrap { width:min(820px, calc(100% - 40px)); margin:0 auto; }
+    header { padding:28px 0 6px; } nav { display:flex; justify-content:space-between; align-items:center; gap:20px; flex-wrap:wrap; }
+    .brand { font-weight:800; color:var(--text); } .nav-links { display:flex; gap:18px; flex-wrap:wrap; font-size:.95rem; }
+    h1 { font-size:clamp(1.9rem,5vw,3rem); line-height:1.15; letter-spacing:-.03em; margin:30px 0 10px; }
+    .meta { color:var(--muted); font-size:.9rem; text-transform:uppercase; letter-spacing:.06em; margin-bottom:26px; }
+    .content img { max-width:100%; height:auto; border-radius:12px; }
+    .content figure { margin:24px 0; } .content figcaption { color:var(--muted); font-size:.9rem; text-align:center; }
+    .content pre { overflow:auto; background:var(--panel); border:1px solid rgba(94,234,255,.16); padding:16px; border-radius:12px; }
+    .content code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size:.92em; }
+    .content blockquote { border-left:3px solid var(--accent); margin:20px 0; padding:4px 18px; color:var(--muted); }
+    .content table { display:block; overflow-x:auto; border-collapse:collapse; } .content td, .content th { border:1px solid rgba(255,255,255,.14); padding:6px 10px; }
+    .content iframe { max-width:100%; }
+    .origin { border-top:1px solid rgba(255,255,255,.1); margin-top:38px; padding-top:16px; color:var(--muted); font-size:.92rem; }
+    footer { padding:26px 0 46px; color:var(--muted); }
+  </style>
+</head>
+<body>
+  <header class="wrap">
+    <nav aria-label="Main navigation">
+      <a class="brand" href="../index.html">Mohamed Ben Achour</a>
+      <div class="nav-links">
+        <a href="../articles.html">Articles</a>
+        <a href="https://github.com/mbenachour">GitHub</a>
+        <a href="https://huggingface.co/mbenachour">Hugging Face</a>
+        <a href="https://mohamedbenachour.net">Blog</a>
+      </div>
+    </nav>
+  </header>
+  <main class="wrap">
+    <h1>Predicting Electricity Wholesale Prices using AWS Machine Learning</h1>
+    <div class="meta">April 9, 2020 · Energy/Smart Grid · machine learning</div>
+
+    <div class="content">
+<h3>Electricity Wholesale Markets</h3>
+<p>Most of the nation’s wholesale electricity sales happen in a competitive market managed by Independent System Operator (ISO), with over 200 million customers in these areas and over $120 billion in annual energy transactions taking place. Under the Federal Power Act, these markets are overseen by the Federal Energy Regulatory Commission (FERC), which ultimately determines the guidelines for how wholesale electricity is bought and sold in the marketplace. RTOs/ISOs create the market rules that enforce whether and how energy resources can compete. Wholesale markets should allow all resources to compete on price and performance, as the Federal Power Act requires that the rates, terms, and conditions of service governing wholesale competitive markets be “just and reasonable”.</p>
+<p><img data-recalc-dims="1" loading="lazy" decoding="async" data-attachment-id="572" data-permalink="https://mohamedbenachour.net/2020/04/09/predicting-electricity-wholesale-prices-using-aws-machine-learning/wholesale_electric_power_markets_map/" data-orig-file="../assets/posts/c6e20746-wholesale_electric_power_markets_map-e1586403708325.png" data-orig-size="2918,2008" data-comments-opened="1" data-image-title="wholesale_electric_power_markets_map" data-image-description="" data-image-caption="" data-large-file="../assets/posts/c6e20746-wholesale_electric_power_markets_map-e1586403708325.png" class="alignnone size-full wp-image-572" src="../assets/posts/c6e20746-wholesale_electric_power_markets_map-e1586403708325.png" alt="wholesale_electric_power_markets_map" width="2918" height="2008" /></p>
+<p>&nbsp;</p>
+<h3>Predicting Energy Prices</h3>
+<p>In a competitive market, being able to predict energy prices does give IPPs a great advantage in formulating their bids for the day ahead market.</p>
+<p>The DA is a purely financial market, which means even financial institutions who are not a power producer can hedge and make profit from buying/selling bulk energy in DA market.</p>
+<p>Energy Price Forecasting ( EPF ) has become very instrumental in the decision making process for day to day energy bids, but also for creating a point of view (POV) for long term investments</p>
+<p>There multiple models and methods used in creating price forecast for electricity :</p>
+<ul>
+<li><strong>Multi-agent model</strong> : build prices forecasting based on matching demand to supply, by simulation the operations of heterogeneous system of generation units and companies</li>
+<li><strong>Fundamentals model</strong> : which focuses on simulation the physical and economic relationship influencing the trading of electricity such as : weather, fleet conditions, load ..</li>
+<li><strong>Statistical model</strong> : uses mathematical regression models which is basically a combination of previous day/month/year prices and other input variables like weather or load</li>
+<li><strong>Computational intelegence model</strong> : this class of models uses mainly deep neural network, or support victor machine methods to predict prices , these methods are good at covering the non-linear aspect of a price curve, from a price spike point of view.</li>
+<li><strong>Hybrid model</strong>: which is a combination of two or more of the above models.</li>
+</ul>
+<p>&nbsp;</p>
+<p>We will use the <strong>Computation intelligence model</strong> based on Fritz Arnold <a href="https://github.com/farwacheema/DA-electricity-price-forecasting/blob/master/proposal/proposal.pdf">proposal</a> for this explanatory exercise.</p>
+<h3><strong>Proposal</strong> :</h3>
+<p>In this paper, the author explores different approaches to create an accurate prediction of energy wholesale prices, one of them which will make the subject of this article is to use purely time series data from previous years to learn about long (one year ) and short ( one day ) term patterns of prices</p>
+<h3>Data:</h3>
+<p>Historical hourly Day-Ahead market clearing prices for the German bidding zone.</p>
+<h3>Platform :</h3>
+<p>We will use Amazon SageMaker as our data science and machine learning platform :</p>
+<p>Amazon SageMaker is a fully managed service that provides every developer and data scientist with the ability to build, train, and deploy machine learning (ML) models quickly. SageMaker removes the heavy lifting from each step of the machine learning process to make it easier to develop high quality models.</p>
+<p>Traditional ML development is a complex, expensive, iterative process made even harder because there are no integrated tools for the entire machine learning workflow. You need to stitch together tools and workflows, which is time-consuming and error-prone. SageMaker solves this challenge by providing all of the components used for machine learning in a single toolset so models get to production faster with much less effort and at lower cost.</p>
+<h4>Platform Architecture :</h4>
+<p><img data-recalc-dims="1" loading="lazy" decoding="async" data-attachment-id="574" data-permalink="https://mohamedbenachour.net/2020/04/09/predicting-electricity-wholesale-prices-using-aws-machine-learning/vistra-databricks-page-4/" data-orig-file="../assets/posts/9d06d83c-vistra-databricks-page-4.png" data-orig-size="512,620" data-comments-opened="1" data-image-title="vistra-databricks-Page-4" data-image-description="" data-image-caption="" data-large-file="../assets/posts/9d06d83c-vistra-databricks-page-4.png" class="alignnone size-full wp-image-574" src="../assets/posts/9d06d83c-vistra-databricks-page-4.png" alt="vistra-databricks-Page-4" width="512" height="620" /></p>
+<p>&nbsp;</p>
+<p>SageMaker Studio unifies at last all the tools needed for ML development. Developers can write code, track experiments, visualize data, and perform debugging and monitoring all within a single, integrated visual interface, which significantly boosts developer productivity.</p>
+<p><img data-recalc-dims="1" loading="lazy" decoding="async" data-attachment-id="575" data-permalink="https://mohamedbenachour.net/2020/04/09/predicting-electricity-wholesale-prices-using-aws-machine-learning/rhinestone-sagemaker-studio-page-2-v2/" data-orig-file="../assets/posts/892f3129-rhinestone-sagemaker-studio-page-2-v2.png" data-orig-size="1366,635" data-comments-opened="1" data-image-title="Rhinestone-SageMaker-Studio-Page-2-v2" data-image-description="" data-image-caption="" data-large-file="../assets/posts/892f3129-rhinestone-sagemaker-studio-page-2-v2.png" class="alignnone size-full wp-image-575" src="../assets/posts/892f3129-rhinestone-sagemaker-studio-page-2-v2.png" alt="Rhinestone-SageMaker-Studio-Page-2-v2" width="1366" height="635" /></p>
+<p>&nbsp;</p>
+<h4>Timeseries analysis</h4>
+<p>loading the data: we read data input from csv file, which consists of historical prices</p>
+<p><img data-recalc-dims="1" loading="lazy" decoding="async" data-attachment-id="576" data-permalink="https://mohamedbenachour.net/2020/04/09/predicting-electricity-wholesale-prices-using-aws-machine-learning/screen-shot-2020-04-08-at-11-14-53-pm/" data-orig-file="../assets/posts/a5afce4b-screen-shot-2020-04-08-at-11.14.53-pm.png" data-orig-size="1610,576" data-comments-opened="1" data-image-title="Screen Shot 2020-04-08 at 11.14.53 PM" data-image-description="" data-image-caption="" data-large-file="../assets/posts/a5afce4b-screen-shot-2020-04-08-at-11.14.53-pm.png" class="alignnone size-full wp-image-576" src="../assets/posts/a5afce4b-screen-shot-2020-04-08-at-11.14.53-pm.png" alt="Screen Shot 2020-04-08 at 11.14.53 PM" width="1610" height="576" /></p>
+<p>Visualizing historical: 10 years od DA prices</p>
+<p><img data-recalc-dims="1" loading="lazy" decoding="async" data-attachment-id="577" data-permalink="https://mohamedbenachour.net/2020/04/09/predicting-electricity-wholesale-prices-using-aws-machine-learning/screen-shot-2020-04-08-at-11-25-06-pm/" data-orig-file="../assets/posts/021977ea-screen-shot-2020-04-08-at-11.25.06-pm.png" data-orig-size="1656,938" data-comments-opened="1" data-image-title="Screen Shot 2020-04-08 at 11.25.06 PM" data-image-description="" data-image-caption="" data-large-file="../assets/posts/021977ea-screen-shot-2020-04-08-at-11.25.06-pm.png" class="alignnone size-full wp-image-577" src="../assets/posts/021977ea-screen-shot-2020-04-08-at-11.25.06-pm.png" alt="Screen Shot 2020-04-08 at 11.25.06 PM" width="1656" height="938" /></p>
+<h4>Model Architecture :</h4>
+<p>This model is hybrid and will use a combination of one convolutional neural network, with a kernel and a stride of 24 corresponding to the number of hours in the day, and a Long Short Term Memory deep neural network, to help the model learn about price pattern over long and short periods of time.</p>
+<p><img data-recalc-dims="1" loading="lazy" decoding="async" data-attachment-id="578" data-permalink="https://mohamedbenachour.net/2020/04/09/predicting-electricity-wholesale-prices-using-aws-machine-learning/vistra-databricks-page-5/" data-orig-file="../assets/posts/dd1edb1f-vistra-databricks-page-5.png" data-orig-size="414,61" data-comments-opened="1" data-image-title="vistra-databricks-Page-5" data-image-description="" data-image-caption="" data-large-file="../assets/posts/dd1edb1f-vistra-databricks-page-5.png" class="alignnone size-full wp-image-578" src="../assets/posts/dd1edb1f-vistra-databricks-page-5.png" alt="vistra-databricks-Page-5" width="414" height="61" /></p>
+<p>&nbsp;</p>
+<p><img data-recalc-dims="1" loading="lazy" decoding="async" data-attachment-id="579" data-permalink="https://mohamedbenachour.net/2020/04/09/predicting-electricity-wholesale-prices-using-aws-machine-learning/screen-shot-2020-04-08-at-11-51-01-pm/" data-orig-file="../assets/posts/bdc8e1c2-screen-shot-2020-04-08-at-11.51.01-pm.png" data-orig-size="1216,820" data-comments-opened="1" data-image-title="Screen Shot 2020-04-08 at 11.51.01 PM" data-image-description="" data-image-caption="" data-large-file="../assets/posts/bdc8e1c2-screen-shot-2020-04-08-at-11.51.01-pm.png" class="alignnone size-full wp-image-579" src="../assets/posts/bdc8e1c2-screen-shot-2020-04-08-at-11.51.01-pm.png" alt="Screen Shot 2020-04-08 at 11.51.01 PM" width="1216" height="820" /></p>
+<p>&nbsp;</p>
+<h4>Predictions</h4>
+<p>For one year :</p>
+<p><img data-recalc-dims="1" loading="lazy" decoding="async" data-attachment-id="580" data-permalink="https://mohamedbenachour.net/2020/04/09/predicting-electricity-wholesale-prices-using-aws-machine-learning/screen-shot-2020-04-08-at-11-57-06-pm/" data-orig-file="../assets/posts/22af2fb2-screen-shot-2020-04-08-at-11.57.06-pm.png" data-orig-size="1588,1096" data-comments-opened="1" data-image-title="Screen Shot 2020-04-08 at 11.57.06 PM" data-image-description="" data-image-caption="" data-large-file="../assets/posts/22af2fb2-screen-shot-2020-04-08-at-11.57.06-pm.png" class="alignnone size-full wp-image-580" src="../assets/posts/22af2fb2-screen-shot-2020-04-08-at-11.57.06-pm.png" alt="Screen Shot 2020-04-08 at 11.57.06 PM" width="1588" height="1096" /></p>
+<p>For 2 weeks :</p>
+<p><img data-recalc-dims="1" loading="lazy" decoding="async" data-attachment-id="581" data-permalink="https://mohamedbenachour.net/2020/04/09/predicting-electricity-wholesale-prices-using-aws-machine-learning/screen-shot-2020-04-08-at-11-58-08-pm/" data-orig-file="../assets/posts/1beb3236-screen-shot-2020-04-08-at-11.58.08-pm.png" data-orig-size="1678,1096" data-comments-opened="1" data-image-title="Screen Shot 2020-04-08 at 11.58.08 PM" data-image-description="" data-image-caption="" data-large-file="../assets/posts/1beb3236-screen-shot-2020-04-08-at-11.58.08-pm.png" class="alignnone size-full wp-image-581" src="../assets/posts/1beb3236-screen-shot-2020-04-08-at-11.58.08-pm.png" alt="Screen Shot 2020-04-08 at 11.58.08 PM" width="1678" height="1096" /></p>
+<h4>Deploying the Model:</h4>
+<p>Once the model is trained and saved, we can use AWS endpoints to deploy as an API.</p>
+<p>API backed deployment basically wraps the model in a web application to make available for inferences.</p>
+<h3>Conclusion</h3>
+<p>A EPF computational intelligence model that is based only on timeseries analysis does provide good results when it comes to learning the general patterns of prices, seasonality of surges, quarterly, and monthly patterns as well, weekday vs weekend, but it doesn&#8217;t perform well when it comes daily price surges which are critical to energy traders, as these impulses are not very frequent but when they happen they offer a great revenue opportunity for the Real Time market.</p>
+<p>The rest of the project does provide a solution to help mitigate this issue, which consists of using MLP (MultiLayer perceptron ) to be able to feed the model different inputs like  weather, load, etc &#8230; and predict prices. The accurracy of the model improves when it comes to predicting price spikes, but as stated above, the computational intelligence models are not probabilistic in nature.</p>
+<p>&nbsp;</p>
+
+    </div>
+    <p class="origin">Originally published on mohamedbenachour.net on April 9, 2020. <a href="https://mohamedbenachour.net/2020/04/09/predicting-electricity-wholesale-prices-using-aws-machine-learning/">View the original post</a>.</p>
+  </main>
+  <footer class="wrap"><span>© 2026 Mohamed Ben Achour</span></footer>
+</body>
+</html>

@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Using Smart Meter Data for consumer electricity usage forecasting · Mohamed Ben Achour</title>
+  <meta name="description" content="Electric energy consumption is essential for promoting economic development and raising the standard of living. In contrast to other energy sources, electric…">
+  <style>
+    :root { color-scheme: dark; --bg:#050a12; --panel:#0a1626; --text:#eef7ff; --muted:#a9bed3; --line:rgba(94,234,255,.28); --accent:#5eeaff; --accent-2:#8bffb0; }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family: Inter, ui-sans-system, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: radial-gradient(circle at 18% 0%, rgba(94,234,255,.18), transparent 30rem), linear-gradient(180deg,#03060b 0%, var(--bg) 46%, #02040a 100%); color:var(--text); line-height:1.7; }
+    a { color:var(--accent); text-decoration:none; } a:hover { text-decoration:underline; }
+    .wrap { width:min(820px, calc(100% - 40px)); margin:0 auto; }
+    header { padding:28px 0 6px; } nav { display:flex; justify-content:space-between; align-items:center; gap:20px; flex-wrap:wrap; }
+    .brand { font-weight:800; color:var(--text); } .nav-links { display:flex; gap:18px; flex-wrap:wrap; font-size:.95rem; }
+    h1 { font-size:clamp(1.9rem,5vw,3rem); line-height:1.15; letter-spacing:-.03em; margin:30px 0 10px; }
+    .meta { color:var(--muted); font-size:.9rem; text-transform:uppercase; letter-spacing:.06em; margin-bottom:26px; }
+    .content img { max-width:100%; height:auto; border-radius:12px; }
+    .content figure { margin:24px 0; } .content figcaption { color:var(--muted); font-size:.9rem; text-align:center; }
+    .content pre { overflow:auto; background:var(--panel); border:1px solid rgba(94,234,255,.16); padding:16px; border-radius:12px; }
+    .content code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size:.92em; }
+    .content blockquote { border-left:3px solid var(--accent); margin:20px 0; padding:4px 18px; color:var(--muted); }
+    .content table { display:block; overflow-x:auto; border-collapse:collapse; } .content td, .content th { border:1px solid rgba(255,255,255,.14); padding:6px 10px; }
+    .content iframe { max-width:100%; }
+    .origin { border-top:1px solid rgba(255,255,255,.1); margin-top:38px; padding-top:16px; color:var(--muted); font-size:.92rem; }
+    footer { padding:26px 0 46px; color:var(--muted); }
+  </style>
+</head>
+<body>
+  <header class="wrap">
+    <nav aria-label="Main navigation">
+      <a class="brand" href="../index.html">Mohamed Ben Achour</a>
+      <div class="nav-links">
+        <a href="../articles.html">Articles</a>
+        <a href="https://github.com/mbenachour">GitHub</a>
+        <a href="https://huggingface.co/mbenachour">Hugging Face</a>
+        <a href="https://mohamedbenachour.net">Blog</a>
+      </div>
+    </nav>
+  </header>
+  <main class="wrap">
+    <h1>Using Smart Meter Data for consumer electricity usage forecasting</h1>
+    <div class="meta">February 11, 2019 · Energy/Smart Grid · machine learning</div>
+
+    <div class="content">
+<p>Electric energy consumption is essential for promoting economic development and raising the standard of living. In contrast to other energy sources, electric energy cannot be stored for large-scale consumption. From an economic viewpoint, the supply and demand of electric energy must be balanced at any given time. Therefore, a precise forecasting of electric energy consumption is very important for the economic operation of an electric power grid.</p>
+<p>The ability to create a forecasting model for an individual consumer can help determine the overall load on the grid for a given time.</p>
+<p>For this post, we will classify this as a time series prediction problem and only use one variance.  Check back for a post where introduce mutli variance.</p>
+<h3>The Dataset :</h3>
+<p>I used <a href="https://www.smartmetertexas.com/smt/jsp/custom_webseal_pages/common_error.jsp">Smart Meters Texas </a>or SMT portal to access my home electricity usage. SMTstores daily, monthly and even 15-minute intervals of energy data. Energy data is  recorded by digital electric meters (commonly known as smart meters), and provides secure access to the data for customers and authorized market participants</p>
+<p>In addition to acting as an interface for access to smart meter data, SMT enables secure communications with the customers in-home devices and provides a convenient and easy-to-use process where customers can voluntarily authorize market participants, other than the customer’s retail electric provider or third parties, access to their energy information and in-home devices.</p>
+<h3>Tools :</h3>
+<p><a href="https://keras.io/">Keras</a>: Keras is an open source neural network library written in Python. It is capable of running on top of TensorFlow, Microsoft Cognitive Toolkit, Theano, or PlaidML. Designed to enable fast experimentation with deep neural networks, it focuses on being user-friendly, modular, and extensible</p>
+<p><a href="https://www.tensorflow.org/">TensorFlow</a> : TensorFlow is an open-source software library for dataflow programming across a range of tasks. It is a symbolic math library and is also used for machine learning applications such as neural networks</p>
+<h3>The Algorithm: LSTM</h3>
+<p>In our case, we will be using a variant of Recurrent Neural Network ( RNN ) called Long Short Term Memory ( LSTM), why? time series problems are a difficult type of prediction modeling, LSTMs are good at extracting input features patterns when it&#8217;s over a long period of time, LSTM have the capability of retaining it in memory, and use it to predict next sequences, this what my 3 months usage (in KWH) look like ( by 15 min interval ) :</p>
+<p><img data-recalc-dims="1" loading="lazy" decoding="async" data-attachment-id="525" data-permalink="https://mohamedbenachour.net/2019/02/11/using-ams-data-for-consumer-power-usage-forecasting/screen-shot-2019-02-10-at-2-31-38-pm/" data-orig-file="../assets/posts/a9c198d6-screen-shot-2019-02-10-at-2.31.38-pm.png" data-orig-size="2128,872" data-comments-opened="1" data-image-title="Screen Shot 2019-02-10 at 2.31.38 PM" data-image-description="" data-image-caption="" data-large-file="../assets/posts/a9c198d6-screen-shot-2019-02-10-at-2.31.38-pm.png" class="alignnone size-full wp-image-525" src="../assets/posts/a9c198d6-screen-shot-2019-02-10-at-2.31.38-pm.png" alt="Screen Shot 2019-02-10 at 2.31.38 PM" width="2128" height="872" /></p>
+<p>for this example, I will only use a subset of the overall dataset, 3 days of electricity usage:</p>
+<p>[code]</p>
+<p>DATE,USAGE_KWH<br />
+11/01/18 00:15,0.005<br />
+11/01/18 00:30,0.005<br />
+11/01/18 00:45,0.013<br />
+11/01/18 01:00,0.029<br />
+11/01/18 01:15,0.025<br />
+11/01/18 01:30,0.004<br />
+11/01/18 01:45,0.005<br />
+11/01/18 02:00,0.004<br />
+11/01/18 02:15,0.024</p>
+<p>[/code]</p>
+<p><img data-recalc-dims="1" loading="lazy" decoding="async" data-attachment-id="526" data-permalink="https://mohamedbenachour.net/2019/02/11/using-ams-data-for-consumer-power-usage-forecasting/screen-shot-2019-02-10-at-2-44-35-pm/" data-orig-file="../assets/posts/7ea3e3b6-screen-shot-2019-02-10-at-2.44.35-pm.png" data-orig-size="2014,864" data-comments-opened="1" data-image-title="Screen Shot 2019-02-10 at 2.44.35 PM" data-image-description="" data-image-caption="" data-large-file="../assets/posts/7ea3e3b6-screen-shot-2019-02-10-at-2.44.35-pm.png" class="alignnone size-full wp-image-526" src="../assets/posts/7ea3e3b6-screen-shot-2019-02-10-at-2.44.35-pm.png" alt="Screen Shot 2019-02-10 at 2.44.35 PM" width="2014" height="864" /></p>
+<h3>python :</h3>
+<p>loading the dataset:</p>
+<p>[code]</p>
+<p># load the dataset</p>
+<p>dataframe = read_csv(&#8216;AMS.csv&#8217;, usecols=[1], engine=&#8217;python&#8217;)</p>
+<p>dataset = dataframe.values</p>
+<p>dataset = dataset.astype(&#8216;float32&#8217;)</p>
+<p>[/code]</p>
+<p>Training Set and Test Set :</p>
+<p>[code]</p>
+<p>train_size = int(len(dataset) * 0.67)</p>
+<p>test_size = len(dataset) &#8211; train_size</p>
+<p>train, test = dataset[0:train_size,:], dataset[train_size:len(dataset),:]</p>
+<p>[/code]</p>
+<div></div>
+<div>creating model :</div>
+<div></div>
+<div>
+<p>[code]</p>
+<p>model = Sequential()</pre>
+</div>
+<p>model.add(LSTM(4, input_shape=(1, look_back))) model.add(Dense(1)) model.add(Activation(&#8216;tanh&#8217;)) model.compile(loss=&#8217;mean_squared_error&#8217;, optimizer=&#8217;adam&#8217;) model.fit(trainX, trainY, epochs=50, batch_size=1) [/code]</p>
+<div></div>
+<div></div>
+<div>making predictions:</div>
+<div></div>
+<div>
+<p>[code]</p>
+<p>trainPredict = model.predict(trainX)</pre>
+</div>
+<p>testPredict = model.predict(testX) [/code]</p>
+<p>for plotting we shift the training and test sets :</p>
+<p>[code]<br />
+# shift train predictions for plotting<br />
+trainPredictPlot = numpy.empty_like(dataset)<br />
+trainPredictPlot[:, :] = numpy.nan<br />
+trainPredictPlot[look_back:len(trainPredict)+look_back, :] = trainPredict<br />
+# shift test predictions for plotting<br />
+testPredictPlot = numpy.empty_like(dataset)<br />
+testPredictPlot[:, :] = numpy.nan<br />
+testPredictPlot[len(trainPredict)+(look_back*2)+1:len(dataset)-1, :] = testPredict<br />
+[/code]</p>
+<p>if results were plotted, it would look something like the picture below:</p>
+<p><strong>Blue</strong>: actual usage</p>
+<p><strong>Orange</strong>: Test Set</p>
+<p><strong>Green</strong>: Predictions</p>
+<p><img data-recalc-dims="1" loading="lazy" decoding="async" data-attachment-id="531" data-permalink="https://mohamedbenachour.net/2019/02/11/using-ams-data-for-consumer-power-usage-forecasting/screen-shot-2019-02-11-at-8-27-33-am/" data-orig-file="../assets/posts/5dd37277-screen-shot-2019-02-11-at-8.27.33-am.png" data-orig-size="1361,422" data-comments-opened="1" data-image-title="Screen Shot 2019-02-11 at 8.27.33 AM" data-image-description="" data-image-caption="" data-large-file="../assets/posts/5dd37277-screen-shot-2019-02-11-at-8.27.33-am.png" class="alignnone size-full wp-image-531" src="../assets/posts/5dd37277-screen-shot-2019-02-11-at-8.27.33-am.png" alt="Screen Shot 2019-02-11 at 8.27.33 AM" width="1361" height="422" /></p>
+<p>if we zoom on the prediction part :</p>
+<p><img data-recalc-dims="1" loading="lazy" decoding="async" data-attachment-id="533" data-permalink="https://mohamedbenachour.net/2019/02/11/using-ams-data-for-consumer-power-usage-forecasting/screen-shot-2019-02-11-at-8-34-54-am/" data-orig-file="../assets/posts/74f47d72-screen-shot-2019-02-11-at-8.34.54-am.png" data-orig-size="1404,458" data-comments-opened="1" data-image-title="Screen Shot 2019-02-11 at 8.34.54 AM" data-image-description="" data-image-caption="" data-large-file="../assets/posts/74f47d72-screen-shot-2019-02-11-at-8.34.54-am.png" class="alignnone size-full wp-image-533" src="../assets/posts/74f47d72-screen-shot-2019-02-11-at-8.34.54-am.png" alt="Screen Shot 2019-02-11 at 8.34.54 AM" width="1404" height="458" /></p>
+<p>this is good forecasting, with a 0.19 RMSE</p>
+<h4>Summary :</h4>
+<p>With the electricity market undergoing a revolution, load forecasts have gained much more significance spreading across other business departments like energy trading and financial planning. Accurate load forecasts are the basis for most reliability organizations operations, like Electricity Reliability Consul Of Texas more commonly known as ERCOT. Accurate load forecasting will become even more important with Smart Grids. Smart Grids create the opportunity to proactively take action at the consumer level, storage level, and generation side, to avoid a situation of energy scarcity and/ or price surge.</p>
+
+    </div>
+    <p class="origin">Originally published on mohamedbenachour.net on February 11, 2019. <a href="https://mohamedbenachour.net/2019/02/11/using-ams-data-for-consumer-power-usage-forecasting/">View the original post</a>.</p>
+  </main>
+  <footer class="wrap"><span>© 2026 Mohamed Ben Achour</span></footer>
+</body>
+</html>

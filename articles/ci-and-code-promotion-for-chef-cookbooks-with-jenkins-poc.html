@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CI and code promotion for Chef cookbooks with Jenkins – POC · Mohamed Ben Achour</title>
+  <meta name="description" content="I have been browsing the internet for blogs or articles to help Chef developers have a way of promoting the code of their cookbooks, a way of vetting code, a…">
+  <style>
+    :root { color-scheme: dark; --bg:#050a12; --panel:#0a1626; --text:#eef7ff; --muted:#a9bed3; --line:rgba(94,234,255,.28); --accent:#5eeaff; --accent-2:#8bffb0; }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family: Inter, ui-sans-system, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: radial-gradient(circle at 18% 0%, rgba(94,234,255,.18), transparent 30rem), linear-gradient(180deg,#03060b 0%, var(--bg) 46%, #02040a 100%); color:var(--text); line-height:1.7; }
+    a { color:var(--accent); text-decoration:none; } a:hover { text-decoration:underline; }
+    .wrap { width:min(820px, calc(100% - 40px)); margin:0 auto; }
+    header { padding:28px 0 6px; } nav { display:flex; justify-content:space-between; align-items:center; gap:20px; flex-wrap:wrap; }
+    .brand { font-weight:800; color:var(--text); } .nav-links { display:flex; gap:18px; flex-wrap:wrap; font-size:.95rem; }
+    h1 { font-size:clamp(1.9rem,5vw,3rem); line-height:1.15; letter-spacing:-.03em; margin:30px 0 10px; }
+    .meta { color:var(--muted); font-size:.9rem; text-transform:uppercase; letter-spacing:.06em; margin-bottom:26px; }
+    .content img { max-width:100%; height:auto; border-radius:12px; }
+    .content figure { margin:24px 0; } .content figcaption { color:var(--muted); font-size:.9rem; text-align:center; }
+    .content pre { overflow:auto; background:var(--panel); border:1px solid rgba(94,234,255,.16); padding:16px; border-radius:12px; }
+    .content code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size:.92em; }
+    .content blockquote { border-left:3px solid var(--accent); margin:20px 0; padding:4px 18px; color:var(--muted); }
+    .content table { display:block; overflow-x:auto; border-collapse:collapse; } .content td, .content th { border:1px solid rgba(255,255,255,.14); padding:6px 10px; }
+    .content iframe { max-width:100%; }
+    .origin { border-top:1px solid rgba(255,255,255,.1); margin-top:38px; padding-top:16px; color:var(--muted); font-size:.92rem; }
+    footer { padding:26px 0 46px; color:var(--muted); }
+  </style>
+</head>
+<body>
+  <header class="wrap">
+    <nav aria-label="Main navigation">
+      <a class="brand" href="../index.html">Mohamed Ben Achour</a>
+      <div class="nav-links">
+        <a href="../articles.html">Articles</a>
+        <a href="https://github.com/mbenachour">GitHub</a>
+        <a href="https://huggingface.co/mbenachour">Hugging Face</a>
+        <a href="https://mohamedbenachour.net">Blog</a>
+      </div>
+    </nav>
+  </header>
+  <main class="wrap">
+    <h1>CI and code promotion for Chef cookbooks with Jenkins – POC</h1>
+    <div class="meta">September 19, 2016 · Devops</div>
+
+    <div class="content">
+<p>&nbsp;</p>
+<p>I have been browsing the internet for blogs or articles to help Chef developers have a way of promoting the code of their cookbooks, a way of vetting code, and avoiding that code goes from Operations guys straight to production.</p>
+<p>I have found a lot of theoretical articles on building a CI pipeline for chef cookbooks, but not a lot of practical ones,  so I decided to make a proof of concept for  the public and my team as well.</p>
+<p>when it comes to integration tools, I like Jenkins, it&#8217;s open source and the community is very active in adding  and updating plugins .</p>
+<p>In this example I will use a <a href="https://github.com/mbenachour/Java-cookbook">Java cookbook</a> as a code base, and I will be running 4 test :</p>
+<ul>
+<li><em>Foodcritic</em> : a helpful lint tool you can use to check your Chef cookbooks for common problems. It comes with <b>61</b> built-in rules that identify problems ranging from simple style inconsistencies to difficult to diagnose issues that will hurt in production.</li>
+<li><em>ChefSpec</em> : a unit testing framework for testing Chef cookbooks. ChefSpec makes it easy to write examples and get fast feedback on cookbook changes without the need for virtual machines or cloud servers.</li>
+<li><em>Rubocop</em> :  a Ruby static code analyzer. Out of the box it will enforce many of the guidelines outlined in the community <a href="https://github.com/bbatsov/ruby-style-guide">Ruby Style Guide</a>.</li>
+<li><em>Test Kitchen</em> : a test harness tool to execute your configured code on one or more platforms in isolation. A driver plugin architecture is used which lets you run your code on various cloud providers and virtualization technologies such as <a href="https://rubygems.org/gems/kitchen-ec2">Amazon EC2</a>,  <a href="https://rubygems.org/gems/kitchen-vagrant">Vagrant</a>, <a href="https://rubygems.org/gems/kitchen-docker">Docker</a>, <a href="https://rubygems.org/gems/kitchen-lxc">LXC containers</a>, and more. Many testing frameworks are already supported out of the box including <a href="https://github.com/sstephenson/bats">Bats</a>, <a href="https://code.google.com/p/shunit2/">shUnit2</a>, <a href="https://www.relishapp.com/rspec">RSpec</a>, <a href="http://serverspec.org/">Serverspec</a>, with others being created weekly.</li>
+</ul>
+<p>of course you can have all these tools in one package&#8230;. the famous <a href="https://downloads.chef.io/chef-dk/">ChefDK</a></p>
+<h5><span style="text-decoration:underline;"><em><strong>Code Promotion :</strong></em></span></h5>
+<p>The concept of code promotion helps the CI process distinguish between good and bad builds, I like to define a good build as a build where ALL the tests are successful .</p>
+<p>Jenkins helps you implement this concept with a community plugin : <a href="https://wiki.jenkins-ci.org/display/JENKINS/Promoted+Builds+Plugin">Promoted Build Plugin</a></p>
+<p>based of the status of your build ( promoted of not)  you can control the code that goes into your repository (github or gitlab), you can use set up hooks to deny merge requests from builds that are not promoted.</p>
+<h5><em><span style="text-decoration:underline;"><strong>Jobs</strong></span>:</em></h5>
+<p>let&#8217;s setup our jobs, we will too categories of jobs :</p>
+<ul>
+<li>Build Jobs</li>
+<li>Test Jobs</li>
+</ul>
+<p>&nbsp;</p>
+<p><img data-recalc-dims="1" loading="lazy" decoding="async" data-attachment-id="203" data-permalink="https://mohamedbenachour.net/2016/09/19/ci-and-code-promotion-for-chef-cookbooks-with-jenkins-poc/screen-shot-2016-09-18-at-9-00-30-pm/" data-orig-file="../assets/posts/541997e7-screen-shot-2016-09-18-at-9-00-30-pm.png" data-orig-size="512,538" data-comments-opened="1" data-image-title="screen-shot-2016-09-18-at-9-00-30-pm" data-image-description="" data-image-caption="" data-large-file="../assets/posts/541997e7-screen-shot-2016-09-18-at-9-00-30-pm.png" class="alignnone  wp-image-203" src="../assets/posts/541997e7-screen-shot-2016-09-18-at-9-00-30-pm.png" alt="screen-shot-2016-09-18-at-9-00-30-pm" width="223" height="234" /></p>
+<p>whenever a build job is successful will trigger all the test jobs to start.</p>
+<p><img data-recalc-dims="1" loading="lazy" decoding="async" data-attachment-id="232" data-permalink="https://mohamedbenachour.net/2016/09/19/ci-and-code-promotion-for-chef-cookbooks-with-jenkins-poc/screen-shot-2016-09-19-at-9-24-50-am/" data-orig-file="../assets/posts/890b7dcb-screen-shot-2016-09-19-at-9-24-50-am.png" data-orig-size="996,874" data-comments-opened="1" data-image-title="screen-shot-2016-09-19-at-9-24-50-am" data-image-description="" data-image-caption="" data-large-file="../assets/posts/890b7dcb-screen-shot-2016-09-19-at-9-24-50-am.png" class="alignnone  wp-image-232" src="../assets/posts/890b7dcb-screen-shot-2016-09-19-at-9-24-50-am.png" alt="screen-shot-2016-09-19-at-9-24-50-am" width="316" height="277" /></p>
+<p><span style="text-decoration:underline;"><strong>Build-java-cookbook</strong></span> : will clone the code repo and create a temporary artifact, this is the config section for this job</p>
+<p><img data-recalc-dims="1" loading="lazy" decoding="async" data-attachment-id="209" data-permalink="https://mohamedbenachour.net/2016/09/19/ci-and-code-promotion-for-chef-cookbooks-with-jenkins-poc/screen-shot-2016-09-18-at-9-04-18-pm/" data-orig-file="../assets/posts/93a336b5-screen-shot-2016-09-18-at-9-04-18-pm.png" data-orig-size="1262,578" data-comments-opened="1" data-image-title="screen-shot-2016-09-18-at-9-04-18-pm" data-image-description="" data-image-caption="" data-large-file="../assets/posts/93a336b5-screen-shot-2016-09-18-at-9-04-18-pm.png" class="alignnone size-full wp-image-209" src="../assets/posts/93a336b5-screen-shot-2016-09-18-at-9-04-18-pm.png" alt="screen-shot-2016-09-18-at-9-04-18-pm" width="1262" height="578" /></p>
+<p><em><strong><span style="text-decoration:underline;">Rubocop Test </span></strong></em>: will copy the temporary artifact decompress it to have all code repo and run rubocop test on the code :</p>
+<p><img data-recalc-dims="1" loading="lazy" decoding="async" data-attachment-id="214" data-permalink="https://mohamedbenachour.net/2016/09/19/ci-and-code-promotion-for-chef-cookbooks-with-jenkins-poc/screen-shot-2016-09-18-at-9-18-58-pm/" data-orig-file="../assets/posts/4b8cad90-screen-shot-2016-09-18-at-9-18-58-pm.png" data-orig-size="1300,760" data-comments-opened="1" data-image-title="screen-shot-2016-09-18-at-9-18-58-pm" data-image-description="" data-image-caption="" data-large-file="../assets/posts/4b8cad90-screen-shot-2016-09-18-at-9-18-58-pm.png" class="alignnone  wp-image-214" src="../assets/posts/4b8cad90-screen-shot-2016-09-18-at-9-18-58-pm.png" alt="screen-shot-2016-09-18-at-9-18-58-pm" width="498" height="292" /></p>
+<p><span style="text-decoration:underline;"><strong>ChefSpec Test</strong> </span>:</p>
+<p><img data-recalc-dims="1" loading="lazy" decoding="async" data-attachment-id="235" data-permalink="https://mohamedbenachour.net/2016/09/19/ci-and-code-promotion-for-chef-cookbooks-with-jenkins-poc/screen-shot-2016-09-19-at-9-26-48-am/" data-orig-file="../assets/posts/010be0b2-screen-shot-2016-09-19-at-9-26-48-am.png" data-orig-size="1344,728" data-comments-opened="1" data-image-title="screen-shot-2016-09-19-at-9-26-48-am" data-image-description="" data-image-caption="" data-large-file="../assets/posts/010be0b2-screen-shot-2016-09-19-at-9-26-48-am.png" class="alignnone size-full wp-image-235" src="../assets/posts/010be0b2-screen-shot-2016-09-19-at-9-26-48-am.png" alt="screen-shot-2016-09-19-at-9-26-48-am" width="1344" height="728" /></p>
+<p><span style="text-decoration:underline;">FoodCritic : </span></p>
+<p><img data-recalc-dims="1" loading="lazy" decoding="async" data-attachment-id="240" data-permalink="https://mohamedbenachour.net/2016/09/19/ci-and-code-promotion-for-chef-cookbooks-with-jenkins-poc/screen-shot-2016-09-19-at-9-34-11-am/" data-orig-file="../assets/posts/31ef4bf9-screen-shot-2016-09-19-at-9-34-11-am.png" data-orig-size="1220,720" data-comments-opened="1" data-image-title="screen-shot-2016-09-19-at-9-34-11-am" data-image-description="" data-image-caption="" data-large-file="../assets/posts/31ef4bf9-screen-shot-2016-09-19-at-9-34-11-am.png" class="alignnone size-full wp-image-240" src="../assets/posts/31ef4bf9-screen-shot-2016-09-19-at-9-34-11-am.png" alt="screen-shot-2016-09-19-at-9-34-11-am" width="1220" height="720" /></p>
+<p><span style="text-decoration:underline;">Test Kitchen : </span></p>
+<p><img data-recalc-dims="1" loading="lazy" decoding="async" data-attachment-id="243" data-permalink="https://mohamedbenachour.net/2016/09/19/ci-and-code-promotion-for-chef-cookbooks-with-jenkins-poc/screen-shot-2016-09-19-at-9-39-28-am/" data-orig-file="../assets/posts/930c66d6-screen-shot-2016-09-19-at-9-39-28-am.png" data-orig-size="1296,726" data-comments-opened="1" data-image-title="screen-shot-2016-09-19-at-9-39-28-am" data-image-description="" data-image-caption="" data-large-file="../assets/posts/930c66d6-screen-shot-2016-09-19-at-9-39-28-am.png" class="alignnone size-full wp-image-243" src="../assets/posts/930c66d6-screen-shot-2016-09-19-at-9-39-28-am.png" alt="screen-shot-2016-09-19-at-9-39-28-am" width="1296" height="726" /></p>
+<p>Test Kitchen will spin a vagrant box (ubuntu-14.04) and run the cookbook on it and test the results.</p>
+<p><span style="text-decoration:underline;"><strong>First Run : </strong></span></p>
+<p>with the configurations above we run the build and test jobs :</p>
+<p>Result :</p>
+<p><img data-recalc-dims="1" loading="lazy" decoding="async" data-attachment-id="254" data-permalink="https://mohamedbenachour.net/2016/09/19/ci-and-code-promotion-for-chef-cookbooks-with-jenkins-poc/screen-shot-2016-09-19-at-9-54-56-am/" data-orig-file="../assets/posts/5dd85d83-screen-shot-2016-09-19-at-9-54-56-am.png" data-orig-size="1246,1210" data-comments-opened="1" data-image-title="screen-shot-2016-09-19-at-9-54-56-am" data-image-description="" data-image-caption="" data-large-file="../assets/posts/5dd85d83-screen-shot-2016-09-19-at-9-54-56-am.png" class="alignnone size-full wp-image-254" src="../assets/posts/5dd85d83-screen-shot-2016-09-19-at-9-54-56-am.png" alt="screen-shot-2016-09-19-at-9-54-56-am" width="1246" height="1210" /></p>
+<p>Rubocop test failed, by looking at the execution log we can see why :</p>
+<blockquote>
+<pre class="console-output">+ rubocop
+Inspecting 44 files
+.......CC...CC........C..C..................
+
+Offenses:
+
+providers/alternatives.rb:34:38: C: Use shell_out("#{alternatives_cmd} --display #{cmd} | grep #{alt_path} | grep 'priority #{priority}$'").exitstatus.zero? instead of shell_out("#{alternatives_cmd} --display #{cmd} | grep #{alt_path} | grep 'priority #{priority}$'").exitstatus == 0.
+      alternative_exists_same_prio = shell_out("#{alternatives_cmd} --display #{cmd} | grep #{alt_path} | grep 'priority #{priority}$'").exitstatus == 0
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+providers/alternatives.rb:35:28: C: Use shell_out("#{alternatives_cmd} --display #{cmd} | grep #{alt_path}").exitstatus.zero? instead of shell_out("#{alternatives_cmd} --display #{cmd} | grep #{alt_path}").exitstatus == 0.
+      alternative_exists = shell_out("#{alternatives_cmd} --display #{cmd} | grep #{alt_path}").exitstatus == 0
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+providers/alternatives.rb:43:18: C: Use remove_cmd.exitstatus.zero? instead of remove_cmd.exitstatus == 0.
+          unless remove_cmd.exitstatus == 0
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^
+providers/alternatives.rb:57:18: C: Use install_cmd.exitstatus.zero? instead of install_cmd.exitstatus == 0.
+          unless install_cmd.exitstatus == 0
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+providers/alternatives.rb:66:28: C: Use shell_out("#{alternatives_cmd} --display #{cmd} | grep \"link currently points to #{alt_path}\"").exitstatus.zero? instead of shell_out("#{alternatives_cmd} --display #{cmd} | grep \"link currently points to #{alt_path}\"").exitstatus == 0.
+      alternative_is_set = shell_out("#{alternatives_cmd} --display #{cmd} | grep \"link currently points to #{alt_path}\"").exitstatus == 0
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+providers/alternatives.rb:72:16: C: Use set_cmd.exitstatus.zero? instead of set_cmd.exitstatus == 0.
+        unless set_cmd.exitstatus == 0
+               ^^^^^^^^^^^^^^^^^^^^^^^
+providers/alternatives.rb:87:50: C: Use cmd.exitstatus.zero? instead of cmd.exitstatus == 0.
+    new_resource.updated_by_last_action(true) if cmd.exitstatus == 0
+                                                 ^^^^^^^^^^^^^^^^^^^
+providers/ark.rb:39:20: C: Omit parentheses for ternary conditions.
+    package_name = (file_name =~ /^server-jre.*$/) ? 'jdk' : file_name.scan(/[a-z]+/)[0]
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+providers/ark.rb:134:14: C: Use 0o for octal literals.
+        mode 0755
+             ^^^^
+providers/ark.rb:149:14: C: Closing method call brace must be on the line after the last argument when opening brace is on a separate line from the first argument.
+            ))
+             ^
+providers/ark.rb:150:16: C: Use cmd.exitstatus.zero? instead of cmd.exitstatus == 0.
+        unless cmd.exitstatus == 0
+               ^^^^^^^^^^^^^^^^^^^
+providers/ark.rb:157:16: C: Use cmd.exitstatus.zero? instead of cmd.exitstatus == 0.
+        unless cmd.exitstatus == 0
+               ^^^^^^^^^^^^^^^^^^^
+providers/ark.rb:164:16: C: Use cmd.exitstatus.zero? instead of cmd.exitstatus == 0.
+        unless cmd.exitstatus == 0
+               ^^^^^^^^^^^^^^^^^^^
+providers/ark.rb:172:14: C: Use cmd.exitstatus.zero? instead of cmd.exitstatus == 0.
+      unless cmd.exitstatus == 0
+             ^^^^^^^^^^^^^^^^^^^
+recipes/ibm.rb:44:8: C: Use 0o for octal literals.
+  mode 00755
+       ^^^^^
+recipes/ibm_tar.rb:36:8: C: Use 0o for octal literals.
+  mode 00755
+       ^^^^^
+recipes/ibm_tar.rb:49:8: C: Use 0o for octal literals.
+  mode 00755
+       ^^^^^
+recipes/set_java_home.rb:27:8: C: Use 0o for octal literals.
+  mode 00755
+       ^^^^^
+recipes/set_java_home.rb:32:8: C: Use 0o for octal literals.
+  mode 00755
+       ^^^^^
+resources/ark.rb:39:54: C: Use 0o for octal literals.
+attribute :app_home_mode, kind_of: Integer, default: 0755
+                                                     ^^^^
+
+44 files inspected, 20 offenses detected
+Build step 'Execute shell' marked build as failure
+Finished: FAILURE</pre>
+</blockquote>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>let&#8217;s go ahead and fix these offenses and commit the code :</p>
+<p><img data-recalc-dims="1" loading="lazy" decoding="async" data-attachment-id="265" data-permalink="https://mohamedbenachour.net/2016/09/19/ci-and-code-promotion-for-chef-cookbooks-with-jenkins-poc/screen-shot-2016-09-19-at-10-38-02-am/" data-orig-file="../assets/posts/7d585345-screen-shot-2016-09-19-at-10-38-02-am.png" data-orig-size="1426,702" data-comments-opened="1" data-image-title="screen-shot-2016-09-19-at-10-38-02-am" data-image-description="" data-image-caption="" data-large-file="../assets/posts/7d585345-screen-shot-2016-09-19-at-10-38-02-am.png" class="alignnone size-full wp-image-265" src="../assets/posts/7d585345-screen-shot-2016-09-19-at-10-38-02-am.png" alt="screen-shot-2016-09-19-at-10-38-02-am" width="1426" height="702" /></p>
+<p>we restart the build :</p>
+<p>and here everything is green this time :</p>
+<p><img data-recalc-dims="1" loading="lazy" decoding="async" data-attachment-id="289" data-permalink="https://mohamedbenachour.net/2016/09/19/ci-and-code-promotion-for-chef-cookbooks-with-jenkins-poc/screen-shot-2016-09-19-at-11-40-27-am/" data-orig-file="../assets/posts/67a01e12-screen-shot-2016-09-19-at-11-40-27-am.png" data-orig-size="1242,1116" data-comments-opened="1" data-image-title="screen-shot-2016-09-19-at-11-40-27-am" data-image-description="" data-image-caption="" data-large-file="../assets/posts/67a01e12-screen-shot-2016-09-19-at-11-40-27-am.png" class="alignnone size-full wp-image-289" src="../assets/posts/67a01e12-screen-shot-2016-09-19-at-11-40-27-am.png" alt="screen-shot-2016-09-19-at-11-40-27-am" width="1242" height="1116" /></p>
+<p>from this point on you can create do two things :</p>
+<ul>
+<li>save your cookbook in a private supermarket with a corresponding version number</li>
+<li>upload this cookbook to chef server</li>
+</ul>
+<p>&nbsp;</p>
+<p>Promotion status :</p>
+<p>After the completion of all tests, this build can now be promoted.</p>
+<p><img data-recalc-dims="1" loading="lazy" decoding="async" data-attachment-id="296" data-permalink="https://mohamedbenachour.net/2016/09/19/ci-and-code-promotion-for-chef-cookbooks-with-jenkins-poc/screen-shot-2016-09-19-at-11-48-31-am/" data-orig-file="../assets/posts/6be3a9dc-screen-shot-2016-09-19-at-11-48-31-am.png" data-orig-size="1078,440" data-comments-opened="1" data-image-title="screen-shot-2016-09-19-at-11-48-31-am" data-image-description="" data-image-caption="" data-large-file="../assets/posts/6be3a9dc-screen-shot-2016-09-19-at-11-48-31-am.png" class="alignnone size-full wp-image-296" src="../assets/posts/6be3a9dc-screen-shot-2016-09-19-at-11-48-31-am.png" alt="screen-shot-2016-09-19-at-11-48-31-am" width="1078" height="440" /></p>
+<p>&nbsp;</p>
+
+    </div>
+    <p class="origin">Originally published on mohamedbenachour.net on September 19, 2016. <a href="https://mohamedbenachour.net/2016/09/19/ci-and-code-promotion-for-chef-cookbooks-with-jenkins-poc/">View the original post</a>.</p>
+  </main>
+  <footer class="wrap"><span>© 2026 Mohamed Ben Achour</span></footer>
+</body>
+</html>

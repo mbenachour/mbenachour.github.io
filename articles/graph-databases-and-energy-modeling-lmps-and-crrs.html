@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Graph databases and Energy: Modeling LMPs and CRRs · Mohamed Ben Achour</title>
+  <meta name="description" content="Graph Databases : Graph databases are NoSQL databases which use the graph data model comprised of vertices, which is an entity such as a person, place, objec…">
+  <style>
+    :root { color-scheme: dark; --bg:#050a12; --panel:#0a1626; --text:#eef7ff; --muted:#a9bed3; --line:rgba(94,234,255,.28); --accent:#5eeaff; --accent-2:#8bffb0; }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family: Inter, ui-sans-system, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: radial-gradient(circle at 18% 0%, rgba(94,234,255,.18), transparent 30rem), linear-gradient(180deg,#03060b 0%, var(--bg) 46%, #02040a 100%); color:var(--text); line-height:1.7; }
+    a { color:var(--accent); text-decoration:none; } a:hover { text-decoration:underline; }
+    .wrap { width:min(820px, calc(100% - 40px)); margin:0 auto; }
+    header { padding:28px 0 6px; } nav { display:flex; justify-content:space-between; align-items:center; gap:20px; flex-wrap:wrap; }
+    .brand { font-weight:800; color:var(--text); } .nav-links { display:flex; gap:18px; flex-wrap:wrap; font-size:.95rem; }
+    h1 { font-size:clamp(1.9rem,5vw,3rem); line-height:1.15; letter-spacing:-.03em; margin:30px 0 10px; }
+    .meta { color:var(--muted); font-size:.9rem; text-transform:uppercase; letter-spacing:.06em; margin-bottom:26px; }
+    .content img { max-width:100%; height:auto; border-radius:12px; }
+    .content figure { margin:24px 0; } .content figcaption { color:var(--muted); font-size:.9rem; text-align:center; }
+    .content pre { overflow:auto; background:var(--panel); border:1px solid rgba(94,234,255,.16); padding:16px; border-radius:12px; }
+    .content code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size:.92em; }
+    .content blockquote { border-left:3px solid var(--accent); margin:20px 0; padding:4px 18px; color:var(--muted); }
+    .content table { display:block; overflow-x:auto; border-collapse:collapse; } .content td, .content th { border:1px solid rgba(255,255,255,.14); padding:6px 10px; }
+    .content iframe { max-width:100%; }
+    .origin { border-top:1px solid rgba(255,255,255,.1); margin-top:38px; padding-top:16px; color:var(--muted); font-size:.92rem; }
+    footer { padding:26px 0 46px; color:var(--muted); }
+  </style>
+</head>
+<body>
+  <header class="wrap">
+    <nav aria-label="Main navigation">
+      <a class="brand" href="../index.html">Mohamed Ben Achour</a>
+      <div class="nav-links">
+        <a href="../articles.html">Articles</a>
+        <a href="https://github.com/mbenachour">GitHub</a>
+        <a href="https://huggingface.co/mbenachour">Hugging Face</a>
+        <a href="https://mohamedbenachour.net">Blog</a>
+      </div>
+    </nav>
+  </header>
+  <main class="wrap">
+    <h1>Graph databases and Energy: Modeling LMPs and CRRs</h1>
+    <div class="meta">April 15, 2019 · Uncategorized</div>
+    <figure class="content"><img src="../assets/posts/c72a6e7f-screen-shot-2019-04-26-at-11.13.55-am.png" alt=""></figure>
+    <div class="content">
+<h3>Graph Databases :</h3>
+<p>Graph databases are NoSQL databases which use the graph data model comprised of vertices, which is an entity such as a person, place, object or relevant piece of data and edges, which represent the relationship between two nodes.</p>
+<p>Graph databases are particularly helpful because they highlight the links and relationships between relevant data similarly to how we do so ourselves.</p>
+<p>this is an example of a graph :</p>
+<p><img loading="lazy" decoding="async" src="https://lh6.googleusercontent.com/proxy/OjOgwDEuM-NqVP0PcXUPVQrfVN2-KU2wGFoOoqwtKMitPxNd1hmwxMkiYLT6_y7JWf0=s0-d" alt="Image result for example graph database" width="530" height="331" /></p>
+<p>In the graph data model above we can see the common entities: <strong>User, Movie, Genre</strong></p>
+<p>the common relationships are: <strong>Rates, Follows, Has</strong></p>
+<h3>Modeling Local Marginal Prices (LMPs) and Congestion Revenue Rights (CRR)  :</h3>
+<p><strong><em>What are LMPs?</em></strong></p>
+<p>LMPs represents the cost to buy and sell power at different locations within wholesale electricity markets, usually called Independent System Operators (ISOs). Examples of ISOs include ERCOT, PJM, ISONE, MISO, CAISO, and NYISO. LMPs are made up of three components, Energy Price, Congestion Cost, and Losses. Most ISOs have Day Ahead and Real Time LMPs. Day-ahead LMPs represent prices in day-ahead markets which let market participants buy and sell wholesale electricity a day before the operating day to avoid volatility. Real-time LMPs represent prices in real time markets which let participants buy and sell power during the day of operation. As a simplified example, let’s say you lived in a neighborhood and at noon today you expected you would have 100 MWs of electricity demand. Yesterday you would have bought 100 MWs of electricity to be delivered at 12 today on the day-ahead market. However when 12 today rolls around, demand is actually 105 MWs, you would buy the additional 5 MWs on the real-time market. Real-time market prices are generally more volatile than day-ahead market prices.</p>
+<h3>Example</h3>
+<p><strong>Without congestion</strong></p>
+<p><img data-recalc-dims="1" loading="lazy" decoding="async" data-attachment-id="554" data-permalink="https://mohamedbenachour.net/2019/04/15/graph-databases-and-energy-modeling-lmps-and-crrs/img_0020/" data-orig-file="../assets/posts/2e0f26ba-img_0020.jpg" data-orig-size="1916,995" data-comments-opened="1" data-image-title="img_0020" data-image-description="" data-image-caption="" data-large-file="../assets/posts/2e0f26ba-img_0020.jpg" class="size-full wp-image-554" src="../assets/posts/2e0f26ba-img_0020.jpg" width="1916" height="995" /></p>
+<p>This is a simplified scenario where we have 2 generators and one consumer, first generators make a 10MW for the price of $4 per MWh, the second makes 20 MW for the price of $2 per MWh, the lines able to transmit 10MW to consumer premises.</p>
+<p>no congestion exists and Generator 2 has the lowest offer and can serve the entire load. Since LMP is calculated as the cost of the next MW needed and generator 2 can supply the next MW at $2, the LMP is $2/MWh. Because there’s no congestion on the network, the cheaper LMP of $2/MWh applies to all the nodes, and the 10 MW load costs $20.</p>
+<p>In this case, the LMP will be $2/MWh and the payments/charges would look something like this :</p>
+<p><img data-recalc-dims="1" loading="lazy" decoding="async" data-attachment-id="555" data-permalink="https://mohamedbenachour.net/2019/04/15/graph-databases-and-energy-modeling-lmps-and-crrs/img_0021/" data-orig-file="../assets/posts/58ff90ba-img_0021.jpg" data-orig-size="1933,955" data-comments-opened="1" data-image-title="img_0021" data-image-description="" data-image-caption="" data-large-file="../assets/posts/58ff90ba-img_0021.jpg" class="size-full wp-image-555" src="../assets/posts/58ff90ba-img_0021.jpg" width="1933" height="955" /></p>
+<p>As we can see generator 2 was able to provide the entirety of the power needed, and LMP is $2 in all three buses ( without accounting for line losses ).</p>
+<p><strong>With Congestion:</strong></p>
+<p>In the next scenario we will introduce the concept of congestion:</p>
+<p><img data-recalc-dims="1" loading="lazy" decoding="async" data-attachment-id="556" data-permalink="https://mohamedbenachour.net/2019/04/15/graph-databases-and-energy-modeling-lmps-and-crrs/img_0022/" data-orig-file="../assets/posts/c1bfc352-img_0022.jpg" data-orig-size="1809,941" data-comments-opened="1" data-image-title="img_0022" data-image-description="" data-image-caption="" data-large-file="../assets/posts/c1bfc352-img_0022.jpg" class="size-full wp-image-556" src="../assets/posts/c1bfc352-img_0022.jpg" width="1809" height="941" /></p>
+<p>The power line from Generator2 has a limit of 4 MW, meaning that maximum power that generator 2 can put on the grid is 4MW, the remaining ( 6MW ) that the consumer needs will be provided by Generator1, this will influence the LMPs in all three buses</p>
+<p><img data-recalc-dims="1" loading="lazy" decoding="async" data-attachment-id="557" data-permalink="https://mohamedbenachour.net/2019/04/15/graph-databases-and-energy-modeling-lmps-and-crrs/img_0023/" data-orig-file="../assets/posts/c1a423a1-img_0023.jpg" data-orig-size="1954,953" data-comments-opened="1" data-image-title="img_0023" data-image-description="" data-image-caption="" data-large-file="../assets/posts/c1a423a1-img_0023.jpg" class="size-full wp-image-557" src="../assets/posts/c1a423a1-img_0023.jpg" width="1954" height="953" /></p>
+<p>congestion exists and Generator 2 is not fully utilized; there’s a constraint from Generator 2 and it can only serve 4 MWs. Now using MWs from the lowest priced generator cannot serve the entire load; 6 MWs must come from elsewhere, such as Generator 1.<br />
+The LMP at Generator 2 is still $2/MWh, so for the 4MWs it supplies, $8 will be paid to Generator 2. Generator 1 will supply 6 MW at $4/MWh, so it should receive a payment of $24. Because congestion exists between Generator 2 and the load, the two LMPs are different, and the more expensive generation cost of $4/MWh is used when charging the load for the 10MW; $40 is owed for the 10 MWs it used for an hour.</p>
+<p>In this the following example I have tried to model both scenarios we showed in the example above.</p>
+<p>There is 3 type of nodes:</p>
+<p><b>Generator:</b> a generation resource in the grid, it can be a power plant, wind or solar farm.</p>
+<p><b>Consumer:</b> a consumer entity ( residential, commercial &#8230;)</p>
+<p><b>Connection:</b> represent a connection between power lines on the grid</p>
+<p>The relationships basically represent the capacity of the transmission line, in this case, 4MW and 10MW</p>
+<p>Here is a link to the java code on <a href="https://github.com/mbenachour/neo4j-lmp-crr">GitHub</a></p>
+<p><img data-recalc-dims="1" loading="lazy" decoding="async" data-attachment-id="559" data-permalink="https://mohamedbenachour.net/2019/04/15/graph-databases-and-energy-modeling-lmps-and-crrs/screen-shot-2019-04-26-at-11-03-01-am/" data-orig-file="../assets/posts/489e2b08-screen-shot-2019-04-26-at-11.03.01-am.png" data-orig-size="275,296" data-comments-opened="1" data-image-title="Screen Shot 2019-04-26 at 11.03.01 AM" data-image-description="" data-image-caption="" data-large-file="../assets/posts/489e2b08-screen-shot-2019-04-26-at-11.03.01-am.png" class="alignnone size-full wp-image-559" src="../assets/posts/489e2b08-screen-shot-2019-04-26-at-11.03.01-am.png" alt="Screen Shot 2019-04-26 at 11.03.01 AM" width="275" height="296" /></p>
+<p>We are using Spring Boot as an application framework, the nodes from the previous example are used as classes.</p>
+<p>to compile the application and generate the binaries :</p>
+<p><img data-recalc-dims="1" loading="lazy" decoding="async" data-attachment-id="560" data-permalink="https://mohamedbenachour.net/2019/04/15/graph-databases-and-energy-modeling-lmps-and-crrs/screen-shot-2019-04-26-at-11-06-42-am/" data-orig-file="../assets/posts/bdf815bb-screen-shot-2019-04-26-at-11.06.42-am.png" data-orig-size="682,129" data-comments-opened="1" data-image-title="Screen Shot 2019-04-26 at 11.06.42 AM" data-image-description="" data-image-caption="" data-large-file="../assets/posts/bdf815bb-screen-shot-2019-04-26-at-11.06.42-am.png" class="alignnone size-full wp-image-560" src="../assets/posts/bdf815bb-screen-shot-2019-04-26-at-11.06.42-am.png" alt="Screen Shot 2019-04-26 at 11.06.42 AM" width="682" height="129" /></p>
+<p>Starting the application :</p>
+<p><img data-recalc-dims="1" loading="lazy" decoding="async" data-attachment-id="561" data-permalink="https://mohamedbenachour.net/2019/04/15/graph-databases-and-energy-modeling-lmps-and-crrs/screen-shot-2019-04-26-at-11-09-28-am/" data-orig-file="../assets/posts/c090c4de-screen-shot-2019-04-26-at-11.09.28-am.png" data-orig-size="445,465" data-comments-opened="1" data-image-title="Screen Shot 2019-04-26 at 11.09.28 AM" data-image-description="" data-image-caption="" data-large-file="../assets/posts/c090c4de-screen-shot-2019-04-26-at-11.09.28-am.png" class="alignnone size-full wp-image-561" src="../assets/posts/c090c4de-screen-shot-2019-04-26-at-11.09.28-am.png" alt="Screen Shot 2019-04-26 at 11.09.28 AM" width="445" height="465" /></p>
+<p>in this example we have a Neo4j server running locally if you go to <a href="http://localhost:7474">http://localhost:7474</a></p>
+<p>you will be able to see the graph :</p>
+<p><img data-recalc-dims="1" loading="lazy" decoding="async" data-attachment-id="563" data-permalink="https://mohamedbenachour.net/2019/04/15/graph-databases-and-energy-modeling-lmps-and-crrs/screen-shot-2019-04-26-at-11-13-55-am/" data-orig-file="../assets/posts/c72a6e7f-screen-shot-2019-04-26-at-11.13.55-am.png" data-orig-size="960,451" data-comments-opened="1" data-image-title="Screen Shot 2019-04-26 at 11.13.55 AM" data-image-description="" data-image-caption="" data-large-file="../assets/posts/c72a6e7f-screen-shot-2019-04-26-at-11.13.55-am.png" class="alignnone size-full wp-image-563" src="../assets/posts/c72a6e7f-screen-shot-2019-04-26-at-11.13.55-am.png" alt="Screen Shot 2019-04-26 at 11.13.55 AM" width="960" height="451" /></p>
+<p>in the graph, we can see all the nodes and relationships that was generated :</p>
+<p>Generators, Connections, and Customers</p>
+<p>if we look at the node properties :</p>
+<p><img data-recalc-dims="1" loading="lazy" decoding="async" data-attachment-id="564" data-permalink="https://mohamedbenachour.net/2019/04/15/graph-databases-and-energy-modeling-lmps-and-crrs/screen-shot-2019-04-26-at-11-17-31-am/" data-orig-file="../assets/posts/b17ca4aa-screen-shot-2019-04-26-at-11.17.31-am.png" data-orig-size="659,338" data-comments-opened="1" data-image-title="Screen Shot 2019-04-26 at 11.17.31 AM" data-image-description="" data-image-caption="" data-large-file="../assets/posts/b17ca4aa-screen-shot-2019-04-26-at-11.17.31-am.png" class="alignnone size-full wp-image-564" src="../assets/posts/b17ca4aa-screen-shot-2019-04-26-at-11.17.31-am.png" alt="Screen Shot 2019-04-26 at 11.17.31 AM" width="659" height="338" /></p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+
+    </div>
+    <p class="origin">Originally published on mohamedbenachour.net on April 15, 2019. <a href="https://mohamedbenachour.net/2019/04/15/graph-databases-and-energy-modeling-lmps-and-crrs/">View the original post</a>.</p>
+  </main>
+  <footer class="wrap"><span>© 2026 Mohamed Ben Achour</span></footer>
+</body>
+</html>

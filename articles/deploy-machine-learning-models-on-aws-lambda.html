@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Deploy machine learning models on AWS lambda and serverless · Mohamed Ben Achour</title>
+  <meta name="description" content="in the last post, we talked about how to deploy a Machine learning trained model on Kubernates. Here is another way of deploying ML models: AWS lambda + API …">
+  <style>
+    :root { color-scheme: dark; --bg:#050a12; --panel:#0a1626; --text:#eef7ff; --muted:#a9bed3; --line:rgba(94,234,255,.28); --accent:#5eeaff; --accent-2:#8bffb0; }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family: Inter, ui-sans-system, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: radial-gradient(circle at 18% 0%, rgba(94,234,255,.18), transparent 30rem), linear-gradient(180deg,#03060b 0%, var(--bg) 46%, #02040a 100%); color:var(--text); line-height:1.7; }
+    a { color:var(--accent); text-decoration:none; } a:hover { text-decoration:underline; }
+    .wrap { width:min(820px, calc(100% - 40px)); margin:0 auto; }
+    header { padding:28px 0 6px; } nav { display:flex; justify-content:space-between; align-items:center; gap:20px; flex-wrap:wrap; }
+    .brand { font-weight:800; color:var(--text); } .nav-links { display:flex; gap:18px; flex-wrap:wrap; font-size:.95rem; }
+    h1 { font-size:clamp(1.9rem,5vw,3rem); line-height:1.15; letter-spacing:-.03em; margin:30px 0 10px; }
+    .meta { color:var(--muted); font-size:.9rem; text-transform:uppercase; letter-spacing:.06em; margin-bottom:26px; }
+    .content img { max-width:100%; height:auto; border-radius:12px; }
+    .content figure { margin:24px 0; } .content figcaption { color:var(--muted); font-size:.9rem; text-align:center; }
+    .content pre { overflow:auto; background:var(--panel); border:1px solid rgba(94,234,255,.16); padding:16px; border-radius:12px; }
+    .content code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size:.92em; }
+    .content blockquote { border-left:3px solid var(--accent); margin:20px 0; padding:4px 18px; color:var(--muted); }
+    .content table { display:block; overflow-x:auto; border-collapse:collapse; } .content td, .content th { border:1px solid rgba(255,255,255,.14); padding:6px 10px; }
+    .content iframe { max-width:100%; }
+    .origin { border-top:1px solid rgba(255,255,255,.1); margin-top:38px; padding-top:16px; color:var(--muted); font-size:.92rem; }
+    footer { padding:26px 0 46px; color:var(--muted); }
+  </style>
+</head>
+<body>
+  <header class="wrap">
+    <nav aria-label="Main navigation">
+      <a class="brand" href="../index.html">Mohamed Ben Achour</a>
+      <div class="nav-links">
+        <a href="../articles.html">Articles</a>
+        <a href="https://github.com/mbenachour">GitHub</a>
+        <a href="https://huggingface.co/mbenachour">Hugging Face</a>
+        <a href="https://mohamedbenachour.net">Blog</a>
+      </div>
+    </nav>
+  </header>
+  <main class="wrap">
+    <h1>Deploy machine learning models on AWS lambda and serverless</h1>
+    <div class="meta">August 7, 2018 · machine learning</div>
+
+    <div class="content">
+<p>in the last <a href="http://mohamedbenachour.net/2018/06/22/automating-the-training-and-deployment-of-ml-models-on-kubernates/">post</a>, we talked about how to deploy a Machine learning trained model on Kubernates.</p>
+<p>Here is another way of deploying ML models: AWS lambda + API gateway</p>
+<p><img data-recalc-dims="1" loading="lazy" decoding="async" data-attachment-id="416" data-permalink="https://mohamedbenachour.net/2018/08/07/deploy-machine-learning-models-on-aws-lambda/untitled-diagram-3/" data-orig-file="../assets/posts/9398ba5a-untitled-diagram-3.jpg" data-orig-size="458,153" data-comments-opened="1" data-image-title="Untitled Diagram (3)" data-image-description="" data-image-caption="" data-large-file="../assets/posts/9398ba5a-untitled-diagram-3.jpg" class="alignnone size-full wp-image-416" src="../assets/posts/9398ba5a-untitled-diagram-3.jpg" alt="Untitled Diagram (3)" width="458" height="153" /></p>
+<p>Basically, your model (mlpreg.pkl) will be stored in S3, your lambda function will download the model use it to make predictions, another call will allow you to get the model hyperparameters, and sent it back to the user.</p>
+<p><img data-recalc-dims="1" loading="lazy" decoding="async" data-attachment-id="420" data-permalink="https://mohamedbenachour.net/2018/08/07/deploy-machine-learning-models-on-aws-lambda/screen-shot-2018-08-07-at-9-11-00-am/" data-orig-file="../assets/posts/966d3b00-screen-shot-2018-08-07-at-9-11-00-am.png" data-orig-size="462,306" data-comments-opened="1" data-image-title="Screen Shot 2018-08-07 at 9.11.00 AM" data-image-description="" data-image-caption="" data-large-file="../assets/posts/966d3b00-screen-shot-2018-08-07-at-9-11-00-am.png" class="alignnone size-full wp-image-420" src="../assets/posts/966d3b00-screen-shot-2018-08-07-at-9-11-00-am.png" alt="Screen Shot 2018-08-07 at 9.11.00 AM" width="462" height="306" /></p>
+<p>to deploy AWS services, we will use a framework called <a href="https://serverless.com/">Serverless</a></p>
+<p>serverless allow you with a single configuration file to define functions, create resources, declare permissions, configure endpoints &#8230;</p>
+<p>serverless uses one main config file and one or multiple code files :</p>
+<ul>
+<li>handler.py : the lambda function</li>
+<li>serverless.yml : serverless configuration file</li>
+</ul>
+<p>here is what the serverless configuration file for this example would look like :</p>
+<p>[code]</p>
+<p>service: deploy-ml-service<br />
+plugins:<br />
+  &#8211; serverless-python-requirements<br />
+provider:<br />
+  name: aws<br />
+  runtime: python2.7<br />
+  iamRoleStatements:<br />
+      &#8211; Effect: Allow<br />
+        # Note: just for the demo, we are giving full access to s3<br />
+        Action:<br />
+          &#8211; s3:*<br />
+        Resource: &#8220;*&#8221;<br />
+functions:<br />
+  predict:<br />
+    handler: handler.predict<br />
+    events:<br />
+      &#8211; http:<br />
+          path: predict<br />
+          method: post<br />
+          cors: true<br />
+          integration: lambda<br />
+  getModelInfo:<br />
+    handler: handler.getModelInfo<br />
+    events:<br />
+      &#8211; http:<br />
+          path: params<br />
+          method: post<br />
+          cors: true<br />
+          integration: lambda[/code]</p>
+<p>as described in the example we will create two functions one will make a prediction using the model we built in the last post, the other one will display the model hyperparameters :</p>
+<ul>
+<li>predict</li>
+<li>getModelInfo</li>
+</ul>
+<p>to load the model we have  :</p>
+<ul>
+<li>load_model : loading the stored model from S3</li>
+</ul>
+<p><strong>handler.py</strong></p>
+<p>[code]<br />
+from sklearn.externals import joblib<br />
+import boto3</p>
+<p>BUCKET_NAME = &#8216;asset-s3-uploader-02141&#8217;</p>
+<p>def predict(event,context):<br />
+  input = event[&#8220;body&#8221;][&#8220;input&#8221;]<br />
+  modelName = event[&#8220;body&#8221;][&#8220;model_name&#8221;]<br />
+  data = float(input)<br />
+  return loadModel(modelName).predict(data)[0]</p>
+<p>def loadModel(model):<br />
+  s3_client = boto3.client(&#8216;s3&#8217;)<br />
+  download_path = &#8216;/tmp/model.pkl&#8217;<br />
+  s3_client.download_file(BUCKET_NAME, model, &#8216;/tmp/model.pkl&#8217;)<br />
+  return joblib.load(download_path)</p>
+<p>def getModelInfo(event,context):<br />
+  model = event[&#8220;body&#8221;][&#8220;model_name&#8221;]<br />
+  return loadModel(model).get_params()<br />
+[/code]</p>
+<p><strong>$Serverless Deploy ! </strong></p>
+<p>yep that&#8217;s all it takes, and your services will be deployed in seconds:</p>
+<p><img data-recalc-dims="1" loading="lazy" decoding="async" data-attachment-id="417" data-permalink="https://mohamedbenachour.net/2018/08/07/deploy-machine-learning-models-on-aws-lambda/screen-shot-2018-08-06-at-9-25-59-pm/" data-orig-file="../assets/posts/2e6cb7c2-screen-shot-2018-08-06-at-9-25-59-pm.png" data-orig-size="1170,900" data-comments-opened="1" data-image-title="Screen Shot 2018-08-06 at 9.25.59 PM" data-image-description="" data-image-caption="" data-large-file="../assets/posts/2e6cb7c2-screen-shot-2018-08-06-at-9-25-59-pm.png" class="alignnone size-full wp-image-417" src="../assets/posts/2e6cb7c2-screen-shot-2018-08-06-at-9-25-59-pm.png" alt="Screen Shot 2018-08-06 at 9.25.59 PM" width="1170" height="900" /></p>
+<h3>Run the tests:</h3>
+<p><strong>getting the model Hyperparameters :</strong></p>
+<p>[code]</p>
+<p>root@58920085f9af:/tmp/deploy# curl -s -d &#8220;model_name=mlpreg.pkl&#8221; <a href="https://abcefgh123.execute-api.us-east-1.amazonaws.com/dev/params" rel="nofollow">https://abcefgh123.execute-api.us-east-1.amazonaws.com/dev/params</a> | python -m json.tool<br />
+{<br />
+&#8220;activation&#8221;: &#8220;relu&#8221;,<br />
+&#8220;alpha&#8221;: 0.001,<br />
+&#8220;batch_size&#8221;: &#8220;auto&#8221;,<br />
+&#8220;beta_1&#8221;: 0.9,<br />
+&#8220;beta_2&#8221;: 0.999,<br />
+&#8220;early_stopping&#8221;: false,<br />
+&#8220;epsilon&#8221;: 1e-08,<br />
+&#8220;hidden_layer_sizes&#8221;: [<br />
+1000<br />
+],<br />
+&#8220;learning_rate&#8221;: &#8220;constant&#8221;,<br />
+&#8220;learning_rate_init&#8221;: 0.01,<br />
+&#8220;max_iter&#8221;: 1000,<br />
+&#8220;momentum&#8221;: 0.9,<br />
+&#8220;nesterovs_momentum&#8221;: true,<br />
+&#8220;power_t&#8221;: 0.5,<br />
+&#8220;random_state&#8221;: 9,<br />
+&#8220;shuffle&#8221;: true,<br />
+&#8220;solver&#8221;: &#8220;adam&#8221;,<br />
+&#8220;tol&#8221;: 0.0001,<br />
+&#8220;validation_fraction&#8221;: 0.1,<br />
+&#8220;verbose&#8221;: false,<br />
+&#8220;warm_start&#8221;: false<br />
+}</p>
+<p>[/code]</p>
+<p><strong>Making Predictions :</strong></p>
+<p>[code]</p>
+<p>root@58920085f9af:/tmp/deploy# curl -s -d &#8220;input=1&amp;model_name=mlpreg.pkl&#8221; <a href="https://abcdefg123.execute-api.us-east-1.amazonaws.com/dev/predict" rel="nofollow">https://abcdefg123.execute-api.us-east-1.amazonaws.com/dev/predict</a> | python -m json.tool<br />
+0.13994134155335683</p>
+<p>[/code]</p>
+
+    </div>
+    <p class="origin">Originally published on mohamedbenachour.net on August 7, 2018. <a href="https://mohamedbenachour.net/2018/08/07/deploy-machine-learning-models-on-aws-lambda/">View the original post</a>.</p>
+  </main>
+  <footer class="wrap"><span>© 2026 Mohamed Ben Achour</span></footer>
+</body>
+</html>

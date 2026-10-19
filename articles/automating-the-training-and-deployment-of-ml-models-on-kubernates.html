@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Automating the training and deployment of ML models on Kubernates · Mohamed Ben Achour</title>
+  <meta name="description" content="With the rise of Machine Learning and models, the need for automating and streamlining model deployment become a necessity. Pushed mostly by the fact that ML…">
+  <style>
+    :root { color-scheme: dark; --bg:#050a12; --panel:#0a1626; --text:#eef7ff; --muted:#a9bed3; --line:rgba(94,234,255,.28); --accent:#5eeaff; --accent-2:#8bffb0; }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family: Inter, ui-sans-system, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: radial-gradient(circle at 18% 0%, rgba(94,234,255,.18), transparent 30rem), linear-gradient(180deg,#03060b 0%, var(--bg) 46%, #02040a 100%); color:var(--text); line-height:1.7; }
+    a { color:var(--accent); text-decoration:none; } a:hover { text-decoration:underline; }
+    .wrap { width:min(820px, calc(100% - 40px)); margin:0 auto; }
+    header { padding:28px 0 6px; } nav { display:flex; justify-content:space-between; align-items:center; gap:20px; flex-wrap:wrap; }
+    .brand { font-weight:800; color:var(--text); } .nav-links { display:flex; gap:18px; flex-wrap:wrap; font-size:.95rem; }
+    h1 { font-size:clamp(1.9rem,5vw,3rem); line-height:1.15; letter-spacing:-.03em; margin:30px 0 10px; }
+    .meta { color:var(--muted); font-size:.9rem; text-transform:uppercase; letter-spacing:.06em; margin-bottom:26px; }
+    .content img { max-width:100%; height:auto; border-radius:12px; }
+    .content figure { margin:24px 0; } .content figcaption { color:var(--muted); font-size:.9rem; text-align:center; }
+    .content pre { overflow:auto; background:var(--panel); border:1px solid rgba(94,234,255,.16); padding:16px; border-radius:12px; }
+    .content code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size:.92em; }
+    .content blockquote { border-left:3px solid var(--accent); margin:20px 0; padding:4px 18px; color:var(--muted); }
+    .content table { display:block; overflow-x:auto; border-collapse:collapse; } .content td, .content th { border:1px solid rgba(255,255,255,.14); padding:6px 10px; }
+    .content iframe { max-width:100%; }
+    .origin { border-top:1px solid rgba(255,255,255,.1); margin-top:38px; padding-top:16px; color:var(--muted); font-size:.92rem; }
+    footer { padding:26px 0 46px; color:var(--muted); }
+  </style>
+</head>
+<body>
+  <header class="wrap">
+    <nav aria-label="Main navigation">
+      <a class="brand" href="../index.html">Mohamed Ben Achour</a>
+      <div class="nav-links">
+        <a href="../articles.html">Articles</a>
+        <a href="https://github.com/mbenachour">GitHub</a>
+        <a href="https://huggingface.co/mbenachour">Hugging Face</a>
+        <a href="https://mohamedbenachour.net">Blog</a>
+      </div>
+    </nav>
+  </header>
+  <main class="wrap">
+    <h1>Automating the training and deployment of ML models on Kubernates</h1>
+    <div class="meta">June 22, 2018 · machine learning</div>
+
+    <div class="content">
+<p>With the rise of Machine Learning and models, the need for automating and streamlining model deployment become a necessity. Pushed mostly by the fact that ML models as a new way of programming, are no longer an experimental concept but rather a day to day artifacts that can also follow a release and versioning process.</p>
+<p>here is a link to the code used below: <a href="https://github.com/mbenachour/ML">github</a></p>
+<p>throughout this example I will :</p>
+<ul>
+<li>train a model.</li>
+<li>serialize it and save it.</li>
+<li>build a docker image with front-end web server.</li>
+<li>make a deployment on a kubernates cluster.</li>
+</ul>
+<p><strong>requirements</strong>:</p>
+<p><a href="http://scikit-learn.org/stable/index.html">scikit</a></p>
+<p><a href="https://docs.docker.com/install/">docker</a></p>
+<p><a href="https://kubernetes.io/docs/setup/minikube/">minikube &amp; Kubernates</a></p>
+<h3>Building The Model</h3>
+<p><em><strong>Training  data : </strong></em></p>
+<p>our training data is going to be generated with a math function y= sin(2*π*tan(x)), where is between 0 and 1 with an increment of 0.001.</p>
+<div>
+<pre>x = np.arange(0.0, 1, 0.001).reshape(-1, 1)</pre>
+</div>
+<div></div>
+<p>x = [[ 0. ]<br />
+[ 0.001]<br />
+[ 0.002]</p>
+<p>&#8230;&#8230;&#8230;</p>
+<p>[ 0.997]<br />
+[ 0.998]<br />
+[ 0.999]]</p>
+<pre>y = np.sin(2 * np.pi * np.tan(x).ravel()) #with max/min values of 1,-1</pre>
+<p><img data-recalc-dims="1" loading="lazy" decoding="async" data-attachment-id="395" data-permalink="https://mohamedbenachour.net/screen-shot-2018-06-20-at-2-40-48-pm/" data-orig-file="../assets/posts/64de181e-screen-shot-2018-06-20-at-2-40-48-pm.png" data-orig-size="537,418" data-comments-opened="1" data-image-title="Screen Shot 2018-06-20 at 2.40.48 PM" data-image-description="" data-image-caption="" data-large-file="../assets/posts/64de181e-screen-shot-2018-06-20-at-2-40-48-pm.png" class="alignnone size-full wp-image-395" src="../assets/posts/64de181e-screen-shot-2018-06-20-at-2-40-48-pm.png" alt="Screen Shot 2018-06-20 at 2.40.48 PM" width="537" height="418" /></p>
+<p><em><strong>Fitting the Model : </strong></em></p>
+<p>In this example, I will use  a <a href="https://en.wikipedia.org/wiki/Multilayer_perceptron">MultiLayer Perceptron</a> implemented by <a href="http://scikit-learn.org/stable/modules/generated/sklearn.neural_network.MLPRegressor.html">SCIKIT</a> python library</p>
+<p>This is what the regressor function will all the parameters ( already tuned ) :</p>
+<div>
+<pre>reg = MLPRegressor(hidden_layer_sizes=(500,), activation='relu', solver='adam', alpha=0.001,batch_size='auto',
+
+learning_rate='constant', learning_rate_init=0.01, power_t=0.5, max_iter=1000, shuffle=True,
+
+random_state=9, tol=0.0001, verbose=False, warm_start=False, momentum=0.9,
+
+nesterovs_momentum=True, early_stopping=False, validation_fraction=0.1, beta_1=0.9, beta_2=0.999,
+
+epsilon=1e-08)</pre>
+</div>
+<div></div>
+<div><em><strong>Test Data :</strong></em></div>
+<div></div>
+<div>for testing we will use a generated set of data as well :</div>
+<div></div>
+<div>
+<div>
+<pre>test_x = np.arange(0.0, 1, 0.05).reshape(-1, 1)</pre>
+</div>
+</div>
+<div></div>
+<div><em><strong>Prediction</strong></em> :</div>
+<div></div>
+<div>
+<div>
+<pre>test_y = reg.predict(test_x)</pre>
+</div>
+</div>
+<div></div>
+<div><strong>Results :</strong></div>
+<div></div>
+<div>continuous blue is the real output</div>
+<div></div>
+<div>dotted red is the predicted output</div>
+<div></div>
+<div></div>
+<div><img data-recalc-dims="1" loading="lazy" decoding="async" data-attachment-id="396" data-permalink="https://mohamedbenachour.net/screen-shot-2018-06-20-at-4-27-17-pm/" data-orig-file="../assets/posts/da44c063-screen-shot-2018-06-20-at-4-27-17-pm.png" data-orig-size="552,436" data-comments-opened="1" data-image-title="Screen Shot 2018-06-20 at 4.27.17 PM" data-image-description="" data-image-caption="" data-large-file="../assets/posts/da44c063-screen-shot-2018-06-20-at-4-27-17-pm.png" class="alignnone size-full wp-image-396" src="../assets/posts/da44c063-screen-shot-2018-06-20-at-4-27-17-pm.png" alt="Screen Shot 2018-06-20 at 4.27.17 PM" width="552" height="436" /></div>
+<div></div>
+<div><strong>Saving the model :</strong></div>
+<div></div>
+<div>I used Python object serialization framework <a href="https://docs.python.org/3/library/pickle.html">Pickle</a> :</div>
+<div></div>
+<div>
+<div>
+<pre>joblib.dump(reg, 'mlpreg.pkl')</pre>
+</div>
+</div>
+<div></div>
+<div>this will save your model to a file named: mlpreg.pkl</div>
+<div></div>
+<div></div>
+<h3><strong>Deploying the model</strong></h3>
+<div></div>
+<div><strong>building an image :</strong></div>
+<div></div>
+<div>I have created a docker image for deploying the model on a web server :</div>
+<div></div>
+<div>
+<div>
+<p>[code] FROM python:2.7.15-stretch</p>
+<p>COPY MLPReg.py .</p>
+<p>COPY server.py .</p>
+<p>RUN python -m pip install &#8211;user numpy scipy matplotlib ipython jupyter pandas sympy nose</p>
+<p>RUN python -m pip install -U scikit-learn</p>
+<p>RUN python MLPReg.py</p>
+<p>EXPOSE 8088</p>
+<p>CMD python server.py</p>
+<p>[/code]</p>
+</div>
+</div>
+<div></div>
+<div>to build the image you can run this :</div>
+<div></div>
+<pre>docker build -t mbenachour/mlpreg:latest .</pre>
+<div></div>
+<div><strong>kubernates deployment :</strong></div>
+<div></div>
+<div>this the kubernates yaml file that describes the deployment :</div>
+<div>
+<div>
+<p>[code ]</p>
+<p>apiVersion: apps/v1beta2<br />
+kind: Deployment<br />
+metadata:<br />
+  name: mlpreg-deployment<br />
+  labels:<br />
+    app: mlpreg<br />
+spec:<br />
+  replicas: 3<br />
+  selector:<br />
+    matchLabels:<br />
+      app: mlpreg<br />
+  template:<br />
+    metadata:<br />
+      labels:<br />
+        app: mlpreg<br />
+    spec:<br />
+      terminationGracePeriodSeconds: 30<br />
+      containers:<br />
+      &#8211; name: mlpreg<br />
+        image: mbenachour/mlpreg:latest<br />
+        imagePullPolicy: &#8220;Always&#8221;<br />
+        ports:<br />
+        &#8211; containerPort: 8088<br />
+&#8212;<br />
+apiVersion: v1<br />
+kind: Service<br />
+metadata:<br />
+  name: mlpreg-svc<br />
+  labels:<br />
+    app: mlpreg<br />
+    #tier: frontend<br />
+spec:<br />
+  type: NodePort<br />
+  ports:<br />
+  &#8211; port: 8088<br />
+  selector:<br />
+    app: mlpreg<br />
+    #tier: frontend</p>
+<p>[/code]</p>
+</div>
+<div>you can deploy the kubernates model :</div>
+</div>
+<div></div>
+<pre>kubectl apply -f mlp.yml</pre>
+<div></div>
+<div>to check on the status of your kubernates services :</div>
+<div></div>
+<pre>kubectl get services</pre>
+<div></div>
+<div>you should see something similar to this :</div>
+<div></div>
+<div><img data-recalc-dims="1" loading="lazy" decoding="async" data-attachment-id="397" data-permalink="https://mohamedbenachour.net/screen-shot-2018-06-21-at-4-31-45-pm/" data-orig-file="../assets/posts/5e0b165b-screen-shot-2018-06-21-at-4-31-45-pm.png" data-orig-size="1180,102" data-comments-opened="1" data-image-title="Screen Shot 2018-06-21 at 4.31.45 PM" data-image-description="" data-image-caption="" data-large-file="../assets/posts/5e0b165b-screen-shot-2018-06-21-at-4-31-45-pm.png" class="alignnone size-full wp-image-397" src="../assets/posts/5e0b165b-screen-shot-2018-06-21-at-4-31-45-pm.png" alt="Screen Shot 2018-06-21 at 4.31.45 PM.png" width="1180" height="102" /></div>
+<div></div>
+<h3>Making predictions</h3>
+<p>to get the kubernates cluster IP address, in my case I&#8217;m using minikube the command line :</p>
+<pre>$minikube service mlpreg-svc --url
+
+http://192.168.99.105:32397</pre>
+<div></div>
+<div>to make a prediction using the API for an input of 0.1</div>
+<div></div>
+<div><img data-recalc-dims="1" loading="lazy" decoding="async" data-attachment-id="398" data-permalink="https://mohamedbenachour.net/screen-shot-2018-06-21-at-5-33-13-pm/" data-orig-file="../assets/posts/b69a47f5-screen-shot-2018-06-21-at-5-33-13-pm.png" data-orig-size="800,238" data-comments-opened="1" data-image-title="Screen Shot 2018-06-21 at 5.33.13 PM" data-image-description="" data-image-caption="" data-large-file="../assets/posts/b69a47f5-screen-shot-2018-06-21-at-5-33-13-pm.png" class="alignnone size-full wp-image-398" src="../assets/posts/b69a47f5-screen-shot-2018-06-21-at-5-33-13-pm.png" alt="Screen Shot 2018-06-21 at 5.33.13 PM" width="800" height="238" /></div>
+<div></div>
+<h3>Pipeline.ai</h3>
+<div></div>
+<div>a lot of products have been introduced to help solve this problem, one of them is Chris Fregly project: <a href="https://pipeline.ai/">pipeline.ai</a></div>
+<div></div>
+<div>the project gives you the possibility to create-train-deploy models using different frameworks :</div>
+<div></div>
+<div>&#8211; tensorflow</div>
+<div>&#8211; scikit</div>
+<div>&#8211; pytorch</div>
+<div></div>
+<div>implementing a lot of ML most used algorithms like linear regression.</div>
+
+    </div>
+    <p class="origin">Originally published on mohamedbenachour.net on June 22, 2018. <a href="https://mohamedbenachour.net/2018/06/22/automating-the-training-and-deployment-of-ml-models-on-kubernates/">View the original post</a>.</p>
+  </main>
+  <footer class="wrap"><span>© 2026 Mohamed Ben Achour</span></footer>
+</body>
+</html>

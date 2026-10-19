@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Making your publisher/subscriber app more cloud agnostic using DAPR · Mohamed Ben Achour</title>
+  <meta name="description" content="Publisher/Subscriber Model Publish/subscribe messaging, or pub/sub messaging, is a form of asynchronous service-to-service communication used in serverless a…">
+  <style>
+    :root { color-scheme: dark; --bg:#050a12; --panel:#0a1626; --text:#eef7ff; --muted:#a9bed3; --line:rgba(94,234,255,.28); --accent:#5eeaff; --accent-2:#8bffb0; }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family: Inter, ui-sans-system, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: radial-gradient(circle at 18% 0%, rgba(94,234,255,.18), transparent 30rem), linear-gradient(180deg,#03060b 0%, var(--bg) 46%, #02040a 100%); color:var(--text); line-height:1.7; }
+    a { color:var(--accent); text-decoration:none; } a:hover { text-decoration:underline; }
+    .wrap { width:min(820px, calc(100% - 40px)); margin:0 auto; }
+    header { padding:28px 0 6px; } nav { display:flex; justify-content:space-between; align-items:center; gap:20px; flex-wrap:wrap; }
+    .brand { font-weight:800; color:var(--text); } .nav-links { display:flex; gap:18px; flex-wrap:wrap; font-size:.95rem; }
+    h1 { font-size:clamp(1.9rem,5vw,3rem); line-height:1.15; letter-spacing:-.03em; margin:30px 0 10px; }
+    .meta { color:var(--muted); font-size:.9rem; text-transform:uppercase; letter-spacing:.06em; margin-bottom:26px; }
+    .content img { max-width:100%; height:auto; border-radius:12px; }
+    .content figure { margin:24px 0; } .content figcaption { color:var(--muted); font-size:.9rem; text-align:center; }
+    .content pre { overflow:auto; background:var(--panel); border:1px solid rgba(94,234,255,.16); padding:16px; border-radius:12px; }
+    .content code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size:.92em; }
+    .content blockquote { border-left:3px solid var(--accent); margin:20px 0; padding:4px 18px; color:var(--muted); }
+    .content table { display:block; overflow-x:auto; border-collapse:collapse; } .content td, .content th { border:1px solid rgba(255,255,255,.14); padding:6px 10px; }
+    .content iframe { max-width:100%; }
+    .origin { border-top:1px solid rgba(255,255,255,.1); margin-top:38px; padding-top:16px; color:var(--muted); font-size:.92rem; }
+    footer { padding:26px 0 46px; color:var(--muted); }
+  </style>
+</head>
+<body>
+  <header class="wrap">
+    <nav aria-label="Main navigation">
+      <a class="brand" href="../index.html">Mohamed Ben Achour</a>
+      <div class="nav-links">
+        <a href="../articles.html">Articles</a>
+        <a href="https://github.com/mbenachour">GitHub</a>
+        <a href="https://huggingface.co/mbenachour">Hugging Face</a>
+        <a href="https://mohamedbenachour.net">Blog</a>
+      </div>
+    </nav>
+  </header>
+  <main class="wrap">
+    <h1>Making your publisher/subscriber app more cloud agnostic using DAPR</h1>
+    <div class="meta">May 12, 2022 · Devops</div>
+
+    <div class="content">
+
+<p class="wp-block-paragraph"></p>
+
+
+
+<p class="wp-block-paragraph"></p>
+
+
+
+<h2 class="wp-block-heading">Publisher/Subscriber Model </h2>
+
+
+
+<p class="wp-block-paragraph">Publish/subscribe messaging, or pub/sub messaging, is a form of asynchronous service-to-service communication used in serverless and microservices architectures. In a pub/sub model, any message published to a topic is immediately received by all of the subscribers to the topic. Pub/sub messaging can be used to enable event-driven architectures, or to decouple applications in order to increase performance, reliability and scalability.</p>
+
+
+
+<p class="wp-block-paragraph">Depending on which pub/sub technology you end up choosing, your application code will be tightly coupled the technology you choose, which makes it difficult to switch from one provider to another without changing the code of your application</p>
+
+
+
+<p class="wp-block-paragraph"><a href="https://dapr.io/">DAPR</a> ( Distributed APplication Runtime) give your the possibility to abstract your pub/sub layer and write your code independently  of your pub/sub provider ( SQS, Azure Bus Service, Kafka, Azure event hub, rabbitmq, redis streams ) </p>
+
+
+
+<figure class="wp-block-image size-full"><img data-recalc-dims="1" loading="lazy" decoding="async" width="800" height="487" data-attachment-id="1030" data-permalink="https://mohamedbenachour.net/2022/05/12/making-your-publisher-subscriber-app-more-cloud-agnostic-using-dapr/dapr-drawio/" data-orig-file="../assets/posts/34214ab4-dapr.drawio.png" data-orig-size="800,487" data-comments-opened="1" data-image-title="dapr.drawio" data-image-description="" data-image-caption="" data-large-file="../assets/posts/34214ab4-dapr.drawio.png" src="../assets/posts/34214ab4-dapr.drawio.png" alt="" class="wp-image-1030" /></figure>
+
+
+
+<p class="wp-block-paragraph"></p>
+
+
+
+<h2 class="wp-block-heading">Example :</h2>
+
+
+
+<p class="wp-block-paragraph">In this example we will have an order processing app where the publisher pushers orders to the messaging queue</p>
+
+
+
+<p class="wp-block-paragraph"><strong>Application Layer</strong> : Publisher and Subscriber both python programs</p>
+
+
+
+<p class="wp-block-paragraph"><strong>DAPR pubsub Component </strong>: we will use Azure Service Bus</p>
+
+
+
+<p class="wp-block-paragraph"><strong>1- creating Azure Service Bus :</strong></p>
+
+
+
+<p class="wp-block-paragraph"></p>
+
+
+
+<figure class="wp-block-image size-large"><img data-recalc-dims="1" loading="lazy" decoding="async" width="1024" height="704" data-attachment-id="1036" data-permalink="https://mohamedbenachour.net/2022/05/12/making-your-publisher-subscriber-app-more-cloud-agnostic-using-dapr/screen-shot-2022-05-11-at-9-34-11-pm/" data-orig-file="../assets/posts/ede33811-Screen-Shot-2022-05-11-at-9.34.11-PM.png" data-orig-size="1670,1148" data-comments-opened="1" data-image-title="Screen-Shot-2022-05-11-at-9.34.11-PM" data-image-description="" data-image-caption="" data-large-file="../assets/posts/ede33811-Screen-Shot-2022-05-11-at-9.34.11-PM.png" src="../assets/posts/ede33811-Screen-Shot-2022-05-11-at-9.34.11-PM.png" alt="" class="wp-image-1036" /></figure>
+
+
+
+<p class="wp-block-paragraph">for more details about how to create an Azure Service Bus, you can read this <a href="https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-quickstart-portal">article</a></p>
+
+
+
+<p class="wp-block-paragraph"><strong>2- Install Dapr </strong> </p>
+
+
+
+<p class="wp-block-paragraph"><strong><code>curl -fsSL https://raw.githubusercontent.com/dapr/cli/master/install/install.sh | /bin/bash</code></strong></p>
+
+
+
+<p class="wp-block-paragraph"><strong>3- initialize dapr  </strong></p>
+
+
+
+<p class="wp-block-paragraph"></p>
+
+
+
+<p class="wp-block-paragraph">in a terminal window run :   <code>dapr init</code></p>
+
+
+
+<figure class="wp-block-image size-full"><img data-recalc-dims="1" loading="lazy" decoding="async" width="834" height="560" data-attachment-id="1039" data-permalink="https://mohamedbenachour.net/2022/05/12/making-your-publisher-subscriber-app-more-cloud-agnostic-using-dapr/screen-shot-2022-05-11-at-9-46-50-pm/" data-orig-file="../assets/posts/0cf58501-Screen-Shot-2022-05-11-at-9.46.50-PM.png" data-orig-size="834,560" data-comments-opened="1" data-image-title="Screen-Shot-2022-05-11-at-9.46.50-PM" data-image-description="" data-image-caption="" data-large-file="../assets/posts/0cf58501-Screen-Shot-2022-05-11-at-9.46.50-PM.png" src="../assets/posts/0cf58501-Screen-Shot-2022-05-11-at-9.46.50-PM.png" alt="" class="wp-image-1039" /></figure>
+
+
+
+<p class="wp-block-paragraph"><strong>4- configure dapr publisher component </strong></p>
+
+
+
+<p class="wp-block-paragraph">create a yaml file called <strong>pubsub.yaml</strong> and place it under <strong>~/.dapr/components </strong></p>
+
+
+
+<p class="wp-block-paragraph"></p>
+
+
+
+<figure class="wp-block-embed is-type-rich is-provider-embed-handler wp-block-embed-embed-handler"><div class="wp-block-embed__wrapper">
+<!-- Invalid Gist ID -->
+</div><figcaption><strong>5- Start Dapr Application</strong></figcaption></figure>
+
+
+
+<p class="wp-block-paragraph"><code>dapr run --app-id daprapptest --dapr-http-port 3601</code></p>
+
+
+
+<p class="wp-block-paragraph"><strong>6- Run publisher application</strong></p>
+
+
+
+<p class="wp-block-paragraph">save the following app code to a publisher.py file</p>
+
+
+
+<figure class="wp-block-embed is-type-rich is-provider-embed-handler wp-block-embed-embed-handler"><div class="wp-block-embed__wrapper">
+<!-- Invalid Gist ID -->
+</div></figure>
+
+
+
+<p class="wp-block-paragraph">Starting the publisher app :</p>
+
+
+
+<p class="wp-block-paragraph"><code>dapr run --app-id daprapptest --app-port 6001 --dapr-http-port 3601 --app-protocol grpc python3</code>  <code>publisher.py</code></p>
+
+
+
+<p class="wp-block-paragraph"></p>
+
+
+
+<figure class="wp-block-image size-full"><img data-recalc-dims="1" loading="lazy" decoding="async" width="882" height="524" data-attachment-id="1048" data-permalink="https://mohamedbenachour.net/2022/05/12/making-your-publisher-subscriber-app-more-cloud-agnostic-using-dapr/screen-shot-2022-05-12-at-2-24-09-pm/" data-orig-file="../assets/posts/a59951a2-Screen-Shot-2022-05-12-at-2.24.09-PM.png" data-orig-size="882,524" data-comments-opened="1" data-image-title="Screen-Shot-2022-05-12-at-2.24.09-PM" data-image-description="" data-image-caption="" data-large-file="../assets/posts/a59951a2-Screen-Shot-2022-05-12-at-2.24.09-PM.png" src="../assets/posts/a59951a2-Screen-Shot-2022-05-12-at-2.24.09-PM.png" alt="" class="wp-image-1048" /></figure>
+
+
+
+<p class="wp-block-paragraph">The application start publishing messages to the Azure Service Bus </p>
+
+
+
+<p class="wp-block-paragraph"></p>
+
+
+
+<h3 class="wp-block-heading">My Thoughts:</h3>
+
+
+
+<p class="wp-block-paragraph">Modern microservices cloud-native applications need to be able to agnostic of the underlying technologies in order to achieve more independence and ease of deployment across platforms, in the example above we tied to make a publisher application code more independent of the technology, we used Azure Service Bus as a queue technology, but we could easily change it AWS SQS, Rabbit MQ , or any other platform that DAPR supports without having to make any changes to application code </p>
+
+    </div>
+    <p class="origin">Originally published on mohamedbenachour.net on May 12, 2022. <a href="https://mohamedbenachour.net/2022/05/12/making-your-publisher-subscriber-app-more-cloud-agnostic-using-dapr/">View the original post</a>.</p>
+  </main>
+  <footer class="wrap"><span>© 2026 Mohamed Ben Achour</span></footer>
+</body>
+</html>

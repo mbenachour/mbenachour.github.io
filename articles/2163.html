@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>The Watched Pot: Why Watching AI Agents Work Is Ruining Your Engineering Leverage · Mohamed Ben Achour</title>
+  <meta name="description" content="The Watched Pot You type /goal implement the payment retry logic across the billing service and hit enter. For the next four minutes, you watch. The terminal…">
+  <style>
+    :root { color-scheme: dark; --bg:#050a12; --panel:#0a1626; --text:#eef7ff; --muted:#a9bed3; --line:rgba(94,234,255,.28); --accent:#5eeaff; --accent-2:#8bffb0; }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family: Inter, ui-sans-system, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: radial-gradient(circle at 18% 0%, rgba(94,234,255,.18), transparent 30rem), linear-gradient(180deg,#03060b 0%, var(--bg) 46%, #02040a 100%); color:var(--text); line-height:1.7; }
+    a { color:var(--accent); text-decoration:none; } a:hover { text-decoration:underline; }
+    .wrap { width:min(820px, calc(100% - 40px)); margin:0 auto; }
+    header { padding:28px 0 6px; } nav { display:flex; justify-content:space-between; align-items:center; gap:20px; flex-wrap:wrap; }
+    .brand { font-weight:800; color:var(--text); } .nav-links { display:flex; gap:18px; flex-wrap:wrap; font-size:.95rem; }
+    h1 { font-size:clamp(1.9rem,5vw,3rem); line-height:1.15; letter-spacing:-.03em; margin:30px 0 10px; }
+    .meta { color:var(--muted); font-size:.9rem; text-transform:uppercase; letter-spacing:.06em; margin-bottom:26px; }
+    .content img { max-width:100%; height:auto; border-radius:12px; }
+    .content figure { margin:24px 0; } .content figcaption { color:var(--muted); font-size:.9rem; text-align:center; }
+    .content pre { overflow:auto; background:var(--panel); border:1px solid rgba(94,234,255,.16); padding:16px; border-radius:12px; }
+    .content code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size:.92em; }
+    .content blockquote { border-left:3px solid var(--accent); margin:20px 0; padding:4px 18px; color:var(--muted); }
+    .content table { display:block; overflow-x:auto; border-collapse:collapse; } .content td, .content th { border:1px solid rgba(255,255,255,.14); padding:6px 10px; }
+    .content iframe { max-width:100%; }
+    .origin { border-top:1px solid rgba(255,255,255,.1); margin-top:38px; padding-top:16px; color:var(--muted); font-size:.92rem; }
+    footer { padding:26px 0 46px; color:var(--muted); }
+  </style>
+</head>
+<body>
+  <header class="wrap">
+    <nav aria-label="Main navigation">
+      <a class="brand" href="../index.html">Mohamed Ben Achour</a>
+      <div class="nav-links">
+        <a href="../articles.html">Articles</a>
+        <a href="https://github.com/mbenachour">GitHub</a>
+        <a href="https://huggingface.co/mbenachour">Hugging Face</a>
+        <a href="https://mohamedbenachour.net">Blog</a>
+      </div>
+    </nav>
+  </header>
+  <main class="wrap">
+    <h1>The Watched Pot: Why Watching AI Agents Work Is Ruining Your Engineering Leverage</h1>
+    <div class="meta">August 10, 2026 · Uncategorized</div>
+
+    <div class="content">
+
+<h2 class="wp-block-heading"></h2>
+
+
+
+<p class="wp-block-paragraph"></p>
+
+
+
+<figure class="wp-block-image size-large"><img data-recalc-dims="1" loading="lazy" decoding="async" width="1024" height="683" data-attachment-id="2178" data-permalink="https://mohamedbenachour.net/2026/08/10/2163/image-7/" data-orig-file="../assets/posts/ee7ad961-image-1.png" data-orig-size="1536,1024" data-comments-opened="1" data-image-title="image" data-image-description="" data-image-caption="" data-large-file="../assets/posts/ee7ad961-image-1.png" src="../assets/posts/ee7ad961-image-1.png" alt="" class="wp-image-2178" /></figure>
+
+
+
+<p class="wp-block-paragraph"></p>
+
+
+
+<p class="wp-block-paragraph"></p>
+
+
+
+<h2 class="wp-block-heading">The Watched Pot</h2>
+
+
+
+<p class="wp-block-paragraph">You type <code>/goal implement the payment retry logic across the billing service</code> and hit enter.</p>
+
+
+
+<p class="wp-block-paragraph">For the next four minutes, you watch. The terminal scrolls. Tool calls fire. Files change. You read every line as it streams by, the same way you&#8217;d watch a compiler bar crawl to 100%, except this isn&#8217;t compiling, it&#8217;s <em>thinking</em>, and somewhere around minute two you catch yourself doing something strange: hovering over the &#8220;stop&#8221; button, not because anything&#8217;s wrong, but because watching is uncomfortable when you&#8217;re not the one doing the work.</p>
+
+
+
+<p class="wp-block-paragraph">This is the tell. Most developers who&#8217;ve picked up long-running agents (<code>/goal</code>, <code>/loop</code>, background tasks) are still running them through a chat-window mental model. Fire a prompt, wait for a reply, read the reply, fire the next prompt. It&#8217;s the same loop we learned typing into ChatGPT eighteen months ago, just pointed at a codebase now. It breaks down the moment the task takes longer than a coffee sip to finish, because nothing in that mental model tells you what to do with your hands, or your attention, while the agent works.</p>
+
+
+
+<p class="wp-block-paragraph">The tools have changed shape. Our instincts haven&#8217;t caught up. We were handed an asynchronous, high-autonomy system, and we&#8217;re still operating it synchronously: one thread, one prompt, one stare at a time.</p>
+
+
+
+<p class="wp-block-paragraph"></p>
+
+
+
+<h2 class="wp-block-heading">The &#8220;Air Traffic Controller&#8221; Mentality</h2>
+
+
+
+<p class="wp-block-paragraph">An air traffic controller does not fly the plane. That is the job. Their skill is judgment about attention, deciding what deserves their eyes and letting the rest run without them. Developers running long agent tasks are still flying the plane, dispatching work and then sitting there watching, as if staying close to it were the same as doing it.</p>
+
+
+
+<p class="wp-block-paragraph">It is not. Attention used to equal care. Now watching a dispatched task produces nothing. It is dead time dressed up as diligence, a habit from a job that no longer exists.</p>
+
+
+
+<p class="wp-block-paragraph">An ordinary morning has one task minutes from landing, one circling on a decision only you can make, one grounded because you have not written its spec. None of these need each other, they need you, unevenly, and most developers cannot tell which one, right now. So they watch the wrong one, watch all of them, watch none of them well. The controller never had this problem. For developers, it still feels like the job. That feeling is the only thing standing between them and the leverage in front of them.</p>
+
+
+
+<figure class="wp-block-image size-large"><img data-recalc-dims="1" loading="lazy" decoding="async" width="1024" height="778" data-attachment-id="2170" data-permalink="https://mohamedbenachour.net/2026/08/10/2163/screenshot-2026-08-10-at-10-48-38-am/" data-orig-file="../assets/posts/802abe64-Screenshot-2026-08-10-at-10.48.38-AM.png" data-orig-size="1032,784" data-comments-opened="1" data-image-title="Screenshot 2026-08-10 at 10.48.38 AM" data-image-description="" data-image-caption="" data-large-file="../assets/posts/802abe64-Screenshot-2026-08-10-at-10.48.38-AM.png" src="../assets/posts/802abe64-Screenshot-2026-08-10-at-10.48.38-AM.png" alt="" class="wp-image-2170" /></figure>
+
+
+
+<p class="wp-block-paragraph"></p>
+
+
+
+<h2 class="wp-block-heading">You Are the Handoff</h2>
+
+
+
+<p class="wp-block-paragraph">The tools are not behind anymore. Your IDE runs agents that plan, edit across files, and finish work on their own. GitHub reviews, summarizes, suggests. CI writes the tests it runs. Every layer got competent, and it happened fast.</p>
+
+
+
+<p class="wp-block-paragraph">They just do not know about each other.</p>
+
+
+
+<p class="wp-block-paragraph">And they never will by accident, because they do not come from the same place. Your developers dispatch work through Claude Code. Your review happens through GitHub&#8217;s own cloud agent. Your pipeline runs something else again, and your ticketing system has its own model summarizing the thread. Four vendors, four roadmaps, four private notions of what the task is. Nobody built the handoff, because nobody owns both sides of it.</p>
+
+
+
+<p class="wp-block-paragraph">So the context dies in the gaps. The reviewing agent has no idea what the coding agent already tried and rejected. The pull request arrives without the intent that produced it. The test run cannot tell a model&#8217;s guess from a decision you made deliberately last week. Each tool holds a fragment of the truth and none of them share it.</p>
+
+
+
+<p class="wp-block-paragraph">You carry the rest. You are the thing moving context between systems, restating intent in three places, remembering what each tool cannot see. The integration layer is a person, and that person is you.</p>
+
+
+
+<p class="wp-block-paragraph">This is what actually caps airspace capacity. Not model quality, not how independent the agents are. Every additional task adds another set of seams for you to hold shut. Five capable agents with no shared substrate is not five times the leverage. It is five times the stitching.</p>
+
+
+
+<p class="wp-block-paragraph">What is missing is not intelligence. It is a place where intent, task state, verification results, and decision history live once, and every tool reads from the same copy. A spec written at dispatch that the reviewer can still see. A failed check that knows which decision it invalidated.</p>
+
+
+
+<p class="wp-block-paragraph">The enterprises that get real leverage from this will not be the ones with the smartest tools. They will be the ones whose tools stopped needing a human to remember on their behalf.</p>
+
+
+
+<p class="wp-block-paragraph"></p>
+
+
+
+<h2 class="wp-block-heading">The Missing Control Tower</h2>
+
+
+
+<figure class="wp-block-image size-large"><img data-recalc-dims="1" loading="lazy" decoding="async" width="1024" height="819" data-attachment-id="2175" data-permalink="https://mohamedbenachour.net/2026/08/10/2163/image-6/" data-orig-file="../assets/posts/4fcb7ff0-image.png" data-orig-size="1402,1122" data-comments-opened="1" data-image-title="image" data-image-description="" data-image-caption="" data-large-file="../assets/posts/4fcb7ff0-image.png" src="../assets/posts/4fcb7ff0-image.png" alt="" class="wp-image-2175" /></figure>
+
+
+
+<p class="wp-block-paragraph">Most enterprise AI rollouts run in the wrong order. Buy seats, deploy agents, measure adoption, then discover a year in that nothing coordinates and everyone has built habits around the gaps.</p>
+
+
+
+<p class="wp-block-paragraph">The sequence should invert. Before the second wave of agents, decide where the work actually lives.</p>
+
+
+
+<p class="wp-block-paragraph">Not where the code lives. Where the intent lives, so a spec written once is readable by the tool that reviews the result. Where task state lives, so a dispatched task has one status the whole system can see rather than a different status per vendor. Where verification attaches, so a failed check knows which decision it invalidated. Where decisions persist, so the reason something was rejected in March is still visible when it returns in June.</p>
+
+
+
+<p class="wp-block-paragraph">None of that is a product you buy. Some of it is convention, some is glue, most of it is deciding which system is authoritative and making everything else defer to it. That is less satisfying than a procurement decision, which is exactly why it gets skipped.</p>
+
+
+
+<p class="wp-block-paragraph">And the cost of skipping it is not that things break. It is that leverage stops scaling. Every agent you add contributes another seam, and seams are held closed by people. Ten seats without shared state is not ten times the output. It is one person doing ten times the remembering, and that person has a ceiling you cannot buy your way past.</p>
+
+    </div>
+    <p class="origin">Originally published on mohamedbenachour.net on August 10, 2026. <a href="https://mohamedbenachour.net/2026/08/10/2163/">View the original post</a>.</p>
+  </main>
+  <footer class="wrap"><span>© 2026 Mohamed Ben Achour</span></footer>
+</body>
+</html>

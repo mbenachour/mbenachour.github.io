@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Deploying Apps and ML models on mesosphere DC/OS · Mohamed Ben Achour</title>
+  <meta name="description" content="Have you ever thought of your data centers and cloud infrastructure ( private and public ) as one big computer? where you can deploy your applications with a…">
+  <style>
+    :root { color-scheme: dark; --bg:#050a12; --panel:#0a1626; --text:#eef7ff; --muted:#a9bed3; --line:rgba(94,234,255,.28); --accent:#5eeaff; --accent-2:#8bffb0; }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family: Inter, ui-sans-system, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: radial-gradient(circle at 18% 0%, rgba(94,234,255,.18), transparent 30rem), linear-gradient(180deg,#03060b 0%, var(--bg) 46%, #02040a 100%); color:var(--text); line-height:1.7; }
+    a { color:var(--accent); text-decoration:none; } a:hover { text-decoration:underline; }
+    .wrap { width:min(820px, calc(100% - 40px)); margin:0 auto; }
+    header { padding:28px 0 6px; } nav { display:flex; justify-content:space-between; align-items:center; gap:20px; flex-wrap:wrap; }
+    .brand { font-weight:800; color:var(--text); } .nav-links { display:flex; gap:18px; flex-wrap:wrap; font-size:.95rem; }
+    h1 { font-size:clamp(1.9rem,5vw,3rem); line-height:1.15; letter-spacing:-.03em; margin:30px 0 10px; }
+    .meta { color:var(--muted); font-size:.9rem; text-transform:uppercase; letter-spacing:.06em; margin-bottom:26px; }
+    .content img { max-width:100%; height:auto; border-radius:12px; }
+    .content figure { margin:24px 0; } .content figcaption { color:var(--muted); font-size:.9rem; text-align:center; }
+    .content pre { overflow:auto; background:var(--panel); border:1px solid rgba(94,234,255,.16); padding:16px; border-radius:12px; }
+    .content code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size:.92em; }
+    .content blockquote { border-left:3px solid var(--accent); margin:20px 0; padding:4px 18px; color:var(--muted); }
+    .content table { display:block; overflow-x:auto; border-collapse:collapse; } .content td, .content th { border:1px solid rgba(255,255,255,.14); padding:6px 10px; }
+    .content iframe { max-width:100%; }
+    .origin { border-top:1px solid rgba(255,255,255,.1); margin-top:38px; padding-top:16px; color:var(--muted); font-size:.92rem; }
+    footer { padding:26px 0 46px; color:var(--muted); }
+  </style>
+</head>
+<body>
+  <header class="wrap">
+    <nav aria-label="Main navigation">
+      <a class="brand" href="../index.html">Mohamed Ben Achour</a>
+      <div class="nav-links">
+        <a href="../articles.html">Articles</a>
+        <a href="https://github.com/mbenachour">GitHub</a>
+        <a href="https://huggingface.co/mbenachour">Hugging Face</a>
+        <a href="https://mohamedbenachour.net">Blog</a>
+      </div>
+    </nav>
+  </header>
+  <main class="wrap">
+    <h1>Deploying Apps and ML models on mesosphere DC/OS</h1>
+    <div class="meta">September 4, 2018 · machine learning</div>
+
+    <div class="content">
+<p>Have you ever thought of your data centers and cloud infrastructure ( private and public ) as one big computer? where you can deploy your applications with a click of a button, without worrying too much about the underlying infrastructure? well &#8230; <a href="https://dcos.io/">DCOS</a> allows you to manage your infrastructure from a single point, offering you the possibility to run distributed applications, containers, services, jobs while maintaining a certain abstraction from the infrastructure layer, as long as it provides computing, storage, and networking capabilities.</p>
+<p>After deploying my ML model on a <a href="http://mohamedbenachour.net/2018/06/22/automating-the-training-and-deployment-of-ml-models-on-kubernates/">kubernates Cluster</a>, <a href="http://mohamedbenachour.net/2018/08/07/deploy-machine-learning-models-on-aws-lambda/">a lambda function</a>, I will deploy it on a DCOS cluster.</p>
+<h3><strong>what is DCOS:</strong></h3>
+<p>DCOS is a datacenter operating system, DC/OS is itself a distributed system, a cluster manager, a container platform, and an operating system.</p>
+<p><img data-recalc-dims="1" decoding="async" src="https://i0.wp.com/docs.mesosphere.com/1.11/img/dcos-architecture-layers.png?ssl=1" alt="DC/OS Architecture Layers" /></p>
+<p>DCOS manages the 3 layers of software, platform, and infrastructure.</p>
+<h4>the dashboard :</h4>
+<p><img data-recalc-dims="1" loading="lazy" decoding="async" data-attachment-id="431" data-permalink="https://mohamedbenachour.net/2018/09/04/deploying-apps-and-ml-models-on-mesosphere-dc-os/screen-shot-2018-09-03-at-7-43-36-pm/" data-orig-file="../assets/posts/d4bc946b-screen-shot-2018-09-03-at-7-43-36-pm.png" data-orig-size="2466,1190" data-comments-opened="1" data-image-title="Screen Shot 2018-09-03 at 7.43.36 PM" data-image-description="" data-image-caption="" data-large-file="../assets/posts/d4bc946b-screen-shot-2018-09-03-at-7-43-36-pm.png" class="alignnone size-full wp-image-431" src="../assets/posts/d4bc946b-screen-shot-2018-09-03-at-7-43-36-pm.png" alt="Screen Shot 2018-09-03 at 7.43.36 PM" width="2466" height="1190" /></p>
+<h4>the catalog:</h4>
+<p>DCOS UI offers a catalog of certified and community packages that the users can install in seconds , like kafka, spark, hadoop, MySQL ..</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p><div class="tiled-gallery type-rectangular tiled-gallery-unresized" data-original-width="500" data-carousel-extra='{&quot;blog_id&quot;:1,&quot;permalink&quot;:&quot;https:\/\/mohamedbenachour.net\/2018\/09\/04\/deploying-apps-and-ml-models-on-mesosphere-dc-os\/&quot;,&quot;likes_blog_id&quot;:104104831}' itemscope itemtype="http://schema.org/ImageGallery" > <div class="gallery-row" style="width: 500px; height: 249px;" data-original-width="500" data-original-height="249" > <div class="gallery-group images-1" style="width: 500px; height: 249px;" data-original-width="500" data-original-height="249" > <div class="tiled-gallery-item tiled-gallery-item-large" itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject"> <a href="https://mohamedbenachour.net/2018/09/04/deploying-apps-and-ml-models-on-mesosphere-dc-os/screen-shot-2018-09-03-at-7-46-09-pm/" border="0" itemprop="url"> <meta itemprop="width" content="496"> <meta itemprop="height" content="245"> <img decoding="async" class="" data-attachment-id="432" data-orig-file="../assets/posts/0b655222-screen-shot-2018-09-03-at-7-46-09-pm.png" data-orig-size="2436,1204" data-comments-opened="1" data-image-title="Screen Shot 2018-09-03 at 7.46.09 PM" data-image-description="" data-medium-file="../assets/posts/0b655222-screen-shot-2018-09-03-at-7-46-09-pm.png" data-large-file="../assets/posts/0b655222-screen-shot-2018-09-03-at-7-46-09-pm.png" src="../assets/posts/0b655222-screen-shot-2018-09-03-at-7-46-09-pm.png" width="496" height="245" loading="lazy" data-original-width="496" data-original-height="245" itemprop="http://schema.org/image" title="Screen Shot 2018-09-03 at 7.46.09 PM" alt="Screen Shot 2018-09-03 at 7.46.09 PM" style="width: 496px; height: 245px;" /> </a> </div> </div> <!-- close group --> </div> <!-- close row --> </div></p>
+<h3></h3>
+<h3>Deploying Apps and ML models on DCOS :</h3>
+<p>the application I&#8217;m deploying is a web server running the model I created in my <a href="http://mohamedbenachour.net/2018/06/22/automating-the-training-and-deployment-of-ml-models-on-kubernates/">previous posts</a> to make predictions.</p>
+<p>DCOS relies on an application definition file that looks like this :</p>
+<p>app.json :</p>
+<p>[code]<br />
+{<br />
+    &#8220;volumes&#8221;: null,<br />
+    &#8220;id&#8221;: &#8220;mlpregv3&#8221;,<br />
+    &#8220;cmd&#8221;: &#8220;python server.py&#8221;,<br />
+    &#8220;instances&#8221;: 1,<br />
+    &#8220;cpus&#8221;: 1,<br />
+    &#8220;mem&#8221;: 128,<br />
+    &#8220;disk&#8221;: 0,<br />
+    &#8220;gpus&#8221;: 0,</p>
+<p>    &#8220;container&#8221;: {<br />
+        &#8220;type&#8221;: &#8220;DOCKER&#8221;,<br />
+        &#8220;docker&#8221;: {<br />
+            &#8220;image&#8221;: &#8220;mbenachour/dcos-mlpreg:1&#8221;,<br />
+            &#8220;forcePullImage&#8221;: false,<br />
+            &#8220;privileged&#8221;: false,<br />
+            &#8220;network&#8221;: &#8220;HOST&#8221;,<br />
+            &#8220;portMappings&#8221;: [<br />
+                { &#8220;containerPort&#8221;: 8088, &#8220;hostPort&#8221;: 8088 }<br />
+            ]<br />
+        }<br />
+    }<br />
+}[/code]</p>
+<p>&nbsp;</p>
+<p>the rest of the code can be found in my GitHub <a href="https://github.com/mbenachour/dcos-ML">repo</a></p>
+<p>after you configure your DCOS CLI and log in, you can run this command :</p>
+<p><img data-recalc-dims="1" loading="lazy" decoding="async" data-attachment-id="433" data-permalink="https://mohamedbenachour.net/2018/09/04/deploying-apps-and-ml-models-on-mesosphere-dc-os/screen-shot-2018-09-03-at-8-01-37-pm/" data-orig-file="../assets/posts/91462dfc-screen-shot-2018-09-03-at-8-01-37-pm.png" data-orig-size="1230,148" data-comments-opened="1" data-image-title="Screen Shot 2018-09-03 at 8.01.37 PM" data-image-description="" data-image-caption="" data-large-file="../assets/posts/91462dfc-screen-shot-2018-09-03-at-8-01-37-pm.png" class="alignnone size-full wp-image-433" src="../assets/posts/91462dfc-screen-shot-2018-09-03-at-8-01-37-pm.png" alt="Screen Shot 2018-09-03 at 8.01.37 PM" width="1230" height="148" /></p>
+<p>if we take a look at the UI we can see that app/web server has been deployed :</p>
+<p><img data-recalc-dims="1" loading="lazy" decoding="async" data-attachment-id="434" data-permalink="https://mohamedbenachour.net/2018/09/04/deploying-apps-and-ml-models-on-mesosphere-dc-os/screen-shot-2018-09-03-at-8-03-35-pm/" data-orig-file="../assets/posts/4c9aefcd-screen-shot-2018-09-03-at-8-03-35-pm.png" data-orig-size="1850,726" data-comments-opened="1" data-image-title="Screen Shot 2018-09-03 at 8.03.35 PM" data-image-description="" data-image-caption="" data-large-file="../assets/posts/4c9aefcd-screen-shot-2018-09-03-at-8-03-35-pm.png" class="alignnone size-full wp-image-434" src="../assets/posts/4c9aefcd-screen-shot-2018-09-03-at-8-03-35-pm.png" alt="Screen Shot 2018-09-03 at 8.03.35 PM" width="1850" height="726" /></p>
+
+    </div>
+    <p class="origin">Originally published on mohamedbenachour.net on September 4, 2018. <a href="https://mohamedbenachour.net/2018/09/04/deploying-apps-and-ml-models-on-mesosphere-dc-os/">View the original post</a>.</p>
+  </main>
+  <footer class="wrap"><span>© 2026 Mohamed Ben Achour</span></footer>
+</body>
+</html>

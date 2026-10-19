@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Automating AWS server builds from ServiceNow requests. · Mohamed Ben Achour</title>
+  <meta name="description" content="A lot of organizations are using ServiceNow to manage requests for creating new compute resources in the could ( i.e servers, lambda functions, containers …)…">
+  <style>
+    :root { color-scheme: dark; --bg:#050a12; --panel:#0a1626; --text:#eef7ff; --muted:#a9bed3; --line:rgba(94,234,255,.28); --accent:#5eeaff; --accent-2:#8bffb0; }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family: Inter, ui-sans-system, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: radial-gradient(circle at 18% 0%, rgba(94,234,255,.18), transparent 30rem), linear-gradient(180deg,#03060b 0%, var(--bg) 46%, #02040a 100%); color:var(--text); line-height:1.7; }
+    a { color:var(--accent); text-decoration:none; } a:hover { text-decoration:underline; }
+    .wrap { width:min(820px, calc(100% - 40px)); margin:0 auto; }
+    header { padding:28px 0 6px; } nav { display:flex; justify-content:space-between; align-items:center; gap:20px; flex-wrap:wrap; }
+    .brand { font-weight:800; color:var(--text); } .nav-links { display:flex; gap:18px; flex-wrap:wrap; font-size:.95rem; }
+    h1 { font-size:clamp(1.9rem,5vw,3rem); line-height:1.15; letter-spacing:-.03em; margin:30px 0 10px; }
+    .meta { color:var(--muted); font-size:.9rem; text-transform:uppercase; letter-spacing:.06em; margin-bottom:26px; }
+    .content img { max-width:100%; height:auto; border-radius:12px; }
+    .content figure { margin:24px 0; } .content figcaption { color:var(--muted); font-size:.9rem; text-align:center; }
+    .content pre { overflow:auto; background:var(--panel); border:1px solid rgba(94,234,255,.16); padding:16px; border-radius:12px; }
+    .content code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size:.92em; }
+    .content blockquote { border-left:3px solid var(--accent); margin:20px 0; padding:4px 18px; color:var(--muted); }
+    .content table { display:block; overflow-x:auto; border-collapse:collapse; } .content td, .content th { border:1px solid rgba(255,255,255,.14); padding:6px 10px; }
+    .content iframe { max-width:100%; }
+    .origin { border-top:1px solid rgba(255,255,255,.1); margin-top:38px; padding-top:16px; color:var(--muted); font-size:.92rem; }
+    footer { padding:26px 0 46px; color:var(--muted); }
+  </style>
+</head>
+<body>
+  <header class="wrap">
+    <nav aria-label="Main navigation">
+      <a class="brand" href="../index.html">Mohamed Ben Achour</a>
+      <div class="nav-links">
+        <a href="../articles.html">Articles</a>
+        <a href="https://github.com/mbenachour">GitHub</a>
+        <a href="https://huggingface.co/mbenachour">Hugging Face</a>
+        <a href="https://mohamedbenachour.net">Blog</a>
+      </div>
+    </nav>
+  </header>
+  <main class="wrap">
+    <h1>Automating AWS server builds from ServiceNow requests.</h1>
+    <div class="meta">October 15, 2018 · Devops</div>
+
+    <div class="content">
+<p>A lot of organizations are using ServiceNow to manage requests for creating new compute resources in the could ( i.e servers, lambda functions, containers &#8230;)</p>
+<p>Usually, CMP tools like Scalr, or even ServiceNow Cloud Management can ( to a certain degree ) automate this process, but there are two major issues with these approaches :</p>
+<p>1 &#8211; For these tools to be used properly they need lengthy customization to fit the business architecture of the organization, mapping all the business units, integrating with existing tools &#8230;</p>
+<p>2 &#8211; It can be expensive, the price per node model can add up quickly for companies with a large number of servers deployed.</p>
+<p>This a way to automate server build by using ServerNow Orchestration Module, and Serverless to build the integration.</p>
+<p><img data-recalc-dims="1" loading="lazy" decoding="async" data-attachment-id="481" data-permalink="https://mohamedbenachour.net/2018/10/15/automating-aws-server-builds-from-servicenow-requests/snow/" data-orig-file="../assets/posts/11349a6f-snow.png" data-orig-size="463,404" data-comments-opened="1" data-image-title="snow" data-image-description="" data-image-caption="" data-large-file="../assets/posts/11349a6f-snow.png" class="alignnone size-full wp-image-481" src="../assets/posts/11349a6f-snow.png" alt="snow" width="463" height="404" /></p>
+<h3>Creating ServiceNow Form</h3>
+<p>&nbsp;</p>
+<p><img data-recalc-dims="1" loading="lazy" decoding="async" data-attachment-id="482" data-permalink="https://mohamedbenachour.net/2018/10/15/automating-aws-server-builds-from-servicenow-requests/screen-shot-2018-10-15-at-10-16-32-am/" data-orig-file="../assets/posts/7b4efc12-screen-shot-2018-10-15-at-10-16-32-am.png" data-orig-size="918,334" data-comments-opened="1" data-image-title="Screen Shot 2018-10-15 at 10.16.32 AM" data-image-description="" data-image-caption="" data-large-file="../assets/posts/7b4efc12-screen-shot-2018-10-15-at-10-16-32-am.png" class="alignnone size-full wp-image-482" src="../assets/posts/7b4efc12-screen-shot-2018-10-15-at-10-16-32-am.png" alt="Screen Shot 2018-10-15 at 10.16.32 AM" width="918" height="334" /></p>
+<p><img data-recalc-dims="1" loading="lazy" decoding="async" data-attachment-id="483" data-permalink="https://mohamedbenachour.net/2018/10/15/automating-aws-server-builds-from-servicenow-requests/screen-shot-2018-10-15-at-10-17-35-am/" data-orig-file="../assets/posts/ad0e2d5a-screen-shot-2018-10-15-at-10-17-35-am.png" data-orig-size="917,282" data-comments-opened="1" data-image-title="Screen Shot 2018-10-15 at 10.17.35 AM" data-image-description="" data-image-caption="" data-large-file="../assets/posts/ad0e2d5a-screen-shot-2018-10-15-at-10-17-35-am.png" class="alignnone size-full wp-image-483" src="../assets/posts/ad0e2d5a-screen-shot-2018-10-15-at-10-17-35-am.png" alt="Screen Shot 2018-10-15 at 10.17.35 AM" width="917" height="282" /></p>
+<p>&nbsp;</p>
+<h3>ServiceNow workflow</h3>
+<p><img data-recalc-dims="1" loading="lazy" decoding="async" data-attachment-id="479" data-permalink="https://mohamedbenachour.net/2018/10/15/automating-aws-server-builds-from-servicenow-requests/screen-shot-2018-10-14-at-5-38-03-pm/" data-orig-file="../assets/posts/8728a26e-screen-shot-2018-10-14-at-5-38-03-pm.png" data-orig-size="1270,822" data-comments-opened="1" data-image-title="Screen Shot 2018-10-14 at 5.38.03 PM" data-image-description="" data-image-caption="" data-large-file="../assets/posts/8728a26e-screen-shot-2018-10-14-at-5-38-03-pm.png" class="alignnone size-full wp-image-479" src="../assets/posts/8728a26e-screen-shot-2018-10-14-at-5-38-03-pm.png" alt="Screen Shot 2018-10-14 at 5.38.03 PM" width="1270" height="822" /></p>
+<p>to simplify the process I&#8217;ve only used a simple RunScript Step, other activities can be added like CMDB integration, approvals, notifications, etc &#8230;</p>
+<p>here is a look at what the script does :</p>
+<ul>
+<li>Gets all the parameters from the form</li>
+<li>make an API call to API Gateway and Lambda</li>
+<li>Lambda will trigger</li>
+</ul>
+<p>[code]</p>
+<p>var os = current.variables.os;<br />
+var inst_size = current.variables.inst_size;</p>
+<p>var request = new sn_ws.RESTMessageV2();<br />
+request.setEndpoint(&#8216;<a href="https://9drnhpoorj.execute-api.us-east-1.amazonaws.com/dev/instance&#038;#8217" rel="nofollow">https://9drnhpoorj.execute-api.us-east-1.amazonaws.com/dev/instance&#038;#8217</a>;);<br />
+request.setBasicAuth(&#8220;apikey1&#8243;,&#8221;mutKJWAolpsdfsdflksd8ndew02234LNFQQvq&#8221;);<br />
+request.setHttpMethod(&#8216;POST&#8217;);<br />
+request.setRequestHeader(&#8220;Accept&#8221;, &#8220;application/json&#8221;);<br />
+request.setRequestHeader(&#8216;Content-Type&#8217;, &#8216;application/json&#8217;);</p>
+<p>request.setStringParameterNoEscape(&#8216;os&#8217;,current.variables.os);<br />
+request.setStringParameterNoEscape(&#8216;inst_size&#8217;,current.variables.inst_size);<br />
+request.setStringParameterNoEscape(&#8216;volume_size&#8217;,current.variables.volume_size1);</p>
+<p>request.setRequestHeader(&#8216;Content-Type&#8217;, &#8216;application/json&#8217;);<br />
+request.setRequestBody(&#8216;{&#8220;os&#8221;:&#8221;${os}&#8221;,&#8221;inst_size&#8221;:&#8221;${inst_size}&#8221;}&#8217;);<br />
+var response = request.execute();</p>
+<p>[/code]</p>
+<p>&nbsp;</p>
+<h3>The AWS side</h3>
+<p>To build things on the AWS side, I used <a href="http://serverless.com">Serverless,</a></p>
+<p>check out the code at the <a href="https://github.com/mbenachour/servicenow-serverbuild-aws">github</a> repo</p>
+<h3>Demo</h3>
+<p>if I request an EC2 instance that&#8217;s an m1.small running an amazon linux OS</p>
+<p><img data-recalc-dims="1" loading="lazy" decoding="async" data-attachment-id="480" data-permalink="https://mohamedbenachour.net/2018/10/15/automating-aws-server-builds-from-servicenow-requests/screen-shot-2018-10-14-at-5-49-25-pm/" data-orig-file="../assets/posts/4749fa6a-screen-shot-2018-10-14-at-5-49-25-pm.png" data-orig-size="1928,482" data-comments-opened="1" data-image-title="Screen Shot 2018-10-14 at 5.49.25 PM" data-image-description="" data-image-caption="" data-large-file="../assets/posts/4749fa6a-screen-shot-2018-10-14-at-5-49-25-pm.png" class="alignnone size-full wp-image-480" src="../assets/posts/4749fa6a-screen-shot-2018-10-14-at-5-49-25-pm.png" alt="Screen Shot 2018-10-14 at 5.49.25 PM" width="1928" height="482" /></p>
+<p>if I take a look at the AWS console I can see that the server is getting created  :</p>
+<p><img data-recalc-dims="1" loading="lazy" decoding="async" data-attachment-id="486" data-permalink="https://mohamedbenachour.net/2018/10/15/automating-aws-server-builds-from-servicenow-requests/screen-shot-2018-10-15-at-10-23-14-am/" data-orig-file="../assets/posts/63e976d0-screen-shot-2018-10-15-at-10-23-14-am.png" data-orig-size="706,221" data-comments-opened="1" data-image-title="Screen Shot 2018-10-15 at 10.23.14 AM" data-image-description="" data-image-caption="" data-large-file="../assets/posts/63e976d0-screen-shot-2018-10-15-at-10-23-14-am.png" class="alignnone size-full wp-image-486" src="../assets/posts/63e976d0-screen-shot-2018-10-15-at-10-23-14-am.png" alt="Screen Shot 2018-10-15 at 10.23.14 AM" width="706" height="221" /></p>
+<p>With the right parameters :</p>
+<p><img data-recalc-dims="1" loading="lazy" decoding="async" data-attachment-id="484" data-permalink="https://mohamedbenachour.net/2018/10/15/automating-aws-server-builds-from-servicenow-requests/screen-shot-2018-10-15-at-10-21-09-am/" data-orig-file="../assets/posts/c9f20c4e-screen-shot-2018-10-15-at-10-21-09-am.png" data-orig-size="482,208" data-comments-opened="1" data-image-title="Screen Shot 2018-10-15 at 10.21.09 AM" data-image-description="" data-image-caption="" data-large-file="../assets/posts/c9f20c4e-screen-shot-2018-10-15-at-10-21-09-am.png" class="alignnone size-full wp-image-484" src="../assets/posts/c9f20c4e-screen-shot-2018-10-15-at-10-21-09-am.png" alt="Screen Shot 2018-10-15 at 10.21.09 AM" width="482" height="208" /></p>
+<p>&nbsp;</p>
+
+    </div>
+    <p class="origin">Originally published on mohamedbenachour.net on October 15, 2018. <a href="https://mohamedbenachour.net/2018/10/15/automating-aws-server-builds-from-servicenow-requests/">View the original post</a>.</p>
+  </main>
+  <footer class="wrap"><span>© 2026 Mohamed Ben Achour</span></footer>
+</body>
+</html>

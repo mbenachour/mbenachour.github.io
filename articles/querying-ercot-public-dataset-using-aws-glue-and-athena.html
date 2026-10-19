@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Querying Ercot public dataset using AWS Glue and Athena · Mohamed Ben Achour</title>
+  <meta name="description" content="ERCOT is an acronym for Electric Reliability Council of Texas, it manages the flow of electric power to more than 25 million Texas customers — representing a…">
+  <style>
+    :root { color-scheme: dark; --bg:#050a12; --panel:#0a1626; --text:#eef7ff; --muted:#a9bed3; --line:rgba(94,234,255,.28); --accent:#5eeaff; --accent-2:#8bffb0; }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family: Inter, ui-sans-system, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: radial-gradient(circle at 18% 0%, rgba(94,234,255,.18), transparent 30rem), linear-gradient(180deg,#03060b 0%, var(--bg) 46%, #02040a 100%); color:var(--text); line-height:1.7; }
+    a { color:var(--accent); text-decoration:none; } a:hover { text-decoration:underline; }
+    .wrap { width:min(820px, calc(100% - 40px)); margin:0 auto; }
+    header { padding:28px 0 6px; } nav { display:flex; justify-content:space-between; align-items:center; gap:20px; flex-wrap:wrap; }
+    .brand { font-weight:800; color:var(--text); } .nav-links { display:flex; gap:18px; flex-wrap:wrap; font-size:.95rem; }
+    h1 { font-size:clamp(1.9rem,5vw,3rem); line-height:1.15; letter-spacing:-.03em; margin:30px 0 10px; }
+    .meta { color:var(--muted); font-size:.9rem; text-transform:uppercase; letter-spacing:.06em; margin-bottom:26px; }
+    .content img { max-width:100%; height:auto; border-radius:12px; }
+    .content figure { margin:24px 0; } .content figcaption { color:var(--muted); font-size:.9rem; text-align:center; }
+    .content pre { overflow:auto; background:var(--panel); border:1px solid rgba(94,234,255,.16); padding:16px; border-radius:12px; }
+    .content code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size:.92em; }
+    .content blockquote { border-left:3px solid var(--accent); margin:20px 0; padding:4px 18px; color:var(--muted); }
+    .content table { display:block; overflow-x:auto; border-collapse:collapse; } .content td, .content th { border:1px solid rgba(255,255,255,.14); padding:6px 10px; }
+    .content iframe { max-width:100%; }
+    .origin { border-top:1px solid rgba(255,255,255,.1); margin-top:38px; padding-top:16px; color:var(--muted); font-size:.92rem; }
+    footer { padding:26px 0 46px; color:var(--muted); }
+  </style>
+</head>
+<body>
+  <header class="wrap">
+    <nav aria-label="Main navigation">
+      <a class="brand" href="../index.html">Mohamed Ben Achour</a>
+      <div class="nav-links">
+        <a href="../articles.html">Articles</a>
+        <a href="https://github.com/mbenachour">GitHub</a>
+        <a href="https://huggingface.co/mbenachour">Hugging Face</a>
+        <a href="https://mohamedbenachour.net">Blog</a>
+      </div>
+    </nav>
+  </header>
+  <main class="wrap">
+    <h1>Querying Ercot public dataset using AWS Glue and Athena</h1>
+    <div class="meta">November 12, 2018 · Energy/Smart Grid · machine learning</div>
+
+    <div class="content">
+<p>ERCOT is an acronym for Electric Reliability Council of Texas, it manages the flow of electric power to more than 25 million Texas customers &#8212; representing about 90 percent of the state’s electric load. As the independent system operator for the region, ERCOT schedules power on an electric grid that connects more than 46,500 miles of transmission lines and 600+ generation units. It also performs financial settlement for the competitive wholesale bulk-power market and administers retail switching for 7 million premises in competitive choice areas.</p>
+<p>ERCOT also offers an online and public dataset giving market participants information on a variety of topics related to the market of electricity in the state of Texas, which makes it a good candidate for AWS products: Glue and Athena.</p>
+<h3>Tools :</h3>
+<p><strong>AWS Glue </strong></p>
+<p>AWS Glue is a fully managed extract, transform, and load (ETL) service that makes it easy for customers to prepare and load their data for analytics</p>
+<p><strong>AWS Athena </strong></p>
+<p>Amazon Athena is an interactive query service that makes it easy to analyze data in Amazon S3 using standard SQL. Athena is serverless, so there is no infrastructure to manage, and you pay only for the queries that you run</p>
+<p><strong>Scraping Data :</strong></p>
+<p>the data on Ercot website is available as a collection of  .zip files, I used a python scraper from this <a href="https://github.com/oxtopus/ercot">github</a> repository to only collect CSV files.</p>
+<p>As an example, we will be collecting data about the total energy sold from this <a href="http://mis.ercot.com/misapp/GetReports.do?reportTypeId=12334&amp;reportTitle=DAM%20Total%20Energy%20Sold&amp;showHTMLView=&amp;mimicKey">page</a></p>
+<p>Using the previous tools the command would something like this :</p>
+<p>[code]</p>
+<p>python -m ercot.scraper &#8220;<a href="http://mis.ercot.com/misapp/GetReports.do?reportTypeId=12334&#038;reportTitle=DAM%20Total%20Energy%20Sold&#038;showHTMLView=&#038;mimicKey&#038;#8221" rel="nofollow">http://mis.ercot.com/misapp/GetReports.do?reportTypeId=12334&#038;reportTitle=DAM%20Total%20Energy%20Sold&#038;showHTMLView=&#038;mimicKey&#038;#8221</a>;</p>
+<p>[/code]</p>
+<p>the script will download the csv files and store them in a data folder :</p>
+<p><img data-recalc-dims="1" loading="lazy" decoding="async" data-attachment-id="492" data-permalink="https://mohamedbenachour.net/2018/11/12/querying-ercot-public-dataset-using-aws-glue-and-athena/screen-shot-2018-11-11-at-9-07-37-pm/" data-orig-file="../assets/posts/9dec14f7-screen-shot-2018-11-11-at-9-07-37-pm.png" data-orig-size="1216,786" data-comments-opened="1" data-image-title="Screen Shot 2018-11-11 at 9.07.37 PM" data-image-description="" data-image-caption="" data-large-file="../assets/posts/9dec14f7-screen-shot-2018-11-11-at-9-07-37-pm.png" class="alignnone size-full wp-image-492" src="../assets/posts/9dec14f7-screen-shot-2018-11-11-at-9-07-37-pm.png" alt="Screen Shot 2018-11-11 at 9.07.37 PM" width="1216" height="786" /></p>
+<p>At this point, we transfer the data to S3 to be ready for AWS Glue, an optimization of this process could consist of creating a lambda function with a schedule to continuously upload  new datasets</p>
+<p><strong>Creating a Crawler </strong></p>
+<p>you can add a Crawler in AWS Glue to be able to traverse datasets in S3 and create a table to be queried.</p>
+<p><img data-recalc-dims="1" loading="lazy" decoding="async" data-attachment-id="494" data-permalink="https://mohamedbenachour.net/2018/11/12/querying-ercot-public-dataset-using-aws-glue-and-athena/screen-shot-2018-11-11-at-9-31-44-pm/" data-orig-file="../assets/posts/e1b74e96-screen-shot-2018-11-11-at-9-31-44-pm.png" data-orig-size="1366,500" data-comments-opened="1" data-image-title="Screen Shot 2018-11-11 at 9.31.44 PM" data-image-description="" data-image-caption="" data-large-file="../assets/posts/e1b74e96-screen-shot-2018-11-11-at-9-31-44-pm.png" class="alignnone size-full wp-image-494" src="../assets/posts/e1b74e96-screen-shot-2018-11-11-at-9-31-44-pm.png" alt="Screen Shot 2018-11-11 at 9.31.44 PM" width="1366" height="500" /></p>
+<p>&nbsp;</p>
+<p>At the end of its run, the crawler creates a table that contains records gathered from all the CSV files we downloaded from EROCT public dataset, in this instance the table is called: <strong>damtotqtyengysoldnp</strong></p>
+<p><img data-recalc-dims="1" loading="lazy" decoding="async" data-attachment-id="493" data-permalink="https://mohamedbenachour.net/2018/11/12/querying-ercot-public-dataset-using-aws-glue-and-athena/screen-shot-2018-11-11-at-9-26-13-pm/" data-orig-file="../assets/posts/ddb5235b-screen-shot-2018-11-11-at-9-26-13-pm.png" data-orig-size="1952,644" data-comments-opened="1" data-image-title="Screen Shot 2018-11-11 at 9.26.13 PM" data-image-description="" data-image-caption="" data-large-file="../assets/posts/ddb5235b-screen-shot-2018-11-11-at-9-26-13-pm.png" class="alignnone size-full wp-image-493" src="../assets/posts/ddb5235b-screen-shot-2018-11-11-at-9-26-13-pm.png" alt="Screen Shot 2018-11-11 at 9.26.13 PM" width="1952" height="644" /></p>
+<p>&nbsp;</p>
+<p><strong>And now you can query Ahead! </strong></p>
+<p>using AWS Athena, you can run different queries on the table we generated previously, here are some few examples :</p>
+<h3><strong>Total energy sold by settlement point :</strong></h3>
+<p><img data-recalc-dims="1" loading="lazy" decoding="async" data-attachment-id="496" data-permalink="https://mohamedbenachour.net/2018/11/12/querying-ercot-public-dataset-using-aws-glue-and-athena/screen-shot-2018-11-11-at-9-53-54-pm/" data-orig-file="../assets/posts/3d01d2a6-screen-shot-2018-11-11-at-9-53-54-pm.png" data-orig-size="1304,912" data-comments-opened="1" data-image-title="Screen Shot 2018-11-11 at 9.53.54 PM" data-image-description="" data-image-caption="" data-large-file="../assets/posts/3d01d2a6-screen-shot-2018-11-11-at-9-53-54-pm.png" class="alignnone size-full wp-image-496" src="../assets/posts/3d01d2a6-screen-shot-2018-11-11-at-9-53-54-pm.png" alt="Screen Shot 2018-11-11 at 9.53.54 PM" width="1304" height="912" /></p>
+<p>&nbsp;</p>
+<h3><strong>Getting the hours of the day: 11/12/2018 with the Max  energy sold </strong></h3>
+<p><img data-recalc-dims="1" loading="lazy" decoding="async" data-attachment-id="497" data-permalink="https://mohamedbenachour.net/2018/11/12/querying-ercot-public-dataset-using-aws-glue-and-athena/screen-shot-2018-11-11-at-10-07-58-pm/" data-orig-file="../assets/posts/3cf96717-screen-shot-2018-11-11-at-10-07-58-pm.png" data-orig-size="1222,880" data-comments-opened="1" data-image-title="Screen Shot 2018-11-11 at 10.07.58 PM" data-image-description="" data-image-caption="" data-large-file="../assets/posts/3cf96717-screen-shot-2018-11-11-at-10-07-58-pm.png" class="alignnone size-full wp-image-497" src="../assets/posts/3cf96717-screen-shot-2018-11-11-at-10-07-58-pm.png" alt="Screen Shot 2018-11-11 at 10.07.58 PM" width="1222" height="880" /></p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+
+    </div>
+    <p class="origin">Originally published on mohamedbenachour.net on November 12, 2018. <a href="https://mohamedbenachour.net/2018/11/12/querying-ercot-public-dataset-using-aws-glue-and-athena/">View the original post</a>.</p>
+  </main>
+  <footer class="wrap"><span>© 2026 Mohamed Ben Achour</span></footer>
+</body>
+</html>

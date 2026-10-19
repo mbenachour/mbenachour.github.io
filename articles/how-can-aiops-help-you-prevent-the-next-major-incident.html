@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>How can AIOps help you prevent the next major incident. · Mohamed Ben Achour</title>
+  <meta name="description" content="What is it? AIOps is a term that has been used in the last few years to describe the ability to drive intelligence from the day-to-day data that IT operation…">
+  <style>
+    :root { color-scheme: dark; --bg:#050a12; --panel:#0a1626; --text:#eef7ff; --muted:#a9bed3; --line:rgba(94,234,255,.28); --accent:#5eeaff; --accent-2:#8bffb0; }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family: Inter, ui-sans-system, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: radial-gradient(circle at 18% 0%, rgba(94,234,255,.18), transparent 30rem), linear-gradient(180deg,#03060b 0%, var(--bg) 46%, #02040a 100%); color:var(--text); line-height:1.7; }
+    a { color:var(--accent); text-decoration:none; } a:hover { text-decoration:underline; }
+    .wrap { width:min(820px, calc(100% - 40px)); margin:0 auto; }
+    header { padding:28px 0 6px; } nav { display:flex; justify-content:space-between; align-items:center; gap:20px; flex-wrap:wrap; }
+    .brand { font-weight:800; color:var(--text); } .nav-links { display:flex; gap:18px; flex-wrap:wrap; font-size:.95rem; }
+    h1 { font-size:clamp(1.9rem,5vw,3rem); line-height:1.15; letter-spacing:-.03em; margin:30px 0 10px; }
+    .meta { color:var(--muted); font-size:.9rem; text-transform:uppercase; letter-spacing:.06em; margin-bottom:26px; }
+    .content img { max-width:100%; height:auto; border-radius:12px; }
+    .content figure { margin:24px 0; } .content figcaption { color:var(--muted); font-size:.9rem; text-align:center; }
+    .content pre { overflow:auto; background:var(--panel); border:1px solid rgba(94,234,255,.16); padding:16px; border-radius:12px; }
+    .content code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size:.92em; }
+    .content blockquote { border-left:3px solid var(--accent); margin:20px 0; padding:4px 18px; color:var(--muted); }
+    .content table { display:block; overflow-x:auto; border-collapse:collapse; } .content td, .content th { border:1px solid rgba(255,255,255,.14); padding:6px 10px; }
+    .content iframe { max-width:100%; }
+    .origin { border-top:1px solid rgba(255,255,255,.1); margin-top:38px; padding-top:16px; color:var(--muted); font-size:.92rem; }
+    footer { padding:26px 0 46px; color:var(--muted); }
+  </style>
+</head>
+<body>
+  <header class="wrap">
+    <nav aria-label="Main navigation">
+      <a class="brand" href="../index.html">Mohamed Ben Achour</a>
+      <div class="nav-links">
+        <a href="../articles.html">Articles</a>
+        <a href="https://github.com/mbenachour">GitHub</a>
+        <a href="https://huggingface.co/mbenachour">Hugging Face</a>
+        <a href="https://mohamedbenachour.net">Blog</a>
+      </div>
+    </nav>
+  </header>
+  <main class="wrap">
+    <h1>How can AIOps help you prevent the next major incident.</h1>
+    <div class="meta">September 19, 2018 · machine learning</div>
+
+    <div class="content">
+<h3>What is it?</h3>
+<p>AIOps is a term that has been used in the last few years to describe the ability to drive intelligence from the day-to-day data that IT operations generate. The data source could vary from monitoring tools like SolarWinds to service desk tools like ServiceNow to automation tools like configuration management ( chef, puppet &#8230; ), or log search platforms like Splunk</p>
+<p><img data-recalc-dims="1" loading="lazy" decoding="async" data-attachment-id="443" data-permalink="https://mohamedbenachour.net/2018/09/19/how-can-aiops-help-you-prevent-the-next-major-incident/untitled-diagram-5/" data-orig-file="../assets/posts/ca39bd20-untitled-diagram-5.jpg" data-orig-size="421,301" data-comments-opened="1" data-image-title="Untitled Diagram (5)" data-image-description="" data-image-caption="" data-large-file="../assets/posts/ca39bd20-untitled-diagram-5.jpg" class="alignnone size-full wp-image-443" src="../assets/posts/ca39bd20-untitled-diagram-5.jpg" alt="Untitled Diagram (5)" width="421" height="301" /></p>
+<h3></h3>
+<p>One area where AIOps can be an asset to operation teams is incident predictability and remediation, there are others like storage and capacity management, resources utilization &#8230;</p>
+<h3>How can AIOPS help prevent the next outage :</h3>
+<p>the footprint of digital systems and businesses is increasing every day and so is the speed at which the data is produced.</p>
+<p>For example, a Palo Alto firewall can produce up to 12 million events in one day, the manual correlation of data is nearly impossible, and that&#8217;s why we need an overview of the entire landscape of data produced by IT operations,  transformation of data to be able to serve as training and test sets for machine learning.</p>
+<p>Starting from the promise that an incident is a result of a change ( voluntary or involuntary) to a configuration, a device, a network, or an application, all these changes if monitored and reported on correctly can help create a good context to understand the root-cause analysis of the incident.</p>
+<p>You can create an ML model that will help you predict the next outage, notify operation teams, and help reduce the downtime.</p>
+<p>Suppose that you transformed the input data that you gathered from all your sources, organized it into dataset like the one below and used a <a href="https://en.wikipedia.org/wiki/Supervised_learning">supervised learning</a> process to create an ML model :</p>
+<p><img data-recalc-dims="1" loading="lazy" decoding="async" data-attachment-id="444" data-permalink="https://mohamedbenachour.net/2018/09/19/how-can-aiops-help-you-prevent-the-next-major-incident/screen-shot-2018-09-18-at-10-20-52-pm/" data-orig-file="../assets/posts/c0dbd1a1-screen-shot-2018-09-18-at-10-20-52-pm.png" data-orig-size="1050,258" data-comments-opened="1" data-image-title="Screen Shot 2018-09-18 at 10.20.52 PM" data-image-description="" data-image-caption="" data-large-file="../assets/posts/c0dbd1a1-screen-shot-2018-09-18-at-10-20-52-pm.png" class="alignnone size-full wp-image-444" src="../assets/posts/c0dbd1a1-screen-shot-2018-09-18-at-10-20-52-pm.png" alt="Screen Shot 2018-09-18 at 10.20.52 PM" width="1050" height="258" /></p>
+<p>your model will be able to make predictions of future incidents when fed with real-time input coming from your tools and logs :</p>
+<p><img data-recalc-dims="1" loading="lazy" decoding="async" data-attachment-id="446" data-permalink="https://mohamedbenachour.net/2018/09/19/how-can-aiops-help-you-prevent-the-next-major-incident/untitled-diagram-7/" data-orig-file="../assets/posts/386fc07c-untitled-diagram-7.jpg" data-orig-size="431,321" data-comments-opened="1" data-image-title="Untitled Diagram (7)" data-image-description="" data-image-caption="" data-large-file="../assets/posts/386fc07c-untitled-diagram-7.jpg" class="alignnone size-full wp-image-446" src="../assets/posts/386fc07c-untitled-diagram-7.jpg" alt="Untitled Diagram (7)" width="431" height="321" /></p>
+<p>over time, with more data, your model will get better at detecting future anomalies, with much more accuracy.</p>
+<h3>in conclusion</h3>
+<p>There is a lot of writing out there about AIOps, but the application, in my opinion, is a bit harder.</p>
+<p>For different reasons, one being the spectrum of toolset in IT operations is very wide, and two being that the data structures are different from one organization to another, which means that trying to put a generic machine learning process to produce insights, will be at worst impossible and at best will lack accuracy.</p>
+<p>For an organization to be able to get intelligent insights from  AIOps, there has to be an internal effort to train your models, because the quality of your future prediction of major incidents will essentially depend on the quality of your training and test sets.</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>Links :</p>
+<p><a href="https://blogs.gartner.com/andrew-lerner/2017/08/09/aiops-platforms/" rel="nofollow">https://blogs.gartner.com/andrew-lerner/2017/08/09/aiops-platforms/</a></p>
+<p><a href="https://www.ca.com/us/products/aiops.html" rel="nofollow">https://www.ca.com/us/products/aiops.html</a></p>
+<p><a href="https://www.splunk.com/blog/2017/11/16/what-is-aiops-and-what-it-means-for-you.html" rel="nofollow">https://www.splunk.com/blog/2017/11/16/what-is-aiops-and-what-it-means-for-you.html</a></p>
+
+    </div>
+    <p class="origin">Originally published on mohamedbenachour.net on September 19, 2018. <a href="https://mohamedbenachour.net/2018/09/19/how-can-aiops-help-you-prevent-the-next-major-incident/">View the original post</a>.</p>
+  </main>
+  <footer class="wrap"><span>© 2026 Mohamed Ben Achour</span></footer>
+</body>
+</html>

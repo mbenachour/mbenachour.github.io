@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Local (and S3) cloud storage server using Minio · Mohamed Ben Achour</title>
+  <meta name="description" content="Minio is a local cloud object storage server, it’s open source, released under Apache License V2.0, allowing developers and devops to have a local and a publ…">
+  <style>
+    :root { color-scheme: dark; --bg:#050a12; --panel:#0a1626; --text:#eef7ff; --muted:#a9bed3; --line:rgba(94,234,255,.28); --accent:#5eeaff; --accent-2:#8bffb0; }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family: Inter, ui-sans-system, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: radial-gradient(circle at 18% 0%, rgba(94,234,255,.18), transparent 30rem), linear-gradient(180deg,#03060b 0%, var(--bg) 46%, #02040a 100%); color:var(--text); line-height:1.7; }
+    a { color:var(--accent); text-decoration:none; } a:hover { text-decoration:underline; }
+    .wrap { width:min(820px, calc(100% - 40px)); margin:0 auto; }
+    header { padding:28px 0 6px; } nav { display:flex; justify-content:space-between; align-items:center; gap:20px; flex-wrap:wrap; }
+    .brand { font-weight:800; color:var(--text); } .nav-links { display:flex; gap:18px; flex-wrap:wrap; font-size:.95rem; }
+    h1 { font-size:clamp(1.9rem,5vw,3rem); line-height:1.15; letter-spacing:-.03em; margin:30px 0 10px; }
+    .meta { color:var(--muted); font-size:.9rem; text-transform:uppercase; letter-spacing:.06em; margin-bottom:26px; }
+    .content img { max-width:100%; height:auto; border-radius:12px; }
+    .content figure { margin:24px 0; } .content figcaption { color:var(--muted); font-size:.9rem; text-align:center; }
+    .content pre { overflow:auto; background:var(--panel); border:1px solid rgba(94,234,255,.16); padding:16px; border-radius:12px; }
+    .content code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size:.92em; }
+    .content blockquote { border-left:3px solid var(--accent); margin:20px 0; padding:4px 18px; color:var(--muted); }
+    .content table { display:block; overflow-x:auto; border-collapse:collapse; } .content td, .content th { border:1px solid rgba(255,255,255,.14); padding:6px 10px; }
+    .content iframe { max-width:100%; }
+    .origin { border-top:1px solid rgba(255,255,255,.1); margin-top:38px; padding-top:16px; color:var(--muted); font-size:.92rem; }
+    footer { padding:26px 0 46px; color:var(--muted); }
+  </style>
+</head>
+<body>
+  <header class="wrap">
+    <nav aria-label="Main navigation">
+      <a class="brand" href="../index.html">Mohamed Ben Achour</a>
+      <div class="nav-links">
+        <a href="../articles.html">Articles</a>
+        <a href="https://github.com/mbenachour">GitHub</a>
+        <a href="https://huggingface.co/mbenachour">Hugging Face</a>
+        <a href="https://mohamedbenachour.net">Blog</a>
+      </div>
+    </nav>
+  </header>
+  <main class="wrap">
+    <h1>Local (and S3) cloud storage server using Minio</h1>
+    <div class="meta">January 3, 2017 · Devops</div>
+
+    <div class="content">
+<p>Minio is a local cloud object storage server, it&#8217;s open source, released under Apache License V2.0, allowing developers and devops to have a local and a public cloud storage to:</p>
+<ul>
+<li>backup VMs</li>
+<li>backup containers</li>
+<li>store unstructured Data ( photos, files, &#8230;)</li>
+<li>store objects in AWS S3</li>
+<li>store objects using SDKs (GO, Javascripts, Java )</li>
+</ul>
+<p>to start a server you can use the container image of MiniO available on Docker hub here :</p>
+<p><a href="https://hub.docker.com/r/minio/minio/">mini0/minio</a></p>
+<p>you can run this cmd :</p>
+<blockquote><p>docker pull minio/minio</p></blockquote>
+<p>to start the server run :</p>
+<blockquote><p> docker run -p 9000:9000 minio/minio server /export</p></blockquote>
+<p>you can access the web UI at <a href="http://localhost:9000" rel="nofollow">http://localhost:9000</a></p>
+<p><img data-recalc-dims="1" loading="lazy" decoding="async" data-attachment-id="336" data-permalink="https://mohamedbenachour.net/2017/01/03/local-and-s3-cloud-storage-server-using-minio/screen-shot-2017-01-02-at-7-21-48-pm/" data-orig-file="../assets/posts/84fa11c0-screen-shot-2017-01-02-at-7-21-48-pm.png" data-orig-size="2506,1252" data-comments-opened="1" data-image-title="screen-shot-2017-01-02-at-7-21-48-pm" data-image-description="" data-image-caption="" data-large-file="../assets/posts/84fa11c0-screen-shot-2017-01-02-at-7-21-48-pm.png" class="alignnone size-full wp-image-336" src="../assets/posts/84fa11c0-screen-shot-2017-01-02-at-7-21-48-pm.png" alt="screen-shot-2017-01-02-at-7-21-48-pm" width="2506" height="1252" /></p>
+<p>the access key and secret key for the local server are generated at the start of the server</p>
+<p><strong>create a bucket :</strong></p>
+<p><img data-recalc-dims="1" loading="lazy" decoding="async" data-attachment-id="345" data-permalink="https://mohamedbenachour.net/2017/01/03/local-and-s3-cloud-storage-server-using-minio/screen-shot-2017-01-02-at-9-15-52-pm/" data-orig-file="../assets/posts/b579f0b7-screen-shot-2017-01-02-at-9-15-52-pm.png" data-orig-size="1220,326" data-comments-opened="1" data-image-title="screen-shot-2017-01-02-at-9-15-52-pm" data-image-description="" data-image-caption="" data-large-file="../assets/posts/b579f0b7-screen-shot-2017-01-02-at-9-15-52-pm.png" class="alignnone size-full wp-image-345" src="../assets/posts/b579f0b7-screen-shot-2017-01-02-at-9-15-52-pm.png" alt="screen-shot-2017-01-02-at-9-15-52-pm" width="1220" height="326" /></p>
+<p>accessible also through the web UI:</p>
+<p><img data-recalc-dims="1" loading="lazy" decoding="async" data-attachment-id="350" data-permalink="https://mohamedbenachour.net/2017/01/03/local-and-s3-cloud-storage-server-using-minio/screen-shot-2017-01-02-at-9-18-00-pm/" data-orig-file="../assets/posts/00167c0e-screen-shot-2017-01-02-at-9-18-00-pm.png" data-orig-size="1582,708" data-comments-opened="1" data-image-title="screen-shot-2017-01-02-at-9-18-00-pm" data-image-description="" data-image-caption="" data-large-file="../assets/posts/00167c0e-screen-shot-2017-01-02-at-9-18-00-pm.png" class="alignnone size-full wp-image-350" src="../assets/posts/00167c0e-screen-shot-2017-01-02-at-9-18-00-pm.png" alt="screen-shot-2017-01-02-at-9-18-00-pm" width="1582" height="708" /></p>
+<p><strong>using your AWS S3 storage :</strong></p>
+<p>we need to add AWS S3 end point to the list of hosts :</p>
+<blockquote><p>mc config host add <strong>my-aws</strong> <a href="https://s3.amazonaws.com" rel="nofollow">https://s3.amazonaws.com</a> <strong>YOUR_ACCESS_KEY</strong>  <strong>YOUR_SECRET_KEY</strong></p></blockquote>
+<p>create a bucket in S3 :</p>
+<p><img data-recalc-dims="1" loading="lazy" decoding="async" data-attachment-id="360" data-permalink="https://mohamedbenachour.net/2017/01/03/local-and-s3-cloud-storage-server-using-minio/screen-shot-2017-01-02-at-10-30-19-pm/" data-orig-file="../assets/posts/0ec2f800-screen-shot-2017-01-02-at-10-30-19-pm.png" data-orig-size="1096,118" data-comments-opened="1" data-image-title="screen-shot-2017-01-02-at-10-30-19-pm" data-image-description="" data-image-caption="" data-large-file="../assets/posts/0ec2f800-screen-shot-2017-01-02-at-10-30-19-pm.png" class="alignnone size-full wp-image-360" src="../assets/posts/0ec2f800-screen-shot-2017-01-02-at-10-30-19-pm.png" alt="screen-shot-2017-01-02-at-10-30-19-pm" width="1096" height="118" /></p>
+<p>and it&#8217;s created  :</p>
+<p><img data-recalc-dims="1" loading="lazy" decoding="async" data-attachment-id="370" data-permalink="https://mohamedbenachour.net/2017/01/03/local-and-s3-cloud-storage-server-using-minio/screen-shot-2017-01-02-at-10-36-10-pm/" data-orig-file="../assets/posts/b7567f52-screen-shot-2017-01-02-at-10-36-10-pm.png" data-orig-size="808,644" data-comments-opened="1" data-image-title="screen-shot-2017-01-02-at-10-36-10-pm" data-image-description="" data-image-caption="" data-large-file="../assets/posts/b7567f52-screen-shot-2017-01-02-at-10-36-10-pm.png" class="alignnone size-full wp-image-370" src="../assets/posts/b7567f52-screen-shot-2017-01-02-at-10-36-10-pm.png" alt="screen-shot-2017-01-02-at-10-36-10-pm" width="808" height="644" /></p>
+
+    </div>
+    <p class="origin">Originally published on mohamedbenachour.net on January 3, 2017. <a href="https://mohamedbenachour.net/2017/01/03/local-and-s3-cloud-storage-server-using-minio/">View the original post</a>.</p>
+  </main>
+  <footer class="wrap"><span>© 2026 Mohamed Ben Achour</span></footer>
+</body>
+</html>

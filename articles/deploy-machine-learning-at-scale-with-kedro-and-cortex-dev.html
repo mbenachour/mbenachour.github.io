@@ -1,0 +1,384 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Deploy Machine Learning at scale with Kedro and Cortex.dev · Mohamed Ben Achour</title>
+  <meta name="description" content="ML model deployment in production is still an area that lacks conformity, nomenclature, and patterns. Aside from few technology companies who started the jou…">
+  <style>
+    :root { color-scheme: dark; --bg:#050a12; --panel:#0a1626; --text:#eef7ff; --muted:#a9bed3; --line:rgba(94,234,255,.28); --accent:#5eeaff; --accent-2:#8bffb0; }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family: Inter, ui-sans-system, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: radial-gradient(circle at 18% 0%, rgba(94,234,255,.18), transparent 30rem), linear-gradient(180deg,#03060b 0%, var(--bg) 46%, #02040a 100%); color:var(--text); line-height:1.7; }
+    a { color:var(--accent); text-decoration:none; } a:hover { text-decoration:underline; }
+    .wrap { width:min(820px, calc(100% - 40px)); margin:0 auto; }
+    header { padding:28px 0 6px; } nav { display:flex; justify-content:space-between; align-items:center; gap:20px; flex-wrap:wrap; }
+    .brand { font-weight:800; color:var(--text); } .nav-links { display:flex; gap:18px; flex-wrap:wrap; font-size:.95rem; }
+    h1 { font-size:clamp(1.9rem,5vw,3rem); line-height:1.15; letter-spacing:-.03em; margin:30px 0 10px; }
+    .meta { color:var(--muted); font-size:.9rem; text-transform:uppercase; letter-spacing:.06em; margin-bottom:26px; }
+    .content img { max-width:100%; height:auto; border-radius:12px; }
+    .content figure { margin:24px 0; } .content figcaption { color:var(--muted); font-size:.9rem; text-align:center; }
+    .content pre { overflow:auto; background:var(--panel); border:1px solid rgba(94,234,255,.16); padding:16px; border-radius:12px; }
+    .content code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size:.92em; }
+    .content blockquote { border-left:3px solid var(--accent); margin:20px 0; padding:4px 18px; color:var(--muted); }
+    .content table { display:block; overflow-x:auto; border-collapse:collapse; } .content td, .content th { border:1px solid rgba(255,255,255,.14); padding:6px 10px; }
+    .content iframe { max-width:100%; }
+    .origin { border-top:1px solid rgba(255,255,255,.1); margin-top:38px; padding-top:16px; color:var(--muted); font-size:.92rem; }
+    footer { padding:26px 0 46px; color:var(--muted); }
+  </style>
+</head>
+<body>
+  <header class="wrap">
+    <nav aria-label="Main navigation">
+      <a class="brand" href="../index.html">Mohamed Ben Achour</a>
+      <div class="nav-links">
+        <a href="../articles.html">Articles</a>
+        <a href="https://github.com/mbenachour">GitHub</a>
+        <a href="https://huggingface.co/mbenachour">Hugging Face</a>
+        <a href="https://mohamedbenachour.net">Blog</a>
+      </div>
+    </nav>
+  </header>
+  <main class="wrap">
+    <h1>Deploy Machine Learning at scale with Kedro and Cortex.dev</h1>
+    <div class="meta">January 20, 2021 · Uncategorized</div>
+
+    <div class="content">
+
+<p class="wp-block-paragraph">ML model deployment in production is still an area that lacks conformity, nomenclature, and patterns. Aside from few technology companies who started the journey early on, for late adopters of ML practices, it&#8217;s pretty much the wild west when it comes to the standards of model deployment.</p>
+
+
+
+<p class="wp-block-paragraph">Some other challenges include the culture of data science teams inside the organization, productionizing the process of model release, data scientists by nature comes from an academic and research background, and tend to focus more on perfecting the quality of predictions and classifications by  running different experiments, tracking them, and lowering cost functions, etc  .., while the data engineering realm tend to focus on streamlining the process of delivery of models to production. Here is a great <a href="https://medium.com/@assaf.pinhasi/machine-learning-products-are-built-by-teams-not-unicorns-f3420c0e770b">article</a> by  Assaf Pinhasi about  the cultural gap in data science teams.</p>
+
+
+
+<p class="wp-block-paragraph"></p>
+
+
+
+<h2 class="wp-block-heading">Traditional approach  </h2>
+
+
+
+<p class="wp-block-paragraph">The most common practice I have seen in different projects  and organizations tend to be :</p>
+
+
+
+<figure class="wp-block-image size-large"><img data-recalc-dims="1" loading="lazy" decoding="async" width="1612" height="962" data-attachment-id="713" data-permalink="https://mohamedbenachour.net/screen-shot-2021-01-17-at-10-53-54-pm/" data-orig-file="../assets/posts/16426a8b-screen-shot-2021-01-17-at-10.53.54-pm.png" data-orig-size="1612,962" data-comments-opened="1" data-image-title="screen-shot-2021-01-17-at-10.53.54-pm" data-image-description="" data-image-caption="" data-large-file="../assets/posts/16426a8b-screen-shot-2021-01-17-at-10.53.54-pm.png" src="../assets/posts/16426a8b-screen-shot-2021-01-17-at-10.53.54-pm.png" alt="" class="wp-image-713" /></figure>
+
+
+
+<p class="wp-block-paragraph">To run all the experiments needed for data explorations, model tuning, tools or platforms like Jupyter Notebook, Databricks notebooks and others are used by data scientists, once the model is trained, turned with the right parameters, and saved into artifact ( like a pickle file ), the  code get committed to a git repository, and the work of data engineering begins.</p>
+
+
+
+<p class="wp-block-paragraph">from that point on, a data engineer needs to :</p>
+
+
+
+<ul class="wp-block-list"><li><strong>Build a data pipeline</strong> by creating the training and automation scripts ( train.py and predict.py)</li><li><strong>Design a deployment strategy</strong> like a micro-services architecture with different services : inference, data preparation&#8230;</li><li><strong>Build a CI/CD pipeline</strong> with the right ML-driven automation tests</li><li><strong>Design model monitoring</strong> to capture concept drift</li><li><strong>Size the right hardware</strong> needed to run the inference and the training </li></ul>
+
+
+
+<p class="wp-block-paragraph">The boundaries  of this collaboration between data  science  and data engineering often feel blurry, leaving room for a lot of &#8220;who is supposed to do what&#8221;, and in most cases requires data engineers to spend time understanding the steps followed. </p>
+
+
+
+<h2 class="wp-block-heading">The new approach </h2>
+
+
+
+<p class="wp-block-paragraph">The idea behind this post is to showcase an example of streamlined ML deployment and training using  combination of two ML frameworks: <a href="https://github.com/quantumblacklabs/kedro">Kedro</a> and <a href="https://www.cortex.dev/">cortex.dev</a> with a minimum amount of code</p>
+
+
+
+<p class="has-text-align-center wp-block-paragraph"><em><strong>What is Kedro </strong>? Kedro is an open-source Python framework for creating reproducible, maintainable and modular data science code. It borrows concepts from software engineering and applies them to machine-learning code; applied concepts include modularity, separation of concerns and versioning.</em></p>
+
+
+
+<p class="has-text-align-center wp-block-paragraph"><em><strong>What is Cortex</strong>? Cortex is an open source platform for large-scale inference workloads, it has the fololwing capabilities :  Supports deploying TensorFlow, PyTorch, and other models as realtime or batch APIs.<br>Ensures high availability with availability zones and automated instance restarts.<br>Runs inference on on-demand instances or spot instances with on-demand backups.<br>Autoscales to handle production workloads with support for overprovisioning.</em></p>
+
+
+
+<p class="wp-block-paragraph">the combination of both tools allow us to implement a new approach that will :</p>
+
+
+
+<ul class="wp-block-list"><li><strong>Shift the data pipeline build</strong> to the data science side (kedro)</li><li><strong>Parametrize model training</strong> by externalizing inputs like : split the train/test data, algorithms used, learning rates, epochs ( kedro )</li><li>Introduce the notion of <strong>nodes and pipelines and data catalogues</strong> (kedro)</li><li><strong>Standardize outputs/inputs</strong> of nodes and persist results (kedro)</li><li>Guarantee <strong>scalability and repeatability</strong> : it&#8217;s easy to reuse nodes and pipelines for new data sources to create models specific to a similar business unit (kedro)</li><li><strong>Design and build the inference infrastructure </strong>(cortex)</li><li><strong>Flexibility</strong> to create batch or realtimeAPI  endpoints ( cortex )</li><li>ease the <strong>management of dependencies</strong> ( cortex &amp; kedro )</li></ul>
+
+
+
+<p class="wp-block-paragraph">the new architecture would look something  like this :</p>
+
+
+
+<figure class="wp-block-image size-large"><img data-recalc-dims="1" loading="lazy" decoding="async" width="1828" height="944" data-attachment-id="718" data-permalink="https://mohamedbenachour.net/screen-shot-2021-01-18-at-11-08-07-pm-1/" data-orig-file="../assets/posts/36c6ea5a-screen-shot-2021-01-18-at-11.08.07-pm-1.png" data-orig-size="1828,944" data-comments-opened="1" data-image-title="screen-shot-2021-01-18-at-11.08.07-pm-1" data-image-description="" data-image-caption="" data-large-file="../assets/posts/36c6ea5a-screen-shot-2021-01-18-at-11.08.07-pm-1.png" src="../assets/posts/36c6ea5a-screen-shot-2021-01-18-at-11.08.07-pm-1.png" alt="" class="wp-image-718" /></figure>
+
+
+
+<p class="wp-block-paragraph">One of Kedro&#8217;s features is to break the ML steps into nodes and pipelines, generally there is a </p>
+
+
+
+<p class="wp-block-paragraph"><strong>Data Engineering</strong> pipeline : for data processing, feature extraction, normalization, encoding &#8230;</p>
+
+
+
+<p class="wp-block-paragraph"><strong>Data Science</strong> pipeline : Splitting the data to training and test  sets, the designing the model(s), evaluation </p>
+
+
+
+<p class="wp-block-paragraph">Cortex on the other hand, takes care of creating and deploying the model generated by Kedro pipeline using a <strong>cortex operator</strong>, it create a kubernetes cluster in either AWS  or GCP using  a simple infrastructure description file :</p>
+
+
+
+<pre class="wp-block-syntaxhighlighter-code">region: us-east-1
+instance_type: t2.medium
+min_instances: 5
+max_instances: 10
+spot: true</pre>
+
+
+
+<p class="wp-block-paragraph">it also creates a load balancer to distribute the inference across all the cluster nodes, and an <strong>API gateway</strong> to serve the API responses</p>
+
+
+
+<h2 class="wp-block-heading">Example : New York Taxi Trip Duration </h2>
+
+
+
+<p class="wp-block-paragraph">I will be using a <a href="https://www.kaggle.com/c/nyc-taxi-trip-duration/data">kaggle</a> dataset that has the following data structure :</p>
+
+
+
+<figure class="wp-block-image size-large"><img data-recalc-dims="1" loading="lazy" decoding="async" width="1546" height="406" data-attachment-id="723" data-permalink="https://mohamedbenachour.net/screen-shot-2021-01-18-at-11-45-23-pm/" data-orig-file="../assets/posts/23fdbd7b-screen-shot-2021-01-18-at-11.45.23-pm.png" data-orig-size="1546,406" data-comments-opened="1" data-image-title="screen-shot-2021-01-18-at-11.45.23-pm" data-image-description="" data-image-caption="" data-large-file="../assets/posts/23fdbd7b-screen-shot-2021-01-18-at-11.45.23-pm.png" src="../assets/posts/23fdbd7b-screen-shot-2021-01-18-at-11.45.23-pm.png" alt="" class="wp-image-723" /></figure>
+
+
+
+<p class="wp-block-paragraph">we aim to create a model that will predict the trip duration based on the other input features like pick up date, pick up location ( longitude latitude) , drop off location etc &#8230;</p>
+
+
+
+<p class="wp-block-paragraph">Considering that we have sizable amount of training data ( 1458645 rows ) and there is no sparsity in the data, or no dimension reduction needed I will use <a href="https://lightgbm.readthedocs.io/en/latest/">lightgbm</a> for this proof of concept. </p>
+
+
+
+<h3 class="wp-block-heading">Creating Nodes and Pipelines </h3>
+
+
+
+<p class="wp-block-paragraph">Nodes are the building blocks of pipelines and represent tasks. Pipelines are used to combine nodes to build workflows, which range from simple machine learning workflows to end-to-end production workflows.</p>
+
+
+
+<p class="wp-block-paragraph">in our case a node will represent tasks like :</p>
+
+
+
+<ul class="wp-block-list"><li><strong>feature extraction</strong> : hour of the day, day of the month, month of the year</li><li><strong>Split data</strong> : train and test sets</li><li><strong>train</strong> <strong>model</strong> : training using lightgbm </li><li><strong>evaluate model </strong>: calculating metrics</li></ul>
+
+
+
+<figure class="wp-block-image size-large"><img data-recalc-dims="1" loading="lazy" decoding="async" width="716" height="908" data-attachment-id="741" data-permalink="https://mohamedbenachour.net/screen-shot-2021-01-19-at-9-35-33-pm/" data-orig-file="../assets/posts/eb7cf851-screen-shot-2021-01-19-at-9.35.33-pm.png" data-orig-size="716,908" data-comments-opened="1" data-image-title="screen-shot-2021-01-19-at-9.35.33-pm" data-image-description="" data-image-caption="" data-large-file="../assets/posts/eb7cf851-screen-shot-2021-01-19-at-9.35.33-pm.png" src="../assets/posts/eb7cf851-screen-shot-2021-01-19-at-9.35.33-pm.png" alt="" class="wp-image-741" /></figure>
+
+
+
+<p class="wp-block-paragraph">Pipeline organises the dependencies and execution order of your collection of nodes, and connects inputs and outputs while keeping your code modular. The pipeline determines the node execution order by resolving dependencies and does not necessarily run the nodes in the order in which they are passed in.</p>
+
+
+
+<p class="wp-block-paragraph">To benefit from Kedro’s automatic dependency resolution, you can chain your nodes into a pipeline, which is a list of nodes that use a shared set of variables.</p>
+
+
+
+<p class="wp-block-paragraph">Here is the <a href="https://github.com/mbenachour/ML-NY-taxi-duration-kedro-cortex/tree/master/ny_cab_trip_duration_kedro_training/src/ny_cab_trip_duration/pipelines/data_science">code</a> to both pipelines , to run the project , you can change directory to <strong>ny_cab_trip_duration_kedro_training</strong>,  and run the  command :</p>
+
+
+
+<pre class="wp-block-syntaxhighlighter-code">ny_cab_trip_duration_kedro_training$ Kedro run
+2021-01-19 19:35:43,309 - kedro.io.data_catalog - INFO - Loading data from `trips_train` (CSVDataSet)...
+2021-01-19 19:35:46,316 - kedro.pipeline.node - INFO - Running node: extract_features: extract_features([trips_train]) -&gt; [extract_features]
+2021-01-19 19:36:24,834 - numexpr.utils - INFO - Note: NumExpr detected 12 cores but "NUMEXPR_MAX_THREADS" not set, so enforcing safe limit of 8.
+2021-01-19 19:36:24,834 - numexpr.utils - INFO - NumExpr defaulting to 8 threads.
+2021-01-19 19:39:27,635 - kedro.io.data_catalog - INFO - Saving data</pre>
+
+
+
+<p class="wp-block-paragraph">This will run all nodes described above and generate the model file :</p>
+
+
+
+<figure class="wp-block-image size-large"><img data-recalc-dims="1" loading="lazy" decoding="async" width="642" height="640" data-attachment-id="731" data-permalink="https://mohamedbenachour.net/screen-shot-2021-01-19-at-7-58-30-pm/" data-orig-file="../assets/posts/1a4f6ca8-screen-shot-2021-01-19-at-7.58.30-pm.png" data-orig-size="642,640" data-comments-opened="1" data-image-title="screen-shot-2021-01-19-at-7.58.30-pm" data-image-description="" data-image-caption="" data-large-file="../assets/posts/1a4f6ca8-screen-shot-2021-01-19-at-7.58.30-pm.png" src="../assets/posts/1a4f6ca8-screen-shot-2021-01-19-at-7.58.30-pm.png" alt="" class="wp-image-731" /></figure>
+
+
+
+<h3 class="wp-block-heading">Model Deployment With Cortex </h3>
+
+
+
+<p class="wp-block-paragraph">The amount of code needed for deployment is really minimal with cortex which makes automation and streamlining deployment extremely easy, in few steps we can have APIs deployed with latest version  of  the model , here are the steps :</p>
+
+
+
+<ul class="wp-block-list"><li>Build a cloud deployment cluster</li><li>Deploy the model</li></ul>
+
+
+
+<p class="wp-block-paragraph"><strong>Build cloud kubernetes cluster:</strong></p>
+
+
+
+<pre class="wp-block-syntaxhighlighter-code">$cortex cluster  up -c  basic-cluster.yaml --aws-key REDACTED_AWS_ACCESS_KEY_ID --aws-secret REDACTED_AWS_SECRET_ACCESS_KEY
+
+￮ creating a new s3 bucket: cortex-6a2d11117c ✓
+￮ creating a new cloudwatch log group: cortex ✓
+￮ creating cloudwatch dashboard: cortex ✓
+￮ creating api gateway: cortex ✓
+￮ spinning up the cluster (this will take about 15 minutes) ...</pre>
+
+
+
+<p class="wp-block-paragraph">At the end of the execution :</p>
+
+
+
+<pre class="wp-block-syntaxhighlighter-code">[✔]  EKS cluster "cortex" in "us-east-1" region is ready
+
+￮ updating cluster configuration ✓
+￮ configuring networking (this might take a few minutes) ✓
+￮ configuring autoscaling ✓
+￮ configuring logging ✓
+￮ configuring metrics ✓
+￮ starting operator ✓
+￮ waiting for load balancers ............................................................................ ✓
+￮ downloading docker images ✓
+
+cortex is ready!
+
+operator:          a1bcbfeb26cef442e92bbcd0daffbf42-01a64d913ebbf7b6.elb.us-east-1.amazonaws.com
+api load balancer: a8e87f75709de4e96bbc3871b8ef9ceb-a6ec41dfe22e0c12.elb.us-east-1.amazonaws.com
+api gateway:       https://g06o0hssmj.execute-api.us-east-1.amazonaws.com</pre>
+
+
+
+<p class="wp-block-paragraph"><strong>Deploy Model </strong></p>
+
+
+
+<p class="wp-block-paragraph"><strong><em>Note</em></strong> : I have  copied the model created  by Kedro pipeline  to S3 under<strong> s3://cortex-6a2d11117c/tmp/</strong></p>
+
+
+
+<p class="wp-block-paragraph">First we create a descriptive YAML of the model:</p>
+
+
+
+<pre class="wp-block-syntaxhighlighter-code">- name: trip-estimator
+  kind: RealtimeAPI
+  predictor:
+    type: python
+    path: predictor.py
+    config:
+      model: s3://cortex-6a2d11117c/tmp/
+  monitoring:
+    model_type: regression</pre>
+
+
+
+<p class="wp-block-paragraph">Deploying it is as easy as : </p>
+
+
+
+<pre class="wp-block-syntaxhighlighter-code">cortex-trip-estimator$ cortex deploy trip_estimator.yaml
+using aws environment
+
+updating trip-estimator (RealtimeAPI)
+
+cortex get                  (show api statuses)
+cortex get trip-estimator   (show api info)
+cortex logs trip-estimator  (stream api logs)</pre>
+
+
+
+<p class="wp-block-paragraph">To make sure the API is deployed : </p>
+
+
+
+<pre class="wp-block-syntaxhighlighter-code">cortex get
+env   realtime api     status   up-to-date   requested   last update   avg request   2XX
+aws   trip-estimator   live     1            1           12m16s        -             -</pre>
+
+
+
+<h2 class="wp-block-heading">Consuming the  API</h2>
+
+
+
+<p class="wp-block-paragraph">I created a small script to test API :</p>
+
+
+
+<pre class="wp-block-syntaxhighlighter-code">import requests
+endpoint = "https://g06o0hssmj.execute-api.us-east-1.amazonaws.com/trip-estimator"
+payload = {
+    "input1":2.0,
+    "input2":6.0,
+    "input3":-73.96147155761719,
+    "input5":40.774391174316406,
+    "input6":-73.9537124633789,
+    "input7":40.77536010742188,
+    "input8":0.6621858468807331,
+    "input9":0.007819358973817251,
+    "input10":0.007788946222373263,
+    "input11":6.0,
+    "input12":23.0,
+    "input13":33.0,
+    "input14":0.0,
+    "input15":3.0,
+    "input16":0.0,
+    "input17":0.0
+}
+prediction = requests.post(endpoint, payload)
+trip_duration = str(prediction.content,'utf-8')
+print("Trip duration is : ", trip_duration)</pre>
+
+
+
+<p class="wp-block-paragraph">Run the script :</p>
+
+
+
+<pre class="wp-block-syntaxhighlighter-code">python consume.py</pre>
+
+
+
+<p class="wp-block-paragraph">et voila !</p>
+
+
+
+<pre class="wp-block-syntaxhighlighter-code">cortex-trip-estimator$ python consume.py
+Trip duration is :  5.252568735167378</pre>
+
+
+
+<h2 class="wp-block-heading">Conclusion  </h2>
+
+
+
+<p class="wp-block-paragraph">With the growing number of platforms, tools, and frameworks that facilitate the deployment of machine learning, we will eventually get to a point where we have defined patterns,  and standards.</p>
+
+
+
+<p class="wp-block-paragraph">The foundation of successful ML projects is having data scientists and data engineers speak the same language, by defining pipelines, tasks, inputs, outputs, at that point it becomes  easy to streamline and automate the delivery.</p>
+
+
+
+<p class="wp-block-paragraph"></p>
+
+    </div>
+    <p class="origin">Originally published on mohamedbenachour.net on January 20, 2021. <a href="https://mohamedbenachour.net/2021/01/20/deploy-machine-learning-at-scale-with-kedro-and-cortex-dev/">View the original post</a>.</p>
+  </main>
+  <footer class="wrap"><span>© 2026 Mohamed Ben Achour</span></footer>
+</body>
+</html>

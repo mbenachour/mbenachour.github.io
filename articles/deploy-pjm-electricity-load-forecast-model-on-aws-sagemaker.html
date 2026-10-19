@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Deploy PJM Electricity Load Forecast Model on AWS SageMaker · Mohamed Ben Achour</title>
+  <meta name="description" content="in the energy industry, forecasting the grid load is vital for various commercial optimizations around Day Ahead and Real Time trading, but it also help Inde…">
+  <style>
+    :root { color-scheme: dark; --bg:#050a12; --panel:#0a1626; --text:#eef7ff; --muted:#a9bed3; --line:rgba(94,234,255,.28); --accent:#5eeaff; --accent-2:#8bffb0; }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family: Inter, ui-sans-system, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: radial-gradient(circle at 18% 0%, rgba(94,234,255,.18), transparent 30rem), linear-gradient(180deg,#03060b 0%, var(--bg) 46%, #02040a 100%); color:var(--text); line-height:1.7; }
+    a { color:var(--accent); text-decoration:none; } a:hover { text-decoration:underline; }
+    .wrap { width:min(820px, calc(100% - 40px)); margin:0 auto; }
+    header { padding:28px 0 6px; } nav { display:flex; justify-content:space-between; align-items:center; gap:20px; flex-wrap:wrap; }
+    .brand { font-weight:800; color:var(--text); } .nav-links { display:flex; gap:18px; flex-wrap:wrap; font-size:.95rem; }
+    h1 { font-size:clamp(1.9rem,5vw,3rem); line-height:1.15; letter-spacing:-.03em; margin:30px 0 10px; }
+    .meta { color:var(--muted); font-size:.9rem; text-transform:uppercase; letter-spacing:.06em; margin-bottom:26px; }
+    .content img { max-width:100%; height:auto; border-radius:12px; }
+    .content figure { margin:24px 0; } .content figcaption { color:var(--muted); font-size:.9rem; text-align:center; }
+    .content pre { overflow:auto; background:var(--panel); border:1px solid rgba(94,234,255,.16); padding:16px; border-radius:12px; }
+    .content code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size:.92em; }
+    .content blockquote { border-left:3px solid var(--accent); margin:20px 0; padding:4px 18px; color:var(--muted); }
+    .content table { display:block; overflow-x:auto; border-collapse:collapse; } .content td, .content th { border:1px solid rgba(255,255,255,.14); padding:6px 10px; }
+    .content iframe { max-width:100%; }
+    .origin { border-top:1px solid rgba(255,255,255,.1); margin-top:38px; padding-top:16px; color:var(--muted); font-size:.92rem; }
+    footer { padding:26px 0 46px; color:var(--muted); }
+  </style>
+</head>
+<body>
+  <header class="wrap">
+    <nav aria-label="Main navigation">
+      <a class="brand" href="../index.html">Mohamed Ben Achour</a>
+      <div class="nav-links">
+        <a href="../articles.html">Articles</a>
+        <a href="https://github.com/mbenachour">GitHub</a>
+        <a href="https://huggingface.co/mbenachour">Hugging Face</a>
+        <a href="https://mohamedbenachour.net">Blog</a>
+      </div>
+    </nav>
+  </header>
+  <main class="wrap">
+    <h1>Deploy PJM Electricity Load Forecast Model on AWS SageMaker</h1>
+    <div class="meta">November 25, 2020 · Energy/Smart Grid · machine learning</div>
+
+    <div class="content">
+
+<p class="wp-block-paragraph">in the energy industry, forecasting the grid load is vital for various commercial optimizations around Day Ahead and Real Time trading, but it also help Independent Power Providers (IPPs) allocate the right generation unites.</p>
+
+
+
+<p class="wp-block-paragraph">we talked <a href="predicting-electricity-wholesale-prices-using-aws-machine-learning.html">previously</a> about energy markets, CAISO, PJM, ERCOT , and others. In this article the goal is not to talk about the accuracy of the model in predicting load, but to highlight AWS SageMaker way of deploying ML models .</p>
+
+
+
+<h4 class="wp-block-heading">The Dataset :</h4>
+
+
+
+<p class="wp-block-paragraph">You can use PJM tool dataminer to extract the load , dataminer is PJM’s enhanced data management tool, giving members and non-members easier, faster and more reliable access to public data formerly posted on pjm.com. </p>
+
+
+
+<p class="wp-block-paragraph"><a href="https://dataminer2.pjm.com/list">PJM dataMiner</a></p>
+
+
+
+<p class="wp-block-paragraph">the initial dataset will look something like :</p>
+
+
+
+<figure class="wp-block-image size-large"><img data-recalc-dims="1" loading="lazy" decoding="async" width="950" height="360" data-attachment-id="607" data-permalink="https://mohamedbenachour.net/screen-shot-2020-11-23-at-9-58-56-pm/" data-orig-file="../assets/posts/25cdaa7e-screen-shot-2020-11-23-at-9.58.56-pm.png" data-orig-size="950,360" data-comments-opened="1" data-image-title="screen-shot-2020-11-23-at-9.58.56-pm" data-image-description="" data-image-caption="" data-large-file="../assets/posts/25cdaa7e-screen-shot-2020-11-23-at-9.58.56-pm.png" src="../assets/posts/25cdaa7e-screen-shot-2020-11-23-at-9.58.56-pm.png" alt="" class="wp-image-607" /></figure>
+
+
+
+<p class="wp-block-paragraph">to simplify this example we can delete the middle two columns to just keep datetime and load in MW</p>
+
+
+
+<figure class="wp-block-image size-large"><img data-recalc-dims="1" loading="lazy" decoding="async" width="792" height="404" data-attachment-id="608" data-permalink="https://mohamedbenachour.net/screen-shot-2020-11-23-at-10-10-09-pm/" data-orig-file="../assets/posts/cd13660f-screen-shot-2020-11-23-at-10.10.09-pm.png" data-orig-size="792,404" data-comments-opened="1" data-image-title="screen-shot-2020-11-23-at-10.10.09-pm" data-image-description="" data-image-caption="" data-large-file="../assets/posts/cd13660f-screen-shot-2020-11-23-at-10.10.09-pm.png" src="../assets/posts/cd13660f-screen-shot-2020-11-23-at-10.10.09-pm.png" alt="" class="wp-image-608" /></figure>
+
+
+
+<h4 class="wp-block-heading">Splitting Training and Test Data</h4>
+
+
+
+<p class="wp-block-paragraph">we will split data into training and test</p>
+
+
+
+<p class="wp-block-paragraph">Training Data : 6578</p>
+
+
+
+<p class="wp-block-paragraph">Test Data: 2021</p>
+
+
+
+<h4 class="wp-block-heading">Feature engineering </h4>
+
+
+
+<p class="wp-block-paragraph">One transformation that will make on data is to create new features from datetime field :</p>
+
+
+
+<ul class="wp-block-list"><li>hour of the day</li><li>day of the week</li><li>month</li><li>quarter</li><li>year</li><li>day of the month</li><li>day of the year</li><li>week of the year</li></ul>
+
+
+
+<pre class="wp-block-syntaxhighlighter-code"># Create features from datetime index
+def create_features(df, label=None):
+    df['date'] = df.index
+    df['hour'] = df['date'].dt.hour
+    df['dayofweek'] = df['date'].dt.dayofweek
+    df['month'] = df['date'].dt.month
+    df['quarter'] = df['date'].dt.quarter
+    df['year'] = df['date'].dt.year
+    df['dayofyear'] = df['date'].dt.dayofyear
+    df['dayofmonth'] = df['date'].dt.day
+    df['weekofyear'] = df['date'].dt.weekofyear</pre>
+
+
+
+<h4 class="wp-block-heading">Building Model with XGBoost </h4>
+
+
+
+<p class="wp-block-paragraph">what is XGBoost :</p>
+
+
+
+<p class="wp-block-paragraph">XGBoost is an optimized distributed gradient boosting library designed to be highly efficient, flexible and portable. It implements machine learning algorithms under the Gradient Boosting framework. XGBoost provides a parallel tree boosting (also known as GBDT, GBM) that solve many data science problems in a fast and accurate way.</p>
+
+
+
+<p class="wp-block-paragraph">XGBoost algorithms are supervised machine learning that has a classifier and a regressor implementation</p>
+
+
+
+<p class="wp-block-paragraph">in this instance we will use xgboost regressor for predictions :</p>
+
+
+
+<pre class="wp-block-syntaxhighlighter-code">reg = xgb.XGBRegressor(n_estimators=1000)
+reg.fit(X_train, y_train,
+        eval_set=[(X_train, y_train), (X_test, y_test)],
+        verbose = True)</pre>
+
+
+
+<h4 class="wp-block-heading">Results of prediction </h4>
+
+
+
+<figure class="wp-block-image size-large"><img data-recalc-dims="1" loading="lazy" decoding="async" width="1866" height="628" data-attachment-id="613" data-permalink="https://mohamedbenachour.net/screen-shot-2020-11-24-at-6-29-28-pm/" data-orig-file="../assets/posts/13ff5db5-screen-shot-2020-11-24-at-6.29.28-pm.png" data-orig-size="1866,628" data-comments-opened="1" data-image-title="screen-shot-2020-11-24-at-6.29.28-pm" data-image-description="" data-image-caption="" data-large-file="../assets/posts/13ff5db5-screen-shot-2020-11-24-at-6.29.28-pm.png" src="../assets/posts/13ff5db5-screen-shot-2020-11-24-at-6.29.28-pm.png" alt="" class="wp-image-613" /></figure>
+
+
+
+<h3 class="wp-block-heading">AWS Endpoint Deployment </h3>
+
+
+
+<p class="wp-block-paragraph">to be able to deploy the model on AWS we must :</p>
+
+
+
+<ul class="wp-block-list"><li>save the model in s3</li><li>create a container with model file</li><li>create a sagemaker Endpoint configuration </li><li>create sagemaker Endpoint</li></ul>
+
+
+
+<figure class="wp-block-image size-large"><img data-recalc-dims="1" loading="lazy" decoding="async" width="780" height="750" data-attachment-id="619" data-permalink="https://mohamedbenachour.net/screen-shot-2020-11-24-at-6-56-28-pm/" data-orig-file="../assets/posts/6e5bb2db-screen-shot-2020-11-24-at-6.56.28-pm.png" data-orig-size="780,750" data-comments-opened="1" data-image-title="screen-shot-2020-11-24-at-6.56.28-pm" data-image-description="" data-image-caption="" data-large-file="../assets/posts/6e5bb2db-screen-shot-2020-11-24-at-6.56.28-pm.png" src="../assets/posts/6e5bb2db-screen-shot-2020-11-24-at-6.56.28-pm.png" alt="" class="wp-image-619" /></figure>
+
+
+
+<h4 class="wp-block-heading">Saving Model to s3</h4>
+
+
+
+<pre class="wp-block-syntaxhighlighter-code">region = 'us-east-1'
+bucket = "pjm-load-forecast"
+prefix = 'sagemaker/pjm-forecast-xgboost-byo'
+bucket_path = 'https://s3-{}.amazonaws.com/{}'.format(region, bucket)
+
+fObj = open("model.tar.gz", 'rb')
+key= os.path.join(prefix, model_file_name, 'model.tar.gz')
+boto3.Session().resource('s3').Bucket(bucket).Object(key).upload_fileobj(fObj)</pre>
+
+
+
+<h4 class="wp-block-heading">Creating Model / Endpoint configuration / Endpoints</h4>
+
+
+
+<p class="wp-block-paragraph">importing XGBoost image </p>
+
+
+
+<pre class="wp-block-syntaxhighlighter-code">import sagemaker
+container = sagemaker.image_uris.retrieve("xgboost", boto3.Session().region_name, "1.2-1")</pre>
+
+
+
+<p class="wp-block-paragraph">creating Model</p>
+
+
+
+<pre class="wp-block-syntaxhighlighter-code">primary_container = {
+    'Image': container,
+    'ModelDataUrl': model_url,
+}
+role = get_execution_role()
+create_model_response2 = sm_client.create_model(
+    ModelName = model_name,
+    ExecutionRoleArn = role,
+    PrimaryContainer = primary_container)
+</pre>
+
+
+
+<p class="wp-block-paragraph">Once created the models are saved to AWS Sagemaker</p>
+
+
+
+<figure class="wp-block-image size-large"><img data-recalc-dims="1" loading="lazy" decoding="async" width="1002" height="760" data-attachment-id="623" data-permalink="https://mohamedbenachour.net/screen-shot-2020-11-24-at-7-02-39-pm/" data-orig-file="../assets/posts/343d49eb-screen-shot-2020-11-24-at-7.02.39-pm.png" data-orig-size="1002,760" data-comments-opened="1" data-image-title="screen-shot-2020-11-24-at-7.02.39-pm" data-image-description="" data-image-caption="" data-large-file="../assets/posts/343d49eb-screen-shot-2020-11-24-at-7.02.39-pm.png" src="../assets/posts/343d49eb-screen-shot-2020-11-24-at-7.02.39-pm.png" alt="" class="wp-image-623" /></figure>
+
+
+
+<p class="wp-block-paragraph">Create endpoint configuration</p>
+
+
+
+<pre class="wp-block-syntaxhighlighter-code">endpoint_config_name = 'PJM-LoadForecast-XGBoostEndpointConfig-' + strftime("%Y-%m-%d-%H-%M-%S", gmtime())
+print(endpoint_config_name)
+create_endpoint_config_response = sm_client.create_endpoint_config(
+    EndpointConfigName = endpoint_config_name,
+    ProductionVariants=[{
+        'InstanceType':'ml.t2.medium',
+        'InitialInstanceCount':1,
+        'InitialVariantWeight':1,
+        'ModelName':model_name,
+        'VariantName':'AllTraffic'}])</pre>
+
+
+
+<p class="wp-block-paragraph">Same goes for Endpoint configuration, once created you can view them on AWS console </p>
+
+
+
+<figure class="wp-block-image size-large"><img data-recalc-dims="1" loading="lazy" decoding="async" width="1116" height="524" data-attachment-id="625" data-permalink="https://mohamedbenachour.net/screen-shot-2020-11-24-at-7-04-46-pm/" data-orig-file="../assets/posts/3a93975b-screen-shot-2020-11-24-at-7.04.46-pm.png" data-orig-size="1116,524" data-comments-opened="1" data-image-title="screen-shot-2020-11-24-at-7.04.46-pm" data-image-description="" data-image-caption="" data-large-file="../assets/posts/3a93975b-screen-shot-2020-11-24-at-7.04.46-pm.png" src="../assets/posts/3a93975b-screen-shot-2020-11-24-at-7.04.46-pm.png" alt="" class="wp-image-625" /></figure>
+
+
+
+<p class="wp-block-paragraph">Deploy Endpoint</p>
+
+
+
+<pre class="wp-block-syntaxhighlighter-code">endpoint_name = 'PJM-LoadForecast-XGBoostEndpoint-' + strftime("%Y-%m-%d-%H-%M-%S", gmtime())
+print(endpoint_name)
+create_endpoint_response = sm_client.create_endpoint(
+    EndpointName=endpoint_name,
+    EndpointConfigName=endpoint_config_name)</pre>
+
+
+
+<h4 class="wp-block-heading">Validation </h4>
+
+
+
+<p class="wp-block-paragraph">SageMaker allow you to validate your endpoint , here a code snippet for that:</p>
+
+
+
+<pre class="wp-block-syntaxhighlighter-code">file_name = 'test_point.csv' 
+with open(file_name, 'r') as f:
+    payload = f.read().strip()
+print('payload',payload)
+response = runtime_client.invoke_endpoint(EndpointName=endpoint_name, 
+                                   ContentType='text/csv', 
+                                   Body=payload)
+result = response['Body'].read().decode('ascii')</pre>
+
+
+
+<p class="wp-block-paragraph">Notebook : you can find the notebook for this article on <a href="https://github.com/mbenachour/pjm-load-forecast-sagemaker-endpoint">github</a></p>
+
+
+
+<h4 class="wp-block-heading">Conclusion </h4>
+
+
+
+<p class="wp-block-paragraph">AWS Sagemaker has built-in algorithms for both supervised and unsupervised machine learning models. it provides a great platform for training, and deploying machine learning models into a production environment on AWS. By combining this powerful platform with the serverless capabilities of Amazon Simple Storage Service (S3), Amazon API Gateway, and AWS Lambda, it’s possible to transform an Amazon SageMaker endpoint into a web application that accepts new input data, potentially from a variety of sources, and presents the resulting inferences to an end user.</p>
+
+
+
+<p class="wp-block-paragraph"></p>
+
+    </div>
+    <p class="origin">Originally published on mohamedbenachour.net on November 25, 2020. <a href="https://mohamedbenachour.net/2020/11/25/deploy-pjm-electricity-load-forecast-model-on-aws-sagemaker/">View the original post</a>.</p>
+  </main>
+  <footer class="wrap"><span>© 2026 Mohamed Ben Achour</span></footer>
+</body>
+</html>

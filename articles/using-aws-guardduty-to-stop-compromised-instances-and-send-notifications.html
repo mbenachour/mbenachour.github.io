@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Using AWS GuardDuty to stop compromised instances and send notifications. · Mohamed Ben Achour</title>
+  <meta name="description" content="GuardDuty (announced in the 2017 edition of AWS Re:Invent) , is a managed threat detection service that continuously monitors for malicious or unauthorized b…">
+  <style>
+    :root { color-scheme: dark; --bg:#050a12; --panel:#0a1626; --text:#eef7ff; --muted:#a9bed3; --line:rgba(94,234,255,.28); --accent:#5eeaff; --accent-2:#8bffb0; }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family: Inter, ui-sans-system, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: radial-gradient(circle at 18% 0%, rgba(94,234,255,.18), transparent 30rem), linear-gradient(180deg,#03060b 0%, var(--bg) 46%, #02040a 100%); color:var(--text); line-height:1.7; }
+    a { color:var(--accent); text-decoration:none; } a:hover { text-decoration:underline; }
+    .wrap { width:min(820px, calc(100% - 40px)); margin:0 auto; }
+    header { padding:28px 0 6px; } nav { display:flex; justify-content:space-between; align-items:center; gap:20px; flex-wrap:wrap; }
+    .brand { font-weight:800; color:var(--text); } .nav-links { display:flex; gap:18px; flex-wrap:wrap; font-size:.95rem; }
+    h1 { font-size:clamp(1.9rem,5vw,3rem); line-height:1.15; letter-spacing:-.03em; margin:30px 0 10px; }
+    .meta { color:var(--muted); font-size:.9rem; text-transform:uppercase; letter-spacing:.06em; margin-bottom:26px; }
+    .content img { max-width:100%; height:auto; border-radius:12px; }
+    .content figure { margin:24px 0; } .content figcaption { color:var(--muted); font-size:.9rem; text-align:center; }
+    .content pre { overflow:auto; background:var(--panel); border:1px solid rgba(94,234,255,.16); padding:16px; border-radius:12px; }
+    .content code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size:.92em; }
+    .content blockquote { border-left:3px solid var(--accent); margin:20px 0; padding:4px 18px; color:var(--muted); }
+    .content table { display:block; overflow-x:auto; border-collapse:collapse; } .content td, .content th { border:1px solid rgba(255,255,255,.14); padding:6px 10px; }
+    .content iframe { max-width:100%; }
+    .origin { border-top:1px solid rgba(255,255,255,.1); margin-top:38px; padding-top:16px; color:var(--muted); font-size:.92rem; }
+    footer { padding:26px 0 46px; color:var(--muted); }
+  </style>
+</head>
+<body>
+  <header class="wrap">
+    <nav aria-label="Main navigation">
+      <a class="brand" href="../index.html">Mohamed Ben Achour</a>
+      <div class="nav-links">
+        <a href="../articles.html">Articles</a>
+        <a href="https://github.com/mbenachour">GitHub</a>
+        <a href="https://huggingface.co/mbenachour">Hugging Face</a>
+        <a href="https://mohamedbenachour.net">Blog</a>
+      </div>
+    </nav>
+  </header>
+  <main class="wrap">
+    <h1>Using AWS GuardDuty to stop compromised instances and send notifications.</h1>
+    <div class="meta">January 4, 2018 · Devops</div>
+    <figure class="content"><img src="../assets/posts/04fdee21-screen-shot-2018-01-04-at-9-43-11-am.png" alt=""></figure>
+    <div class="content">
+<p>GuardDuty  (announced in the 2017 edition of AWS Re:Invent) , is a managed threat detection service that continuously monitors for malicious or unauthorized behavior to help you protect your AWS accounts and workloads. It monitors for activity such as unusual API calls or potentially unauthorized deployments that indicate a possible account compromise. GuardDuty also detects potentially compromised instances or reconnaissance by attackers.</p>
+<p>with a minimal amount of code, and few clicks in the AWS console we can set up guardduty to scan EC2 fleets for eventual threats, notify a lambda function to stop the compromised instances and send an SMS notification using AWS SNS service:</p>
+<p><img data-recalc-dims="1" loading="lazy" decoding="async" data-attachment-id="378" data-permalink="https://mohamedbenachour.net/2018/01/04/using-aws-guardduty-to-stop-compromised-instances-and-send-notifications/screen-shot-2018-01-04-at-9-43-11-am/" data-orig-file="../assets/posts/04fdee21-screen-shot-2018-01-04-at-9-43-11-am.png" data-orig-size="661,340" data-comments-opened="1" data-image-title="Screen Shot 2018-01-04 at 9.43.11 AM" data-image-description="" data-image-caption="" data-large-file="../assets/posts/04fdee21-screen-shot-2018-01-04-at-9-43-11-am.png" class="alignnone size-full wp-image-378" src="../assets/posts/04fdee21-screen-shot-2018-01-04-at-9-43-11-am.png" alt="Screen Shot 2018-01-04 at 9.43.11 AM" width="661" height="340" /></p>
+<p><strong>1- Testing few threats</strong> :</p>
+<p>1-a &#8211; <strong>Bitcoin mining</strong> : one of the possible threats is using your EC2 instances for bitcoin mining , I started a bitcoind container on my EC2 instance to :</p>
+<p><img data-recalc-dims="1" loading="lazy" decoding="async" data-attachment-id="379" data-permalink="https://mohamedbenachour.net/2018/01/04/using-aws-guardduty-to-stop-compromised-instances-and-send-notifications/screen-shot-2018-01-04-at-9-53-26-am/" data-orig-file="../assets/posts/61ce4b50-screen-shot-2018-01-04-at-9-53-26-am.png" data-orig-size="779,103" data-comments-opened="1" data-image-title="Screen Shot 2018-01-04 at 9.53.26 AM" data-image-description="" data-image-caption="" data-large-file="../assets/posts/61ce4b50-screen-shot-2018-01-04-at-9-53-26-am.png" class="alignnone size-full wp-image-379" src="../assets/posts/61ce4b50-screen-shot-2018-01-04-at-9-53-26-am.png" alt="Screen Shot 2018-01-04 at 9.53.26 AM" width="779" height="103" /></p>
+<p>1-b <strong>SSH brute-force</strong> : I&#8217;m not using any username and passwords dictionaries</p>
+<p><img data-recalc-dims="1" loading="lazy" decoding="async" data-attachment-id="380" data-permalink="https://mohamedbenachour.net/2018/01/04/using-aws-guardduty-to-stop-compromised-instances-and-send-notifications/screen-shot-2018-01-04-at-9-55-03-am/" data-orig-file="../assets/posts/6daf58a5-screen-shot-2018-01-04-at-9-55-03-am.png" data-orig-size="666,142" data-comments-opened="1" data-image-title="Screen Shot 2018-01-04 at 9.55.03 AM" data-image-description="" data-image-caption="" data-large-file="../assets/posts/6daf58a5-screen-shot-2018-01-04-at-9-55-03-am.png" class="alignnone size-full wp-image-380" src="../assets/posts/6daf58a5-screen-shot-2018-01-04-at-9-55-03-am.png" alt="Screen Shot 2018-01-04 at 9.55.03 AM" width="666" height="142" /></p>
+<p><strong>2- SNS topic</strong> : create an SNS topic called guardduty_alerts, with an SMS subscription</p>
+<p><strong>3- Lambda: </strong>for stopping instances and sending notifications</p>
+<blockquote><p>import boto3<br />
+import json</p>
+<p>def lambda_handler(event, context):<br />
+print(&#8216;loading handler&#8217;)# print(event)<br />
+sns = boto3.client(service_name = &#8220;sns&#8221;)<br />
+topicArn = &#8216;arn:aws:sns:us-east-1:9999999999:guardduty_alerts&#8217;</p>
+<p>#<br />
+result = json.loads(event)# result is now a dict<br />
+instanceId = event[&#8216;detail&#8217;][&#8216;resource&#8217;][&#8216;instanceDetails&#8217;][&#8216;instanceId&#8217;]<br />
+type = event[&#8216;detail&#8217;][&#8216;description&#8217;]<br />
+message = &#8220;your EC2 instance &#8221; + instanceId + &#8220;has been compromised by attack of &#8221; + type + &#8220;, it will be stopped&#8221;<br />
+sns.publish(<br />
+TopicArn = topicArn,<br />
+Message = message<br />
+)</p>
+<p>ec2 = boto3.client(&#8216;ec2&#8217;, region_name = &#8216;us-east-1&#8217;)<br />
+ec2.stop_instances(InstanceIds = [instanceId])<br />
+return</p></blockquote>
+<p>4- <strong>CloudWatch</strong> rule: create a cloudwatch rule that triggers the lambda function we created previosly</p>
+<p>&nbsp;</p>
+<p>et voila , all the threats that we did earlier shows in the GuardDuty findings :</p>
+<p><img data-recalc-dims="1" loading="lazy" decoding="async" data-attachment-id="382" data-permalink="https://mohamedbenachour.net/2018/01/04/using-aws-guardduty-to-stop-compromised-instances-and-send-notifications/screen-shot-2018-01-04-at-10-36-08-am/" data-orig-file="../assets/posts/d7dceafe-screen-shot-2018-01-04-at-10-36-08-am.png" data-orig-size="582,307" data-comments-opened="1" data-image-title="Screen Shot 2018-01-04 at 10.36.08 AM" data-image-description="" data-image-caption="" data-large-file="../assets/posts/d7dceafe-screen-shot-2018-01-04-at-10-36-08-am.png" class="alignnone size-full wp-image-382" src="../assets/posts/d7dceafe-screen-shot-2018-01-04-at-10-36-08-am.png" alt="Screen Shot 2018-01-04 at 10.36.08 AM" width="582" height="307" /></p>
+<p>Stoping the compromised instances :</p>
+<p><img data-recalc-dims="1" loading="lazy" decoding="async" data-attachment-id="384" data-permalink="https://mohamedbenachour.net/2018/01/04/using-aws-guardduty-to-stop-compromised-instances-and-send-notifications/screen-shot-2018-01-04-at-10-42-33-am/" data-orig-file="../assets/posts/4491e990-screen-shot-2018-01-04-at-10-42-33-am.png" data-orig-size="573,115" data-comments-opened="1" data-image-title="Screen Shot 2018-01-04 at 10.42.33 AM" data-image-description="" data-image-caption="" data-large-file="../assets/posts/4491e990-screen-shot-2018-01-04-at-10-42-33-am.png" class="alignnone size-full wp-image-384" src="../assets/posts/4491e990-screen-shot-2018-01-04-at-10-42-33-am.png" alt="Screen Shot 2018-01-04 at 10.42.33 AM" width="573" height="115" /></p>
+<p>sending notifications:</p>
+<p><img data-recalc-dims="1" loading="lazy" decoding="async" data-attachment-id="385" data-permalink="https://mohamedbenachour.net/2018/01/04/using-aws-guardduty-to-stop-compromised-instances-and-send-notifications/screen-shot-2018-01-04-at-10-43-29-am/" data-orig-file="../assets/posts/a38f580c-screen-shot-2018-01-04-at-10-43-29-am.png" data-orig-size="377,537" data-comments-opened="1" data-image-title="Screen Shot 2018-01-04 at 10.43.29 AM" data-image-description="" data-image-caption="" data-large-file="../assets/posts/a38f580c-screen-shot-2018-01-04-at-10-43-29-am.png" class="alignnone size-full wp-image-385" src="../assets/posts/a38f580c-screen-shot-2018-01-04-at-10-43-29-am.png" alt="Screen Shot 2018-01-04 at 10.43.29 AM" width="377" height="537" /></p>
+<p>&nbsp;</p>
+
+    </div>
+    <p class="origin">Originally published on mohamedbenachour.net on January 4, 2018. <a href="https://mohamedbenachour.net/2018/01/04/using-aws-guardduty-to-stop-compromised-instances-and-send-notifications/">View the original post</a>.</p>
+  </main>
+  <footer class="wrap"><span>© 2026 Mohamed Ben Achour</span></footer>
+</body>
+</html>

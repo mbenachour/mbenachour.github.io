@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Storing your ML Models with parameters · Mohamed Ben Achour</title>
+  <meta name="description" content="Often when training machine learning models you find yourself creating different estimators and tuning this parameter or that to get the results you want, yo…">
+  <style>
+    :root { color-scheme: dark; --bg:#050a12; --panel:#0a1626; --text:#eef7ff; --muted:#a9bed3; --line:rgba(94,234,255,.28); --accent:#5eeaff; --accent-2:#8bffb0; }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family: Inter, ui-sans-system, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: radial-gradient(circle at 18% 0%, rgba(94,234,255,.18), transparent 30rem), linear-gradient(180deg,#03060b 0%, var(--bg) 46%, #02040a 100%); color:var(--text); line-height:1.7; }
+    a { color:var(--accent); text-decoration:none; } a:hover { text-decoration:underline; }
+    .wrap { width:min(820px, calc(100% - 40px)); margin:0 auto; }
+    header { padding:28px 0 6px; } nav { display:flex; justify-content:space-between; align-items:center; gap:20px; flex-wrap:wrap; }
+    .brand { font-weight:800; color:var(--text); } .nav-links { display:flex; gap:18px; flex-wrap:wrap; font-size:.95rem; }
+    h1 { font-size:clamp(1.9rem,5vw,3rem); line-height:1.15; letter-spacing:-.03em; margin:30px 0 10px; }
+    .meta { color:var(--muted); font-size:.9rem; text-transform:uppercase; letter-spacing:.06em; margin-bottom:26px; }
+    .content img { max-width:100%; height:auto; border-radius:12px; }
+    .content figure { margin:24px 0; } .content figcaption { color:var(--muted); font-size:.9rem; text-align:center; }
+    .content pre { overflow:auto; background:var(--panel); border:1px solid rgba(94,234,255,.16); padding:16px; border-radius:12px; }
+    .content code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size:.92em; }
+    .content blockquote { border-left:3px solid var(--accent); margin:20px 0; padding:4px 18px; color:var(--muted); }
+    .content table { display:block; overflow-x:auto; border-collapse:collapse; } .content td, .content th { border:1px solid rgba(255,255,255,.14); padding:6px 10px; }
+    .content iframe { max-width:100%; }
+    .origin { border-top:1px solid rgba(255,255,255,.1); margin-top:38px; padding-top:16px; color:var(--muted); font-size:.92rem; }
+    footer { padding:26px 0 46px; color:var(--muted); }
+  </style>
+</head>
+<body>
+  <header class="wrap">
+    <nav aria-label="Main navigation">
+      <a class="brand" href="../index.html">Mohamed Ben Achour</a>
+      <div class="nav-links">
+        <a href="../articles.html">Articles</a>
+        <a href="https://github.com/mbenachour">GitHub</a>
+        <a href="https://huggingface.co/mbenachour">Hugging Face</a>
+        <a href="https://mohamedbenachour.net">Blog</a>
+      </div>
+    </nav>
+  </header>
+  <main class="wrap">
+    <h1>Storing your ML Models with parameters</h1>
+    <div class="meta">December 11, 2018 · machine learning</div>
+
+    <div class="content">
+<p>Often when training machine learning models you find yourself creating different estimators and tuning this parameter or that to get the results you want, you may also find yourself wanting to save the results of those iterations, to save you time in the future.</p>
+<p>that&#8217;s what I&#8217;m trying to address in this post, having some sort of artifact repository for machine learning models, but saving your parameters as metadata using the following design :</p>
+<p><img data-recalc-dims="1" loading="lazy" decoding="async" data-attachment-id="508" data-permalink="https://mohamedbenachour.net/2018/12/11/storing-your-ml-models-with-parameters/screen-shot-2018-12-09-at-8-38-33-pm/" data-orig-file="../assets/posts/f5a41b48-screen-shot-2018-12-09-at-8-38-33-pm.png" data-orig-size="1540,390" data-comments-opened="1" data-image-title="Screen Shot 2018-12-09 at 8.38.33 PM" data-image-description="" data-image-caption="" data-large-file="../assets/posts/f5a41b48-screen-shot-2018-12-09-at-8-38-33-pm.png" class="alignnone size-full wp-image-508" src="../assets/posts/f5a41b48-screen-shot-2018-12-09-at-8-38-33-pm.png" alt="Screen Shot 2018-12-09 at 8.38.33 PM" width="1540" height="390" /></p>
+<p>1: user uploads artifacts using pre-signed s3 URLs</p>
+<p>2  and 3: a putObject event triggers the lambda function to make an API call to an ec2 instance running an HTTP server  to read the estimator from S3 and get the parameters</p>
+<p>4: saving the parameters in DynamoDB</p>
+<p>&nbsp;</p>
+<h3>Uploading artifacts :</h3>
+<p>I use AWS S3 to store the assets, making use of the pre-signed URL feature that gives you the possibility to use temporary URLs to upload files to S3, which takes away the managing permissions.</p>
+<p>to orchestrate all this I like to use my favorite <a href="http://serverless.com">serverless</a> framework.</p>
+<p>here is the code on <a href="https://github.com/mbenachour/store_ml_models">github</a></p>
+<h3>Deploying Serverless stack :</h3>
+<p>[code]$serverless deploy[/code]</p>
+<p><img data-recalc-dims="1" loading="lazy" decoding="async" data-attachment-id="509" data-permalink="https://mohamedbenachour.net/2018/12/11/storing-your-ml-models-with-parameters/screen-shot-2018-12-10-at-1-19-57-pm/" data-orig-file="../assets/posts/2d309129-screen-shot-2018-12-10-at-1-19-57-pm.png" data-orig-size="698,227" data-comments-opened="1" data-image-title="Screen Shot 2018-12-10 at 1.19.57 PM" data-image-description="" data-image-caption="" data-large-file="../assets/posts/2d309129-screen-shot-2018-12-10-at-1-19-57-pm.png" class="alignnone size-full wp-image-509" src="../assets/posts/2d309129-screen-shot-2018-12-10-at-1-19-57-pm.png" alt="Screen Shot 2018-12-10 at 1.19.57 PM" width="698" height="227" /></p>
+<p>this will create 5 endpoints :</p>
+<ul>
+<li>POST /dev/asset</li>
+<li>GET /dev/asset</li>
+<li>PUT /dev/asset/{asset_id}</li>
+<li>DELETE /dev/asset/{asset_id}</li>
+</ul>
+<p>these endpoints will allow you to update/create/delete an artifact, in this case, is a model.</p>
+<p>for more reading about this check out the readme page of this serverless <a href="https://github.com/serverless/examples/tree/master/aws-python-pynamodb-s3-sigurl">example</a></p>
+<h3>Getting the parameters :</h3>
+<p>in this part, in the EC2 instance, we will try to download the model and get the parameters to store them in dynamo DB</p>
+<p><em>Initially I thought I could leverage all of this work in Lambda, so I don&#8217;t have to create an EC2 instance just to read the parameters, unfortunately, there couple issues with that solution, one of them is the size of the dependencies once you add SKlearn libraries as a dependency, the size of the lambda zip reaches 60Mb. But once uploaded there was an issue running SKlearn part of the lambda, for this iteration I decided to use a t2.micro on EC2.</em></p>
+<p>the EC2 has a python web server running that get requests with an asset_id, downloads the asset, get the parameters and store them in dynamodb</p>
+<p>this is the code for the server :</p>
+<p><a href="https://github.com/mbenachour/store_ml_models/blob/master/server.py">https://github.com/mbenachour/store_ml_models/blob/master/server.py</a></p>
+<h3>Testing the upload :</h3>
+<p>to test all this I created a small python script:</p>
+<p>[code]</p>
+<p>import sys<br />
+import requests<br />
+from sklearn.externals import joblib</p>
+<p>def upload(filename):<br />
+model = loadModel(filename)<br />
+print (model.get_params())<br />
+url = &#8216;<a href="https://oo0cl2av91.execute-api.us-east-1.amazonaws.com/dev/asset&#038;#8217" rel="nofollow">https://oo0cl2av91.execute-api.us-east-1.amazonaws.com/dev/asset&#038;#8217</a>;<br />
+response = requests.post(url)<br />
+print (response)<br />
+presigned = response.json().get(&#8216;body&#8217;).get(&#8216;upload_url&#8217;)<br />
+response = requests.put(presigned, data=open(filename).read())<br />
+print (response)</p>
+<p>def loadModel(model_path):<br />
+download_path = model_path<br />
+#s3_client.download_file(BUCKET_NAME, model, &#8216;/tmp/model.pkl&#8217;)<br />
+return joblib.load(download_path)</p>
+<p>upload(sys.argv[1])</p>
+<p>[/code]</p>
+<p>to run it use :</p>
+<p>[code] python test.py  your_model.pkl [/code]</p>
+<p>if you look at your dynamodb table you will see that your model has a description :</p>
+<p><img data-recalc-dims="1" loading="lazy" decoding="async" data-attachment-id="510" data-permalink="https://mohamedbenachour.net/2018/12/11/storing-your-ml-models-with-parameters/screen-shot-2018-12-10-at-11-40-30-pm/" data-orig-file="../assets/posts/b892a18e-screen-shot-2018-12-10-at-11-40-30-pm.png" data-orig-size="2102,320" data-comments-opened="1" data-image-title="Screen Shot 2018-12-10 at 11.40.30 PM" data-image-description="" data-image-caption="" data-large-file="../assets/posts/b892a18e-screen-shot-2018-12-10-at-11-40-30-pm.png" class="alignnone size-full wp-image-510" src="../assets/posts/b892a18e-screen-shot-2018-12-10-at-11-40-30-pm.png" alt="Screen Shot 2018-12-10 at 11.40.30 PM" width="2102" height="320" /></p>
+
+    </div>
+    <p class="origin">Originally published on mohamedbenachour.net on December 11, 2018. <a href="https://mohamedbenachour.net/2018/12/11/storing-your-ml-models-with-parameters/">View the original post</a>.</p>
+  </main>
+  <footer class="wrap"><span>© 2026 Mohamed Ben Achour</span></footer>
+</body>
+</html>

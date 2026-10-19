@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Riak Cluster Using Docker Compose · Mohamed Ben Achour</title>
+  <meta name="description" content="Riak is some hot stuff lately with the increasing need for clusterzitation in the world of NoSQL data stores . Riak is a solution to big data problem, it was…">
+  <style>
+    :root { color-scheme: dark; --bg:#050a12; --panel:#0a1626; --text:#eef7ff; --muted:#a9bed3; --line:rgba(94,234,255,.28); --accent:#5eeaff; --accent-2:#8bffb0; }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family: Inter, ui-sans-system, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: radial-gradient(circle at 18% 0%, rgba(94,234,255,.18), transparent 30rem), linear-gradient(180deg,#03060b 0%, var(--bg) 46%, #02040a 100%); color:var(--text); line-height:1.7; }
+    a { color:var(--accent); text-decoration:none; } a:hover { text-decoration:underline; }
+    .wrap { width:min(820px, calc(100% - 40px)); margin:0 auto; }
+    header { padding:28px 0 6px; } nav { display:flex; justify-content:space-between; align-items:center; gap:20px; flex-wrap:wrap; }
+    .brand { font-weight:800; color:var(--text); } .nav-links { display:flex; gap:18px; flex-wrap:wrap; font-size:.95rem; }
+    h1 { font-size:clamp(1.9rem,5vw,3rem); line-height:1.15; letter-spacing:-.03em; margin:30px 0 10px; }
+    .meta { color:var(--muted); font-size:.9rem; text-transform:uppercase; letter-spacing:.06em; margin-bottom:26px; }
+    .content img { max-width:100%; height:auto; border-radius:12px; }
+    .content figure { margin:24px 0; } .content figcaption { color:var(--muted); font-size:.9rem; text-align:center; }
+    .content pre { overflow:auto; background:var(--panel); border:1px solid rgba(94,234,255,.16); padding:16px; border-radius:12px; }
+    .content code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size:.92em; }
+    .content blockquote { border-left:3px solid var(--accent); margin:20px 0; padding:4px 18px; color:var(--muted); }
+    .content table { display:block; overflow-x:auto; border-collapse:collapse; } .content td, .content th { border:1px solid rgba(255,255,255,.14); padding:6px 10px; }
+    .content iframe { max-width:100%; }
+    .origin { border-top:1px solid rgba(255,255,255,.1); margin-top:38px; padding-top:16px; color:var(--muted); font-size:.92rem; }
+    footer { padding:26px 0 46px; color:var(--muted); }
+  </style>
+</head>
+<body>
+  <header class="wrap">
+    <nav aria-label="Main navigation">
+      <a class="brand" href="../index.html">Mohamed Ben Achour</a>
+      <div class="nav-links">
+        <a href="../articles.html">Articles</a>
+        <a href="https://github.com/mbenachour">GitHub</a>
+        <a href="https://huggingface.co/mbenachour">Hugging Face</a>
+        <a href="https://mohamedbenachour.net">Blog</a>
+      </div>
+    </nav>
+  </header>
+  <main class="wrap">
+    <h1>Riak Cluster Using Docker Compose</h1>
+    <div class="meta">December 15, 2015 · Devops</div>
+
+    <div class="content">
+<p>Riak is some hot stuff lately with the increasing need for clusterzitation in the world of NoSQL data stores .</p>
+<p>Riak is a solution to big data problem, it was based on Amazon Dynamo design, to respond to request at a very large scale,</p>
+<p>Basho introduced Riak as fault tolerant, simple, scalable, high availability friendly .</p>
+<p>it&#8217;s fairly easy to create/add nodes with riak-admin to a riak cluster, but if this is combined with docker-compose capabilities it will give you the possibility to have an easily deployable/scalable cluster of riak nodes.</p>
+<p>I created a docker-compose yaml to specify all the components of the cluster, basically a seed and a set of nodes</p>
+<p>I used  <a href="https://hub.docker.com/r/hectcastro/riak-cs/">Hectcastro</a> Riak docker image, because :  that&#8217;s the beauty of containers, they are reusable !</p>
+<ul>
+<li>install <a href="https://docs.docker.com/engine/installation/">docker-engine</a> and <a href="https://docs.docker.com/compose/install/">docker compose</a></li>
+<li>You can either, copy/past the content of those files or clone this repo :</li>
+</ul>
+<pre><strong>$git clone https://github.com/mbenachour/riak-cluster-compose.git</strong></pre>
+<pre><strong>$cd riak-cluster-compose</strong></pre>
+<p>&nbsp;</p>
+<ul>
+<li>start compose as a daemon :</li>
+</ul>
+<pre><strong>$docker-compose up -d</strong></pre>
+<ul>
+<li>you will have one seed and one node running :</li>
+</ul>
+<p><img data-recalc-dims="1" loading="lazy" decoding="async" data-attachment-id="45" data-permalink="https://mohamedbenachour.net/2015/12/15/riak-cluster-using-docker-compose/screen-shot-2015-12-15-at-5-00-52-pm/" data-orig-file="../assets/posts/be6251a2-screen-shot-2015-12-15-at-5-00-52-pm.png" data-orig-size="596,61" data-comments-opened="1" data-image-title="Screen Shot 2015-12-15 at 5.00.52 PM" data-image-description="" data-image-caption="" data-large-file="../assets/posts/be6251a2-screen-shot-2015-12-15-at-5-00-52-pm.png" class="alignnone size-full wp-image-45" src="../assets/posts/be6251a2-screen-shot-2015-12-15-at-5-00-52-pm.png" alt="Screen Shot 2015-12-15 at 5.00.52 PM" width="596" height="61" /></p>
+<ul>
+<li>list all running containers</li>
+</ul>
+<p><img data-recalc-dims="1" loading="lazy" decoding="async" data-attachment-id="48" data-permalink="https://mohamedbenachour.net/2015/12/15/riak-cluster-using-docker-compose/screen-shot-2015-12-15-at-5-02-33-pm/" data-orig-file="../assets/posts/f9f2d9a9-screen-shot-2015-12-15-at-5-02-33-pm.png" data-orig-size="821,90" data-comments-opened="1" data-image-title="Screen Shot 2015-12-15 at 5.02.33 PM" data-image-description="" data-image-caption="" data-large-file="../assets/posts/f9f2d9a9-screen-shot-2015-12-15-at-5-02-33-pm.png" class="alignnone size-full wp-image-48" src="../assets/posts/f9f2d9a9-screen-shot-2015-12-15-at-5-02-33-pm.png" alt="Screen Shot 2015-12-15 at 5.02.33 PM" width="821" height="90" /></p>
+<ul>
+<li>let&#8217;s create an &#8220;Artists&#8221; buckets and add an object using node1 (port : 32812)</li>
+</ul>
+<pre><strong>$curl -i -d '{"name":"Bruce"}' -H "Content-Type: application/json" \
+localhost:32812/riak/artists/Bruce</strong></pre>
+<ul>
+<li>check the bucket was created :</li>
+</ul>
+<p><img data-recalc-dims="1" loading="lazy" decoding="async" data-attachment-id="65" data-permalink="https://mohamedbenachour.net/2015/12/15/riak-cluster-using-docker-compose/screen-shot-2015-12-15-at-5-30-05-pm/" data-orig-file="../assets/posts/ea5e2a2f-screen-shot-2015-12-15-at-5-30-05-pm.png" data-orig-size="846,160" data-comments-opened="1" data-image-title="Screen Shot 2015-12-15 at 5.30.05 PM" data-image-description="" data-image-caption="" data-large-file="../assets/posts/ea5e2a2f-screen-shot-2015-12-15-at-5-30-05-pm.png" class="alignnone size-full wp-image-65" src="../assets/posts/ea5e2a2f-screen-shot-2015-12-15-at-5-30-05-pm.png" alt="Screen Shot 2015-12-15 at 5.30.05 PM" width="846" height="160" /></p>
+<p><strong>Scale time ! : </strong></p>
+<ul>
+<li>to scale you cluster you can add 3 nodes
+<pre><strong>$docker scale riak_node=4</strong></pre>
+</li>
+</ul>
+<p><img data-recalc-dims="1" loading="lazy" decoding="async" data-attachment-id="71" data-permalink="https://mohamedbenachour.net/2015/12/15/riak-cluster-using-docker-compose/screen-shot-2015-12-15-at-5-32-32-pm/" data-orig-file="../assets/posts/b67d0094-screen-shot-2015-12-15-at-5-32-32-pm.png" data-orig-size="809,208" data-comments-opened="1" data-image-title="Screen Shot 2015-12-15 at 5.32.32 PM" data-image-description="" data-image-caption="" data-large-file="../assets/posts/b67d0094-screen-shot-2015-12-15-at-5-32-32-pm.png" class="alignnone size-full wp-image-71" src="../assets/posts/b67d0094-screen-shot-2015-12-15-at-5-32-32-pm.png" alt="Screen Shot 2015-12-15 at 5.32.32 PM" width="809" height="208" /></p>
+<ul>
+<li> let&#8217;s query node4 for the list of buckets (port: 32818)</li>
+</ul>
+<p><img data-recalc-dims="1" loading="lazy" decoding="async" data-attachment-id="75" data-permalink="https://mohamedbenachour.net/2015/12/15/riak-cluster-using-docker-compose/screen-shot-2015-12-15-at-5-36-08-pm/" data-orig-file="../assets/posts/f17dd398-screen-shot-2015-12-15-at-5-36-08-pm.png" data-orig-size="848,155" data-comments-opened="1" data-image-title="Screen Shot 2015-12-15 at 5.36.08 PM" data-image-description="" data-image-caption="" data-large-file="../assets/posts/f17dd398-screen-shot-2015-12-15-at-5-36-08-pm.png" class="alignnone size-full wp-image-75" src="../assets/posts/f17dd398-screen-shot-2015-12-15-at-5-36-08-pm.png" alt="Screen Shot 2015-12-15 at 5.36.08 PM" width="848" height="155" /></p>
+<p>works !</p>
+<p>if you are more interested to scale on multiple hosts, you can combine this with docker swarm.</p>
+<p>&nbsp;</p>
+
+    </div>
+    <p class="origin">Originally published on mohamedbenachour.net on December 15, 2015. <a href="https://mohamedbenachour.net/2015/12/15/riak-cluster-using-docker-compose/">View the original post</a>.</p>
+  </main>
+  <footer class="wrap"><span>© 2026 Mohamed Ben Achour</span></footer>
+</body>
+</html>

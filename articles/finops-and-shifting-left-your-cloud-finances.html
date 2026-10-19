@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>FinOps and shifting left your cloud finances · Mohamed Ben Achour</title>
+  <meta name="description" content="The old vs the new model of infrastructure finance The old procurement model : In the old days of infrastructure, ops teams like any other organization would…">
+  <style>
+    :root { color-scheme: dark; --bg:#050a12; --panel:#0a1626; --text:#eef7ff; --muted:#a9bed3; --line:rgba(94,234,255,.28); --accent:#5eeaff; --accent-2:#8bffb0; }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family: Inter, ui-sans-system, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: radial-gradient(circle at 18% 0%, rgba(94,234,255,.18), transparent 30rem), linear-gradient(180deg,#03060b 0%, var(--bg) 46%, #02040a 100%); color:var(--text); line-height:1.7; }
+    a { color:var(--accent); text-decoration:none; } a:hover { text-decoration:underline; }
+    .wrap { width:min(820px, calc(100% - 40px)); margin:0 auto; }
+    header { padding:28px 0 6px; } nav { display:flex; justify-content:space-between; align-items:center; gap:20px; flex-wrap:wrap; }
+    .brand { font-weight:800; color:var(--text); } .nav-links { display:flex; gap:18px; flex-wrap:wrap; font-size:.95rem; }
+    h1 { font-size:clamp(1.9rem,5vw,3rem); line-height:1.15; letter-spacing:-.03em; margin:30px 0 10px; }
+    .meta { color:var(--muted); font-size:.9rem; text-transform:uppercase; letter-spacing:.06em; margin-bottom:26px; }
+    .content img { max-width:100%; height:auto; border-radius:12px; }
+    .content figure { margin:24px 0; } .content figcaption { color:var(--muted); font-size:.9rem; text-align:center; }
+    .content pre { overflow:auto; background:var(--panel); border:1px solid rgba(94,234,255,.16); padding:16px; border-radius:12px; }
+    .content code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size:.92em; }
+    .content blockquote { border-left:3px solid var(--accent); margin:20px 0; padding:4px 18px; color:var(--muted); }
+    .content table { display:block; overflow-x:auto; border-collapse:collapse; } .content td, .content th { border:1px solid rgba(255,255,255,.14); padding:6px 10px; }
+    .content iframe { max-width:100%; }
+    .origin { border-top:1px solid rgba(255,255,255,.1); margin-top:38px; padding-top:16px; color:var(--muted); font-size:.92rem; }
+    footer { padding:26px 0 46px; color:var(--muted); }
+  </style>
+</head>
+<body>
+  <header class="wrap">
+    <nav aria-label="Main navigation">
+      <a class="brand" href="../index.html">Mohamed Ben Achour</a>
+      <div class="nav-links">
+        <a href="../articles.html">Articles</a>
+        <a href="https://github.com/mbenachour">GitHub</a>
+        <a href="https://huggingface.co/mbenachour">Hugging Face</a>
+        <a href="https://mohamedbenachour.net">Blog</a>
+      </div>
+    </nav>
+  </header>
+  <main class="wrap">
+    <h1>FinOps and shifting left your cloud finances</h1>
+    <div class="meta">August 17, 2022 · Devops</div>
+
+    <div class="content">
+
+<p class="wp-block-paragraph"></p>
+
+
+
+<h3 class="wp-block-heading">The old vs the new model of infrastructure finance </h3>
+
+
+
+<h4 class="wp-block-heading">The old procurement model : </h4>
+
+
+
+<p class="wp-block-paragraph">In the old days of infrastructure, ops teams like any other organization would have to follow a traditional procurement model, requirements for hardware are set months or years in advance, and needed to account for growth, the process was long, subject to multiple budget approvals and delays, OPex and CAPex finances have to determined and also approved.</p>
+
+
+
+<figure class="wp-block-image aligncenter size-full"><img data-recalc-dims="1" loading="lazy" decoding="async" width="592" height="181" data-attachment-id="1120" data-permalink="https://mohamedbenachour.net/2022/08/17/finops-and-shifting-left-your-cloud-finances/datasunrise-page-6/" data-orig-file="../assets/posts/4422d571-Datasunrise-Page-6.png" data-orig-size="592,181" data-comments-opened="1" data-image-title="Datasunrise-Page-6" data-image-description="" data-image-caption="" data-large-file="../assets/posts/4422d571-Datasunrise-Page-6.png" src="../assets/posts/4422d571-Datasunrise-Page-6.png" alt="" class="wp-image-1120" /></figure>
+
+
+
+<h4 class="wp-block-heading">The new cloud model </h4>
+
+
+
+<p class="wp-block-paragraph">In the era of cloud, operation teams have more direct access to cloud resources, and cloud spending, without having to undergo a budget approval process, with this new flexibility in provisioning, the challenge becomes how to have a good governance model around cloud spending without been a road block for development and operation teams, but at the same time making sure the finance teams have a realtime visibility into the cloud bill cloud bill</p>
+
+
+
+<figure class="wp-block-image aligncenter size-full"><img data-recalc-dims="1" loading="lazy" decoding="async" width="618" height="338" data-attachment-id="1121" data-permalink="https://mohamedbenachour.net/2022/08/17/finops-and-shifting-left-your-cloud-finances/datasunrise-page-96/" data-orig-file="../assets/posts/c8c1ff75-Datasunrise-Page-96.png" data-orig-size="618,338" data-comments-opened="1" data-image-title="Datasunrise-Page-96" data-image-description="" data-image-caption="" data-large-file="../assets/posts/c8c1ff75-Datasunrise-Page-96.png" src="../assets/posts/c8c1ff75-Datasunrise-Page-96.png" alt="" class="wp-image-1121" /></figure>
+
+
+
+<p class="wp-block-paragraph"></p>
+
+
+
+<h3 class="wp-block-heading">what is finops : </h3>
+
+
+
+<p class="wp-block-paragraph">FinOps is a culture and practice of financial awareness and transparency around cloud spending. Teams should use tools to understand their spend, forecast future spend, and take action to manage that spend as needed. FinOps is about using data to drive better decisions. It’s about efficiently using resources for the best return on investment. FinOps is about understanding how your organization is using cloud resources, and using that information to make strategic decisions about how to use your cloud spend more effectively.</p>
+
+
+
+<h3 class="wp-block-heading">FinOps Personas</h3>
+
+
+
+<p class="wp-block-paragraph">different people or personas are involved in the finops teams, each has different role to accomplish, but it all centered around cloud, provisioning,  </p>
+
+
+
+<p class="wp-block-paragraph"><strong>FinOps Practitioner</strong> : Drive best practices into the organization through education, standardization, and cheerleading</p>
+
+
+
+<p class="wp-block-paragraph"><strong>Execs</strong> : Leverage technology to give the business a market and competitive advantage</p>
+
+
+
+<p class="wp-block-paragraph"><strong>Product Owner </strong>: Quickly bring new products and features to market with an accurate price point</p>
+
+
+
+<p class="wp-block-paragraph"><strong>Finance</strong> : Accurately budget, forecast and report cloud costs</p>
+
+
+
+<p class="wp-block-paragraph"><strong>Engineering</strong> : Deliver faster and high quality services to the organisation, whilst maintaining business as usual</p>
+
+
+
+<figure class="wp-block-image aligncenter size-full"><img data-recalc-dims="1" loading="lazy" decoding="async" width="431" height="571" data-attachment-id="1113" data-permalink="https://mohamedbenachour.net/2022/08/17/finops-and-shifting-left-your-cloud-finances/datasunrise-page-4-1/" data-orig-file="../assets/posts/d67bfd0b-Datasunrise-Page-4-1.png" data-orig-size="431,571" data-comments-opened="1" data-image-title="Datasunrise-Page-4-1" data-image-description="" data-image-caption="" data-large-file="../assets/posts/d67bfd0b-Datasunrise-Page-4-1.png" src="../assets/posts/d67bfd0b-Datasunrise-Page-4-1.png" alt="" class="wp-image-1113" /></figure>
+
+
+
+<h3 class="wp-block-heading">The Prius Effect</h3>
+
+
+
+<p class="wp-block-paragraph">&nbsp;J.R. Storment and Mike Fuller in their book <a href="https://www.amazon.com/Cloud-FinOps-Collaborative-Real-Time-Management/dp/1492054623">Cloud FinOps </a>talk about the Prius Effect ; it&#8217;s basically an analogy to driving the hybrid EV, when you put your foot and the pedal your can instantly see the flow of energy from the battery to the engine, when you lift your foot the flow goes the other way, and the feedback is instantaneous . </p>
+
+
+
+<p class="wp-block-paragraph">The real-time reporting on cloud spends should follow the same model, providing transparency to everyone to see the effect of cloud provisioning, this is a capability that needs to be built and offered internally, making use of all the cloud billing resources, cost estimators, etc &#8230;</p>
+
+
+
+<h3 class="wp-block-heading">Unit Economics</h3>
+
+
+
+<p class="wp-block-paragraph">Unit economics is the idea that cloud spend should be measured against a business metrics, it can be the number of order delivered per day, the cost of keeping a number of DAU ( daily active users), revenue per ride for a ride sharing company, etc </p>
+
+
+
+<p class="wp-block-paragraph">This approach will change the narrative of cloud spends, from just reducing the cloud bill, to correlating that amount with a business goal, this help organizations distinguish between good cloud spend and bad.</p>
+
+
+
+<h3 class="wp-block-heading">Shifting left cloud finances with engineering and operation teams :</h3>
+
+
+
+<p class="wp-block-paragraph">Just like Devops and DevSecOps allowed us to shift left application delivery and application security, by getting developers and operations teams to work closely to release faster, and embed application security practices in the pipelines, FinOps aims also to eliminate the friction between ops teams and financial team, one aspect of of this collaboration can be done at the code level:</p>
+
+
+
+<p class="wp-block-paragraph">Imagine you have an operation team, wanting to provision additional EC2 instances, the ops team writes a terraform template, and sends a pull request to your code repository</p>
+
+
+
+<figure class="wp-block-image size-full"><img data-recalc-dims="1" loading="lazy" decoding="async" width="687" height="314" data-attachment-id="1116" data-permalink="https://mohamedbenachour.net/2022/08/17/finops-and-shifting-left-your-cloud-finances/datasunrise-page-5/" data-orig-file="../assets/posts/36b061fc-Datasunrise-Page-5.png" data-orig-size="687,314" data-comments-opened="1" data-image-title="Datasunrise-Page-5" data-image-description="" data-image-caption="" data-large-file="../assets/posts/36b061fc-Datasunrise-Page-5.png" src="../assets/posts/36b061fc-Datasunrise-Page-5.png" alt="" class="wp-image-1116" /></figure>
+
+
+
+<p class="wp-block-paragraph">your code request can generate a report showing the forecasted expenses for such a change, tools like <a href="https://www.infracost.io/" data-type="URL" data-id="https://www.infracost.io/">infracost</a> , can allow you to create a report on the impact of the current infrastructure and the future one, in a way that will help with the decision making process, this , product managers can take a look at the report and decide to approve or deny the pull request.</p>
+
+
+
+<figure class="wp-block-image size-large"><img data-recalc-dims="1" loading="lazy" decoding="async" width="1024" height="444" data-attachment-id="1118" data-permalink="https://mohamedbenachour.net/2022/08/17/finops-and-shifting-left-your-cloud-finances/image-2/" data-orig-file="../assets/posts/64baec94-image.png" data-orig-size="2541,1101" data-comments-opened="1" data-image-title="image" data-image-description="" data-image-caption="" data-large-file="../assets/posts/64baec94-image.png" src="../assets/posts/64baec94-image.png" alt="" class="wp-image-1118" /></figure>
+
+
+
+<p class="wp-block-paragraph">This step while its scope is only limited to the engineering teams, it helps create more transparency about cloud expenses, and also have operation teams take better ownership of their cloud bill. </p>
+
+
+
+<h3 class="wp-block-heading">My Thoughts :</h3>
+
+
+
+<p class="wp-block-paragraph">FinOps will have to become a culture to adopt by every organization using cloud resources, driven by transparency and ownership of cloud expenses, but also managing cloud investments, at the end of the day FinOps is not only about saving money it&#8217;s also about making money, when more resources are needed for new projects.</p>
+
+
+
+<p class="wp-block-paragraph">there is a lot of talks, blogs, webinars, about cloud cost optimization but often times it&#8217;s only targeted at engineering and operation teams, using very specific technical nomenclature making almost impossible for non-technical stakeholders to understand it.</p>
+
+
+
+<p class="wp-block-paragraph">J.R Storment and Mike Fuller  recommend having an actual FinOps team, composed of the different personas,  having access to real time reporting, and an understandable language and terminology that make sense for everyone, while keeping in mind that one of  the driving factors of cloud expendenture is Unit economics </p>
+
+
+
+<p class="wp-block-paragraph"></p>
+
+    </div>
+    <p class="origin">Originally published on mohamedbenachour.net on August 17, 2022. <a href="https://mohamedbenachour.net/2022/08/17/finops-and-shifting-left-your-cloud-finances/">View the original post</a>.</p>
+  </main>
+  <footer class="wrap"><span>© 2026 Mohamed Ben Achour</span></footer>
+</body>
+</html>

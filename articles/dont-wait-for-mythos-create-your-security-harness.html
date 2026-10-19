@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Don’t Wait For Mythos, Create Your Security Harness. · Mohamed Ben Achour</title>
+  <meta name="description" content="I want to start with what actually happened, because the headline and the finding are not the same thing. In April, Anthropic gave a handful of organizations…">
+  <style>
+    :root { color-scheme: dark; --bg:#050a12; --panel:#0a1626; --text:#eef7ff; --muted:#a9bed3; --line:rgba(94,234,255,.28); --accent:#5eeaff; --accent-2:#8bffb0; }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family: Inter, ui-sans-system, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: radial-gradient(circle at 18% 0%, rgba(94,234,255,.18), transparent 30rem), linear-gradient(180deg,#03060b 0%, var(--bg) 46%, #02040a 100%); color:var(--text); line-height:1.7; }
+    a { color:var(--accent); text-decoration:none; } a:hover { text-decoration:underline; }
+    .wrap { width:min(820px, calc(100% - 40px)); margin:0 auto; }
+    header { padding:28px 0 6px; } nav { display:flex; justify-content:space-between; align-items:center; gap:20px; flex-wrap:wrap; }
+    .brand { font-weight:800; color:var(--text); } .nav-links { display:flex; gap:18px; flex-wrap:wrap; font-size:.95rem; }
+    h1 { font-size:clamp(1.9rem,5vw,3rem); line-height:1.15; letter-spacing:-.03em; margin:30px 0 10px; }
+    .meta { color:var(--muted); font-size:.9rem; text-transform:uppercase; letter-spacing:.06em; margin-bottom:26px; }
+    .content img { max-width:100%; height:auto; border-radius:12px; }
+    .content figure { margin:24px 0; } .content figcaption { color:var(--muted); font-size:.9rem; text-align:center; }
+    .content pre { overflow:auto; background:var(--panel); border:1px solid rgba(94,234,255,.16); padding:16px; border-radius:12px; }
+    .content code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size:.92em; }
+    .content blockquote { border-left:3px solid var(--accent); margin:20px 0; padding:4px 18px; color:var(--muted); }
+    .content table { display:block; overflow-x:auto; border-collapse:collapse; } .content td, .content th { border:1px solid rgba(255,255,255,.14); padding:6px 10px; }
+    .content iframe { max-width:100%; }
+    .origin { border-top:1px solid rgba(255,255,255,.1); margin-top:38px; padding-top:16px; color:var(--muted); font-size:.92rem; }
+    footer { padding:26px 0 46px; color:var(--muted); }
+  </style>
+</head>
+<body>
+  <header class="wrap">
+    <nav aria-label="Main navigation">
+      <a class="brand" href="../index.html">Mohamed Ben Achour</a>
+      <div class="nav-links">
+        <a href="../articles.html">Articles</a>
+        <a href="https://github.com/mbenachour">GitHub</a>
+        <a href="https://huggingface.co/mbenachour">Hugging Face</a>
+        <a href="https://mohamedbenachour.net">Blog</a>
+      </div>
+    </nav>
+  </header>
+  <main class="wrap">
+    <h1>Don’t Wait For Mythos, Create Your Security Harness.</h1>
+    <div class="meta">September 10, 2026 · Uncategorized</div>
+
+    <div class="content">
+
+<p class="wp-block-paragraph"></p>
+
+
+
+<figure class="wp-block-image aligncenter size-full is-resized"><img data-recalc-dims="1" loading="lazy" decoding="async" width="660" height="642" data-attachment-id="2213" data-permalink="https://mohamedbenachour.net/2026/09/10/dont-wait-for-mythos-create-your-security-harness/crucible/" data-orig-file="../assets/posts/f133c4a9-crucible.png" data-orig-size="660,642" data-comments-opened="1" data-image-title="crucible" data-image-description="" data-image-caption="" data-large-file="../assets/posts/f133c4a9-crucible.png" src="../assets/posts/f133c4a9-crucible.png" alt="" class="wp-image-2213" style="aspect-ratio:1.028044018459354;width:214px;height:auto" /></figure>
+
+
+
+<p class="wp-block-paragraph">I want to start with what actually happened, because the headline and the finding are not the same thing.</p>
+
+
+
+<p class="wp-block-paragraph">In April, Anthropic gave a handful of organizations early access to Mythos Preview under <a href="https://www.anthropic.com/glasswing">Project Glasswing</a>. Within a month, those partners had surfaced more than 10,000 high- or critical-severity vulnerabilities across the software that runs critical systems. That is the headline.</p>
+
+
+
+<p class="wp-block-paragraph">The finding is in what Cloudflare and Visa wrote afterward. Cloudflare <a href="https://blog.cloudflare.com/cyber-frontier-models/">ran the model against more than 50 of its own repositories</a> and learned that pointing it at a codebase and asking for bugs produced findings but terrible coverage. So they built a harness: recon, then roughly 50 narrowly scoped hunters in parallel, then an independent validator whose only power was to disprove. The numbers that moved were the harness numbers. Validation rejections fell from around 40% to 11%, high-integrity findings rose from about 35% to 58%, and Cloudflare is <a href="https://blog.cloudflare.com/build-your-own-vulnerability-harness/">explicit</a> that those gains came from context and gating, not a better model.</p>
+
+
+
+<p class="wp-block-paragraph">Visa tells the same story from the other end. They <a href="https://github.com/visa/visa-vulnerability-agentic-harness">open-sourced their harness</a> in June, and <a href="https://corporate.visa.com/en/sites/visa-perspectives/security-trust/visa-cybersecurity-mythos-project-glasswing.html">their primary metric</a> isn&#8217;t findings per scan. It&#8217;s time from discovery to a validated fix, because after Glasswing the bottleneck wasn&#8217;t finding bugs. It was proving, disclosing, and patching them.</p>
+
+
+
+<p class="wp-block-paragraph">Two companies with early access to the most capable security model in existence both came back and said, in effect: the model is not the hard part.</p>
+
+
+
+<p class="wp-block-paragraph">Which makes the strategy most security teams adopted this year, wait for Mythos access or for a vendor to productize it, look backwards. If the orchestration is the durable asset, then the orchestration is what you should be building today, with whatever models you can already run. The frontier model, when it arrives, slots into a role. It doesn&#8217;t replace the roles.</p>
+
+
+
+<p class="wp-block-paragraph">To test that claim hands-on I built <a href="https://github.com/mbenachour/crucible">Crucible</a>: a from-scratch, model-agnostic, self-hostable vulnerability discovery harness. It is a learning-and-research build, not a product, and roughly half of it is still stubbed. But it is far enough along that I can walk through what &#8220;a harness&#8221; concretely means, which design decisions turned out to be load-bearing, and why none of them require a frontier model to start.</p>
+
+
+
+<h2 class="wp-block-heading">Anatomy of Crucible</h2>
+
+
+
+<figure class="wp-block-image size-large"><img data-recalc-dims="1" loading="lazy" decoding="async" width="1024" height="778" data-attachment-id="2211" data-permalink="https://mohamedbenachour.net/2026/09/10/dont-wait-for-mythos-create-your-security-harness/image-8/" data-orig-file="../assets/posts/4208fa94-image.png" data-orig-size="3000,2280" data-comments-opened="1" data-image-title="image" data-image-description="" data-image-caption="" data-large-file="../assets/posts/4208fa94-image.png" src="../assets/posts/4208fa94-image.png" alt="" class="wp-image-2211" /></figure>
+
+
+
+<p class="wp-block-paragraph">There are two layers, and keeping them apart is most of the architecture.</p>
+
+
+
+<p class="wp-block-paragraph">The <strong>stage machine</strong> is coarse and durable: a handful of nodes, a checkpoint after every step, resume-from-crash as a library feature rather than something I wrote. The <strong>agent stages</strong> are fine-grained: each node is an agent loop with its own tools, its own model role, and its own context budget. The stage machine decides <em>what runs next</em>; the agent decides <em>how to do the work</em>. Neither layer holds content. The graph state is pointers and counters, and everything an agent produces lands on disk.</p>
+
+
+
+<p class="wp-block-paragraph"><strong>Recon</strong> reads the repository top-down. A deterministic seed pass indexes files, detects the framework, and classifies entry points (network, IPC, file, CLI, deserialization). Then a lead agent partitions the code into subsystems, one agent per subsystem maps it in parallel, and a deterministic synthesis step stitches those maps into an <code>architecture.md</code> every downstream agent reads: build commands, trust boundaries, external inputs, ranked attack surface. Recon also writes its own threat model rather than receiving one, so the attack-class taxonomy is specific to this repo. Finally it decomposes all of that into a queue of <code>(area × attack_class)</code> cells, tier-sorted so the highest-value hunts come first.</p>
+
+
+
+<p class="wp-block-paragraph"><strong>Hunt</strong> pops a cell and gets exactly one attack class, one scope hint, the architecture document, and prior coverage notes. It explores with read-only tools and a per-task sandbox, then a second forced call makes it emit either a structured <code>Finding</code> or an explicit negative. Both are coverage. If it exits early, the harness reinjects the prompt in a fresh context window, up to three times. If it trips over something interesting outside its scope, it forks a sibling with a precise seed instead of wandering.</p>
+
+
+
+<p class="wp-block-paragraph"><strong>Dedup</strong> runs before any model is spent on validation. Deterministic inverted indexes over structured fields (cited file, normalized boundary, rare tokens) produce a short candidate list; only then does a judge model decide whether one fix at one root cause would close both. Cross-run stable keys reopen existing records instead of spawning new ones.</p>
+
+
+
+<p class="wp-block-paragraph"><strong>Validate A</strong> is plain Python. Cited path exists at the pinned commit, line range in bounds, threat model populated, patch applies with <code>git apply --check</code>, PoC parses, and the PoC gate: the test fails on the unmodified tree and passes with the patch. Anything that fails here never costs a model call.</p>
+
+
+
+<p class="wp-block-paragraph"><strong>Gapfill and Feedback</strong> close the loop. Gapfill reconstructs the intended coverage matrix and re-queues cells that were never hunted, hunted thinly, or failed validation for a fixable reason. Feedback reads this run&#8217;s own failures and appends a targeted note to each re-queued prompt: cite the exact line, give a patch that applies, run one trivial sandbox command first. Then loop control either sends the queue back to Hunt or, after two cycles, lets the run fall through.</p>
+
+
+
+<p class="wp-block-paragraph"></p>
+
+
+
+<h2 class="wp-block-heading">Takeaway </h2>
+
+
+
+<p class="wp-block-paragraph">Mythos will arrive, for some of you, eventually. And when it does, you&#8217;ll rediscover the lesson the same way Cloudflare did.</p>
+
+
+
+<p class="wp-block-paragraph">Cloudflare&#8217;s first instinct with Mythos Preview was the obvious one: point it at a repository and ask for vulnerabilities. It worked, in the sense that findings came out. But coverage was terrible, because a coding agent is built for one sequential task and vulnerability research is dozens of narrow tasks at once. </p>
+
+
+
+<p class="wp-block-paragraph"></p>
+
+
+
+<p class="wp-block-paragraph">Everything Cloudflare later described as the real work, the recon that produces a shared architecture document, the fifty narrowly scoped hunters, the validator that can only refute, the dedup that stops a thousand-finding backlog from being three hundred findings reported three times, the wishlist agents used more than 25,000 times to ask for what they were missing, was built <em>around</em> the strongest model they had access to, not instead of it. </p>
+
+
+
+<p class="wp-block-paragraph">The model got better and the harness stayed necessary. Visa&#8217;s experience is even more pointed: Mythos found the flaws, Visa&#8217;s zero-trust segmentation broke most of the attack chains before exploitation, and the thing Visa chose to open-source wasn&#8217;t a prompt or a model recipe. It was VVAH, an eleven-stage pipeline whose headline metric is the time from discovery to a validated fix in production, because that turned out to be where the actual bottleneck lived. Both companies had the frontier. Both concluded the frontier was the easy part</p>
+
+
+
+<p class="wp-block-paragraph"></p>
+
+    </div>
+    <p class="origin">Originally published on mohamedbenachour.net on September 10, 2026. <a href="https://mohamedbenachour.net/2026/09/10/dont-wait-for-mythos-create-your-security-harness/">View the original post</a>.</p>
+  </main>
+  <footer class="wrap"><span>© 2026 Mohamed Ben Achour</span></footer>
+</body>
+</html>
