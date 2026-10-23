@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Too Much Code, Too Many Attackers, Too Little Time · Mohamed Ben Achour</title>
+  <meta name="description" content="To understand what is coming, you do not need to imagine a distant future. You need only look at two trends that are already reshaping the present, and consider where they lead. The first trend is the amount of code">
+  <style>
+    :root { color-scheme: dark; --bg:#050a12; --panel:#0a1626; --text:#eef7ff; --muted:#a9bed3; --line:rgba(94,234,255,.28); --accent:#5eeaff; --accent-2:#8bffb0; }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family: Inter, ui-sans-system, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: radial-gradient(circle at 18% 0%, rgba(94,234,255,.18), transparent 30rem), linear-gradient(180deg,#03060b 0%, var(--bg) 46%, #02040a 100%); color:var(--text); line-height:1.7; }
+    a { color:var(--accent); text-decoration:none; } a:hover { text-decoration:underline; }
+    .wrap { width:min(820px, calc(100% - 40px)); margin:0 auto; }
+    header { padding:28px 0 6px; } nav { display:flex; justify-content:space-between; align-items:center; gap:20px; flex-wrap:wrap; }
+    .brand { font-weight:800; color:var(--text); } .nav-links { display:flex; gap:18px; flex-wrap:wrap; font-size:.95rem; }
+    h1 { font-size:clamp(1.9rem,5vw,3rem); line-height:1.15; letter-spacing:-.03em; margin:30px 0 10px; }
+    .meta { color:var(--muted); font-size:.9rem; text-transform:uppercase; letter-spacing:.06em; margin-bottom:26px; }
+    .content img { max-width:100%; height:auto; border-radius:12px; }
+    .content figure { margin:24px 0; } .content figcaption { color:var(--muted); font-size:.9rem; text-align:center; }
+    .content pre { overflow:auto; background:var(--panel); border:1px solid rgba(94,234,255,.16); padding:16px; border-radius:12px; }
+    .content code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size:.92em; }
+    .content blockquote { border-left:3px solid var(--accent); margin:20px 0; padding:4px 18px; color:var(--muted); }
+    .content table { display:block; overflow-x:auto; border-collapse:collapse; } .content td, .content th { border:1px solid rgba(255,255,255,.14); padding:6px 10px; }
+    .content iframe { max-width:100%; }
+    .origin { border-top:1px solid rgba(255,255,255,.1); margin-top:38px; padding-top:16px; color:var(--muted); font-size:.92rem; }
+    footer { padding:26px 0 46px; color:var(--muted); }
+  </style>
+</head>
+<body>
+  <header class="wrap">
+    <nav aria-label="Main navigation">
+      <a class="brand" href="../index.html">Mohamed Ben Achour</a>
+      <div class="nav-links">
+        <a href="../articles.html">Articles</a>
+        <a href="https://github.com/mbenachour">GitHub</a>
+        <a href="https://huggingface.co/mbenachour">Hugging Face</a>
+        <a href="https://mohamedbenachour.net">Blog</a>
+      </div>
+    </nav>
+  </header>
+  <main class="wrap">
+    <h1>Too Much Code, Too Many Attackers, Too Little Time</h1>
+    <div class="meta">October 23, 2026 · Uncategorized</div>
+    <figure class="content"><img src="../assets/posts/too-much-code-too-many-attackers.webp" alt=""></figure>
+    <div class="content">
+
+<h2>When exploits become daily</h2>
+
+<p>To understand what is coming, you do not need to imagine a distant future. You need only look at two trends that are already reshaping the present, and consider where they lead.</p>
+
+<p>The first trend is the amount of code.</p>
+
+<p>We are producing software at a scale we have never produced it before. AI coding tools let small teams ship what large teams used to ship. They let non specialists build applications. They speed up every feature, every integration, and every internal tool.</p>
+
+<p>By the end of 2024, an estimated 29 percent of Python functions in the United States were produced with substantial AI support (Simone Daniotti, Johannes Wachs, Xiangnan Feng, and Frank Neffke, "Who is using AI to code? Global diffusion and impact of generative AI," <a href="https://www.science.org/doi/10.1126/science.adz9311">Science, 2026</a>).</p>
+
+<p>More code means more vulnerabilities. That is the simple math teams need to face. Every new application adds dependencies, APIs, permissions, and configurations. Review, testing, and security review do not scale at the same speed as generation. So the backlog of flaws will grow, including flaws nobody knows about yet, in code nobody has time to read closely.</p>
+
+<p>The second trend is on the attack side. Attacking is getting easier.</p>
+
+<p>Abliterated models are a big reason why. These are open models that have been modified to remove their safety refusals. A normal model may refuse to help write exploit code, build a phishing kit, or adapt malware. An abliterated model does not refuse. It can be downloaded, run locally, and used without a provider watching or cutting it off.</p>
+
+<p>That lowers the floor for attackers. A person with limited skill can now get patient, step by step help with reconnaissance, vulnerability analysis, exploit development, and evasion. A skilled attacker can move faster and test more targets in parallel.</p>
+
+<p>Put the two trends together and you get the flood. More vulnerable code is shipped every day, and more people have the tools to find and exploit the flaws in it, every day.</p>
+
+<p>Security teams used to rely on a window between disclosure and exploitation. That window gave them weeks to scan, prioritize, and release a fix.</p>
+
+<p>That window is closing. The question for teams is direct: can you investigate and fix at the speed you will soon be attacked?</p>
+
+<h2>What breaks first</h2>
+
+<p>Three things break.</p>
+
+<p>First, periodic defense breaks. A monthly scan and an annual penetration test cannot keep up with daily exploitation.</p>
+
+<p>Second, slow remediation breaks. A ticket that waits for assignment, sprint planning, and a normal release is a delay attackers can use.</p>
+
+<p>Third, manual investigation breaks. Analysts cannot read every log, check every system, and reconstruct every attack fast enough when several incidents run at the same time.</p>
+
+<p>The tempo is already changing. Microsoft reported in April 2026 that Storm-1175 moved from access to ransomware in as little as 24 hours in some cases, and Cl0p exploited an Oracle E-Business Suite zero day nearly two months before a patch existed.</p>
+
+<p>Look at SharePoint in July 2025. Exploitation started July 7. By the time Eye Security scanned more than 23,000 servers, more than 400 were already compromised in four waves over five days.</p>
+
+<p>Look at Cisco in September 2025. CISA gave federal agencies one day to inventory their ASA and Firepower devices, collect forensic data, check for compromise, and start updating or disconnecting them.</p>
+
+<p>Look at Citrix in September 2026. Two NetScaler flaws rated 9.5 were disclosed on September 27. CISA required federal remediation by September 30. Exploitation had started in early September, and some teams shut the appliances down to stop the exposure.</p>
+
+<p>In each case, the bottleneck was the same. Teams needed to know what they owned, what was hit, and what to do next, and they needed those answers in hours.</p>
+
+<h2>Remediation agents and blue agent swarms</h2>
+
+<p>That is why teams need agents on defense, and they need two different kinds.</p>
+
+<p>The first is a remediation agent. Its job is to fix.</p>
+
+<p>It should find the affected code and systems, build the patch, test it, and prove the exploit no longer works. Then it should open a pull request with the evidence, so a human can see what changed and what risk is left.</p>
+
+<p>Its authority should be limited by risk. A routine dependency update can move fast. A change to authentication, payments, health data, or core infrastructure should require human approval.</p>
+
+<p>The second is a blue agent swarm. Its job is to investigate.</p>
+
+<p>Different agents should work in parallel. One triages alerts. One searches logs. One maps which users, systems, and data were exposed. One checks threat intelligence. One tracks containment.</p>
+
+<p>This matters because investigation is usually the hidden delay. Before anyone can fix a problem, someone has to understand its scope. A swarm can do that first pass in minutes, and leave the analyst with a clear summary and a real decision to make.</p>
+
+<p>The goal is simple. Humans should spend their time on judgment, approval, and risk. Machines should spend their time on search, testing, and repetition.</p>
+
+<h2>Streamline the remediation protocol</h2>
+
+<p>But agents alone will not solve this. The decision process has to get faster too.</p>
+
+<p>Too many incidents slow down on basic questions. Who owns this system? Who leads the response? Who can approve an emergency patch? Who can take the application offline?</p>
+
+<p>Those questions should be answered before an incident, in a written protocol.</p>
+
+<p>The protocol should assign an owner and a lead for every critical system. It should define severity levels. It should say, for each level, whether the team patches in place, isolates the service, disables a feature, blocks traffic, or takes the application offline.</p>
+
+<p>The offline decision needs to be explicit. A shutdown costs revenue and trust in the short term. Leaving a compromised system online can cost much more. Teams should decide the threshold in advance, and name the person who can make that call.</p>
+
+<p>The protocol should also define the emergency path to production. That means a fast CI and CD pipeline for critical fixes. It should update dependencies, rebuild containers and artifacts, throw away old vulnerable versions, test the patch, deploy by canary, and roll back if a defined trigger is hit.</p>
+
+<p>If the flaw is in a base image or a build tool, the pipeline should find every service built from it and rebuild those services too. Otherwise the team fixes one application and leaves the same flaw in twenty others.</p>
+
+<p>Add communication to the same protocol. Status page updates, customer notices, and internal updates should use prepared templates, with a named owner and a set update cadence.</p>
+
+<p>Then connect the whole process into one loop. Detection starts investigation. Investigation sets the scope. The protocol assigns the decision. The remediation agent builds the fix. The pipeline ships it. Verification proves the exploit fails. If verification fails, the incident stays open.</p>
+
+<p>That loop is the preparation. Not a new tool by itself. Not a larger team by itself. A system that can investigate, decide, fix, and verify at the speed attackers now operate.</p>
+
+<p>Build the remediation agent. Build the blue agent swarm. Write the protocol. Test the emergency pipeline. Do it now, while you still get to choose the timeline.</p>
+
+<h2>Sources</h2>
+
+<p><a href="https://www.microsoft.com/en-us/security/blog/2026/04/06/storm-1175-focuses-gaze-on-vulnerable-web-facing-assets-in-high-tempo-medusa-ransomware-operations/">Microsoft Threat Intelligence, "Storm-1175 focuses gaze on vulnerable web-facing assets in high-tempo Medusa ransomware operations," April 6, 2026.</a></p>
+
+<p><a href="https://cloud.google.com/blog/topics/threat-intelligence/oracle-ebusiness-suite-zero-day-exploitation">Google Threat Intelligence Group and Mandiant, "Oracle E-Business Suite Zero-Day Exploited in Widespread Extortion Campaign," October 2025.</a></p>
+
+<p><a href="https://research.eye.security/sharepoint-under-siege/">Eye Security, "SharePoint Under Siege," July 2025.</a></p>
+
+<p><a href="https://www.cisa.gov/news-events/directives/ed-25-03-identify-and-mitigate-potential-compromise-cisco-devices">CISA, Emergency Directive 25-03, September 25, 2025.</a></p>
+
+<p><a href="https://www.cyber.gc.ca/en/alerts-advisories/al26-024-critical-vulnerabilities-affecting-citrix-netscaler-adc-netscaler-gateway-cve-2026-88771-cve-2026-88772">Canadian Centre for Cyber Security, Alert AL26-024 on CVE-2026-88771 and CVE-2026-88772, September 27, 2026.</a></p>
+
+    </div>
+    <p class="origin">Originally published on mohamedbenachour.net on October 23, 2026. <a href="https://mohamedbenachour.net/2026/10/23/too-much-code-too-many-attackers-too-little-time/">View the original post</a>.</p>
+  </main>
+  <footer class="wrap"><span>© 2026 Mohamed Ben Achour</span></footer>
+</body>
+</html>
